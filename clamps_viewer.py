@@ -10,11 +10,16 @@ this feature you must install dash-bootstrap-components >= 0.11.0.
 For more details on building multi-page Dash applications, check out the Dash
 documentation: https://dash.plot.ly/urls
 """
-import dash
-import dash_bootstrap_components as dbc
-from dash import Input, Output, dcc, html
 
-app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+from dash import Dash, dcc, html, dash_table, Input, Output, callback
+import plotly.express as px
+import dash_bootstrap_components as dbc
+from dash_bootstrap_templates import ThemeChangerAIO, template_from_url
+
+#dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
+dbc_css = 'dbc_v105.css'
+
+app = Dash(__name__, external_stylesheets=[dbc.themes.SLATE, dbc_css])
 
 # the style arguments for the sidebar. We use position:fixed and a fixed width
 SIDEBAR_STYLE = {
@@ -24,7 +29,7 @@ SIDEBAR_STYLE = {
     "bottom": 0,
     "width": "16rem",
     "padding": "2rem 1rem",
-    "background-color": "#f8f9fa",
+
 }
 
 # the styles for the main content position it to the right of the sidebar and
@@ -57,7 +62,8 @@ sidebar = html.Div(
 
 content = html.Div(id="page-content", style=CONTENT_STYLE)
 
-app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
+app.layout = dbc.Container(html.Div(
+    [dcc.Location(id="url"), sidebar, content]), fluid=True, className="dbc")
 
 
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
@@ -79,4 +85,4 @@ def render_page_content(pathname):
 
 
 if __name__ == "__main__":
-    app.run_server(port=8888)
+    app.run_server(port=8888, debug=True)
