@@ -1,20 +1,9 @@
-"""
-This app creates a simple sidebar layout using inline style arguments and the
-dbc.Nav component.
-
-dcc.Location is used to track the current location, and a callback uses the
-current location to render the appropriate page content. The active prop of
-each NavLink is set automatically according to the current pathname. To use
-this feature you must install dash-bootstrap-components >= 0.11.0.
-
-For more details on building multi-page Dash applications, check out the Dash
-documentation: https://dash.plot.ly/urls
-"""
-
-from dash import Dash, dcc, html, dash_table, Input, Output, callback
+from dash import Dash, dcc, html, dash_table, Input, Output, State, callback
 import plotly.express as px
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import ThemeChangerAIO, template_from_url
+
+DV_LOGO = 'assets/dv_logo.png'
 
 #dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
 dbc_css = 'dbc_v105.css'
@@ -42,28 +31,30 @@ CONTENT_STYLE = {
 
 sidebar = html.Div(
     [
-        html.H2("Sidebar", className="display-4"),
-        html.Hr(),
-        html.P(
-            "A simple sidebar layout with navigation links", className="lead"
-        ),
-        dbc.Nav(
+        dbc.Offcanvas(
             [
-                dbc.NavLink("Home", href="/", active="exact"),
-                dbc.NavLink("Page 1", href="/page-1", active="exact"),
-                dbc.NavLink("Page 2", href="/page-2", active="exact"),
+                html.H2("Sidebar", className="display-4"),
+                html.Hr(),
+                html.P(
+                    "A simple sidebar layout with navigation links", className="lead"
+                ),
+                dbc.Nav(
+                    [
+                        dbc.NavLink("Home", href="/", active="exact"),
+                        dbc.NavLink("Page 1", href="/page-1", active="exact"),
+                        dbc.NavLink("Page 2", href="/page-2", active="exact"),
+                    ],
+                    vertical=True,
+                    pills=True,
+                ),
             ],
-            vertical=True,
-            pills=True,
+            id="offcanvas",
+            title="Title",
+            is_open=True,
         ),
     ],
     style=SIDEBAR_STYLE,
 )
-
-content = html.Div(id="page-content", style=CONTENT_STYLE)
-
-app.layout = dbc.Container(html.Div(
-    [dcc.Location(id="url"), sidebar, content]), fluid=True, className="dbc")
 
 
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
@@ -83,6 +74,72 @@ def render_page_content(pathname):
         ]
     )
 
+
+search_bar = dbc.Row(
+    [
+        dbc.Col(dbc.Input(type="search", placeholder="Search")),
+        dbc.Col(
+            dbc.Button(
+                "Search", color="primary", className="ms-2", n_clicks=0
+            ),
+            width="auto",
+        ),
+        dbc.Col(
+            dbc.NavItem(dbc.NavLink("login", href="#"))
+        ),
+    ],
+    className="g-0 ms-auto flex-nowrap mt-3 mt-md-0",
+    align="center",
+)
+
+navbar = dbc.Navbar(
+    dbc.Container(
+        [
+            html.A(
+                # Use row and col to control vertical alignment of logo / brand
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            html.Img(src=DV_LOGO, height="auto", width="120px")),
+                        dbc.Col(dbc.NavbarBrand(
+                            "Dashboard", className="ms-2")),
+                    ],
+                    align="center",
+                    className="g-0",
+                ),
+                href="https://plotly.com",
+                style={"textDecoration": "none"},
+            ),
+            dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
+            dbc.Collapse(
+                search_bar,
+                id="navbar-collapse",
+                is_open=False,
+                navbar=True,
+            ),
+        ]
+    ),
+    color="black",
+    dark=True,
+)
+
+
+# add callback for toggling the collapse on small screens
+@app.callback(
+    Output("navbar-collapse", "is_open"),
+    [Input("navbar-toggler", "n_clicks")],
+    [State("navbar-collapse", "is_open")],
+)
+def toggle_navbar_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+
+content = html.Div(id="page-content", style=CONTENT_STYLE)
+
+app.layout = dbc.Container(html.Div(
+    [dcc.Location(id="url"), navbar, sidebar, content]), fluid=True, className="dbc")
 
 if __name__ == "__main__":
     app.run_server(port=8888, debug=True)
