@@ -1,11 +1,13 @@
+import re
 from dash import Dash, dcc, html, dash_table, Input, Output, State, callback
+import dash_daq as daq
 import plotly.express as px
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import ThemeChangerAIO, template_from_url
 
 DV_LOGO = 'assets/dv_logo.png'
 
-#dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
+# dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
 dbc_css = 'dbc_v105.css'
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.SLATE, dbc_css])
@@ -51,6 +53,7 @@ sidebar = html.Div(
             id="offcanvas",
             title="Title",
             is_open=True,
+            placement="end",
         ),
     ],
     style=SIDEBAR_STYLE,
@@ -75,7 +78,21 @@ def render_page_content(pathname):
     )
 
 
-search_bar = dbc.Row(
+@app.callback(Output("offcanvas", "is_open"), [Input("sidebar-toggler", "value")])
+def open_sidebar(value):
+    if not value:
+        return 1
+
+
+@ app.callback(Output("sidebar-toggler", "value"), [State("offcanvas", "is_open")])
+def close_sidebar(is_open):
+    if is_open:
+        return 1
+    else:
+        return 0
+
+
+navbar_menu = dbc.Row(
     [
         dbc.Col(dbc.Input(type="search", placeholder="Search")),
         dbc.Col(
@@ -86,6 +103,19 @@ search_bar = dbc.Row(
         ),
         dbc.Col(
             dbc.NavItem(dbc.NavLink("login", href="#"))
+        ),
+        # dbc.Col(
+        #     daq.BooleanSwitch(id='sidebar-switch', on=False)
+        # ),
+        dbc.Col(
+            dbc.Checklist(
+                options=[
+                    {"label": "", "value": 1},
+                ],
+                value=[1],
+                id="sidebar-toggler",
+                switch=True,
+            ),
         ),
     ],
     className="g-0 ms-auto flex-nowrap mt-3 mt-md-0",
@@ -99,10 +129,9 @@ navbar = dbc.Navbar(
                 # Use row and col to control vertical alignment of logo / brand
                 dbc.Row(
                     [
-                        dbc.Col(
-                            html.Img(src=DV_LOGO, height="auto", width="120px")),
+                        dbc.Col(html.Img(src=DV_LOGO, height="30px")),
                         dbc.Col(dbc.NavbarBrand(
-                            "Dashboard", className="ms-2")),
+                            "Dashboard", class_name="ms-2")),
                     ],
                     align="center",
                     className="g-0",
@@ -112,7 +141,7 @@ navbar = dbc.Navbar(
             ),
             dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
             dbc.Collapse(
-                search_bar,
+                navbar_menu,
                 id="navbar-collapse",
                 is_open=False,
                 navbar=True,
@@ -125,7 +154,7 @@ navbar = dbc.Navbar(
 
 
 # add callback for toggling the collapse on small screens
-@app.callback(
+@ app.callback(
     Output("navbar-collapse", "is_open"),
     [Input("navbar-toggler", "n_clicks")],
     [State("navbar-collapse", "is_open")],
