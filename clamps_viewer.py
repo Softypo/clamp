@@ -1,4 +1,6 @@
+from pickle import TRUE
 import re
+from turtle import width
 from dash import Dash, dcc, html, dash_table, Input, Output, State, callback
 import dash_daq as daq
 import plotly.express as px
@@ -10,7 +12,8 @@ DV_LOGO = 'assets/dv_logo.png'
 # dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
 dbc_css = 'dbc_v105.css'
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.SLATE, dbc_css])
+app = Dash(__name__, external_stylesheets=[dbc.themes.SLATE, dbc_css], meta_tags=[
+           {"name": "viewport", "content": "width=device-width, initial-scale=1"}],)
 
 # the style arguments for the sidebar. We use position:fixed and a fixed width
 SIDEBAR_STYLE = {
@@ -35,7 +38,18 @@ sidebar = html.Div(
     [
         dbc.Offcanvas(
             [
-                html.H2("Sidebar", className="display-4"),
+                html.P(
+                    [
+                        dbc.Col(
+                            html.P("Settings", className="offcanvas-title h5")),
+                        dbc.Col(
+                            html.Button(
+                                # html.I(className="fas fa-times"),
+                                className="btn-close",
+                                id="cls_sidebar",
+                            ), align="end"),
+                    ],
+                ),
                 html.Hr(),
                 html.P(
                     "A simple sidebar layout with navigation links", className="lead"
@@ -51,16 +65,22 @@ sidebar = html.Div(
                 ),
             ],
             id="offcanvas",
-            title="Title",
-            is_open=True,
+            # title="Settings",
+            is_open=False,
             placement="end",
+            scrollable=True,
+            backdrop=False,
+            close_button=False,
+            # autofocus=True,
+
         ),
     ],
+    id="sidebar",
     style=SIDEBAR_STYLE,
 )
 
 
-@app.callback(Output("page-content", "children"), [Input("url", "pathname")])
+@ app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
     if pathname == "/":
         return html.P("This is the content of the home page!")
@@ -78,18 +98,22 @@ def render_page_content(pathname):
     )
 
 
-@app.callback(Output("offcanvas", "is_open"), [Input("sidebar-toggler", "value")])
-def open_sidebar(value):
-    if not value:
-        return 1
-
-
-@ app.callback(Output("sidebar-toggler", "value"), [State("offcanvas", "is_open")])
-def close_sidebar(is_open):
-    if is_open:
-        return 1
+@ app.callback([Output("sidebar-toggler", "value"),
+                Output("offcanvas", "is_open"),
+                Output("cls_sidebar", "n_clicks")],
+               [Input("sidebar-toggler", "value"),
+                Input("cls_sidebar", "n_clicks")],
+               [State("offcanvas", "is_open")],
+               )
+def close_sidebar(value, n0, is_open):
+    if n0:
+        return [1], False, 0
+    elif not value:
+        return value, True, n0
+    elif value:
+        return value, False, n0
     else:
-        return 0
+        return value, is_open, n0
 
 
 navbar_menu = dbc.Row(
@@ -110,7 +134,7 @@ navbar_menu = dbc.Row(
         dbc.Col(
             dbc.Checklist(
                 options=[
-                    {"label": "", "value": 1},
+                    {"label": "Settings", "value": 1},
                 ],
                 value=[1],
                 id="sidebar-toggler",
