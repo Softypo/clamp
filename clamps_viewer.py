@@ -5,7 +5,8 @@ from dash import Dash, dcc, html, dash_table, Input, Output, State, callback
 import dash_daq as daq
 import plotly.express as px
 import dash_bootstrap_components as dbc
-from dash_bootstrap_templates import ThemeChangerAIO, template_from_url
+# ThemeChangerAIO, template_from_url
+from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url
 
 DV_LOGO = 'assets/dv_logo.png'
 
@@ -38,16 +39,42 @@ sidebar = html.Div(
     [
         dbc.Offcanvas(
             [
-                html.P(
+                dbc.Row(
                     [
                         dbc.Col(
-                            html.P("Settings", className="offcanvas-title h5")),
+                            html.P("Settings", className="offcanvas-title h5"),
+                        ),
                         dbc.Col(
                             html.Button(
-                                # html.I(className="fas fa-times"),
                                 className="btn-close",
                                 id="cls_sidebar",
-                            ), align="end"),
+                            ),
+                            width=2,
+                        ),
+                    ],
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            html.P("Themes", className="lead",
+                                   style={"display": "inline-block"}),
+                            align="end",
+                        ),
+                        dbc.Col(
+                            ThemeSwitchAIO(aio_id="theme",
+                                           themes=[dbc.themes.SLATE,
+                                                   dbc.themes.UNITED],
+                                           icons={"left": "fa fa-sun",
+                                                  "right": "fa fa-moon"}
+                                           ),
+                            width=5,
+                            align="end",
+                        ),
+                        dbc.Col(
+                            ThemeChangerAIO(
+                                aio_id="theme", radio_props={"value": dbc.themes.FLATLY}
+                            ),
+                        ),
                     ],
                 ),
                 html.Hr(),
@@ -114,6 +141,23 @@ def close_sidebar(value, n0, is_open):
         return value, False, n0
     else:
         return value, is_open, n0
+
+# @app.callback(
+#     Output("graph", "figure"), Input(ThemeSwitchAIO.ids.switch("theme"), "value"),
+# )
+# def update_graph_theme(toggle):
+#     template = template_theme1 if toggle else template_theme2
+#     return px.scatter(
+#         df.query("year==2007"),
+#         x="gdpPercap",
+#         y="lifeExp",
+#         size="pop",
+#         color="continent",
+#         log_x=True,
+#         size_max=60,
+#         template=template,
+#         title="Gapminder 2007: '%s' theme" % template,
+#     )
 
 
 navbar_menu = dbc.Row(
