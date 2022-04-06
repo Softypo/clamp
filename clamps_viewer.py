@@ -11,7 +11,7 @@ from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_f
 DV_LOGO = 'assets/dv_logo.png'
 
 # dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
-dbc_css = 'dbc_v105.css'
+dbc_css = 'assets/dbc_v105.css'
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.SLATE, dbc_css],
            title='DV Dashboard',
