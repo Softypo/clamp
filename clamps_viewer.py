@@ -20,7 +20,6 @@ app = Dash(__name__, external_stylesheets=[united], meta_tags=[
            {"name": "viewport", "content": "width=device-width, initial-scale=1"}],)
 app.css.config.serve_locally = True
 
-
 # the style arguments for the sidebar. We use position:fixed and a fixed width
 SIDEBAR_STYLE = {
     "position": "fixed",
