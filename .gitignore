@@ -1,5 +1,6 @@
 /data
 /plotly
+/__pycache__
 
 plotly/430_pie.html
 plotly/430_plot.html
