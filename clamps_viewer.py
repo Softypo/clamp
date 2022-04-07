@@ -7,15 +7,15 @@ import plotly.express as px
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url
 
-
 DV_LOGO = 'assets/dv_logo.png'
 
 # dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
 dbc_css = 'assets/dbc_v105.css'
 slate = 'assets/slate/bootstrap.min.css'
-united = 'https://raw.githubusercontent.com/Softypo/clamp/master/themes/united/bootstrap.min.css'
+united = 'assets/united/bootstrap.min.css'
+# united = 'https://raw.githubusercontent.com/Softypo/clamp/master/themes/united/bootstrap.min.css'
 
-app = Dash(__name__, external_stylesheets=[united], meta_tags=[
+app = Dash(__name__, external_stylesheets=[slate, dbc_css], meta_tags=[
            {"name": "viewport", "content": "width=device-width, initial-scale=1"}],)
 
 # the style arguments for the sidebar. We use position:fixed and a fixed width
@@ -62,16 +62,16 @@ sidebar = html.Div(
                                    style={"display": "inline-block"}),
                             align="end",
                         ),
-                        # dbc.Col(
-                        #     ThemeSwitchAIO(aio_id="theme",
-                        #                    themes=[dbc.themes.SLATE,
-                        #                            dbc.themes.UNITED],
-                        #                    icons={"left": "fa fa-sun",
-                        #                           "right": "fa fa-moon"}
-                        #                    ),
-                        #     width=5,
-                        #     align="end",
-                        # ),
+                        dbc.Col(
+                            ThemeSwitchAIO(aio_id="theme",
+                                           themes=[slate,
+                                                   united],
+                                           icons={"left": "fa fa-sun",
+                                                  "right": "fa fa-moon"}
+                                           ),
+                            width=5,
+                            align="end",
+                        ),
                         # dbc.Col(
                         #     ThemeChangerAIO(
                         #         aio_id="theme", radio_props={"value": dbc.themes.FLATLY}
