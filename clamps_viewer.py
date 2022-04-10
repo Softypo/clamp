@@ -1,3 +1,4 @@
+from ctypes import alignment
 from pickle import TRUE
 import re
 from turtle import width
@@ -6,17 +7,16 @@ import dash_daq as daq
 import plotly.express as px
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url
-
-DV_LOGO = 'assets/dv_logo.png'
-
 # dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
-dbc_css = 'assets/dbc_v105.css'
-slate = 'assets/slate/bootstrap.min.css'
-united = 'assets/united/bootstrap.min.css'
-# united = 'https://raw.githubusercontent.com/Softypo/clamp/master/themes/united/bootstrap.min.css'
 
-app = Dash(__name__, external_stylesheets=[slate, dbc_css], meta_tags=[
-           {"name": "viewport", "content": "width=device-width, initial-scale=1"}],)
+# initial config
+app = Dash(__name__, external_stylesheets=['https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/slate/bootstrap.min.css', dbc.icons.FONT_AWESOME], meta_tags=[
+    {"name": "viewport", "content": "width=device-width, initial-scale=1"}], title='DV Dashboard')
+
+app.scripts.config.serve_locally = True
+
+# images
+DV_LOGO = 'assets/dv_logo.png'
 
 # the style arguments for the sidebar. We use position:fixed and a fixed width
 SIDEBAR_STYLE = {
@@ -37,6 +37,8 @@ CONTENT_STYLE = {
     "padding": "2rem 1rem",
 }
 
+# body
+
 sidebar = html.Div(
     [
         dbc.Offcanvas(
@@ -55,22 +57,19 @@ sidebar = html.Div(
                         ),
                     ],
                 ),
+                html.Hr(),
                 dbc.Row(
                     [
                         dbc.Col(
-                            html.P("Themes", className="lead",
-                                   style={"display": "inline-block"}),
-                            align="end",
+                            html.P("Themes",  # className="lead",
+                                   style={"textAlign": "right", "marginTop": "auto", "marginBottom": "auto"}),
+                            width=9,
                         ),
                         dbc.Col(
-                            ThemeSwitchAIO(aio_id="theme",
-                                           themes=[slate,
-                                                   united],
-                                           icons={"left": "fa fa-sun",
-                                                  "right": "fa fa-moon"}
-                                           ),
-                            width=5,
-                            align="end",
+                            [html.Span(className="fa fa-moon"),
+                             dbc.Switch(value=False, id="theme",
+                                        className="d-inline-block ml-2",),
+                             html.Span(className="fa fa-sun")],
                         ),
                         # dbc.Col(
                         #     ThemeChangerAIO(
@@ -79,7 +78,6 @@ sidebar = html.Div(
                         # ),
                     ],
                 ),
-                html.Hr(),
                 html.P(
                     "A simple sidebar layout with navigation links", className="lead"
                 ),
@@ -107,60 +105,6 @@ sidebar = html.Div(
     id="sidebar",
     style=SIDEBAR_STYLE,
 )
-
-
-@ app.callback(Output("page-content", "children"), [Input("url", "pathname")])
-def render_page_content(pathname):
-    if pathname == "/":
-        return html.P("This is the content of the home page!")
-    elif pathname == "/page-1":
-        return html.P("This is the content of page 1. Yay!")
-    elif pathname == "/page-2":
-        return html.P("Oh cool, this is page 2!")
-    # If the user tries to reach a different page, return a 404 message
-    return dbc.Jumbotron(
-        [
-            html.H1("404: Not found", className="text-danger"),
-            html.Hr(),
-            html.P(f"The pathname {pathname} was not recognised..."),
-        ]
-    )
-
-
-@ app.callback([Output("sidebar-toggler", "value"),
-                Output("offcanvas", "is_open"),
-                Output("cls_sidebar", "n_clicks")],
-               [Input("sidebar-toggler", "value"),
-                Input("cls_sidebar", "n_clicks")],
-               [State("offcanvas", "is_open")],
-               )
-def close_sidebar(value, n0, is_open):
-    if n0:
-        return [1], False, 0
-    elif not value:
-        return value, True, n0
-    elif value:
-        return value, False, n0
-    else:
-        return value, is_open, n0
-
-# @app.callback(
-#     Output("graph", "figure"), Input(ThemeSwitchAIO.ids.switch("theme"), "value"),
-# )
-# def update_graph_theme(toggle):
-#     template = template_theme1 if toggle else template_theme2
-#     return px.scatter(
-#         df.query("year==2007"),
-#         x="gdpPercap",
-#         y="lifeExp",
-#         size="pop",
-#         color="continent",
-#         log_x=True,
-#         size_max=60,
-#         template=template,
-#         title="Gapminder 2007: '%s' theme" % template,
-#     )
-
 
 navbar_menu = dbc.Row(
     [
@@ -222,23 +166,79 @@ navbar = dbc.Navbar(
     dark=True,
 )
 
+content = html.Div(id="page-content", style=CONTENT_STYLE)
 
-# add callback for toggling the collapse on small screens
+blank = html.Div(id="blank_output")
+
+
+# callbacks
+
 @ app.callback(
     Output("navbar-collapse", "is_open"),
     [Input("navbar-toggler", "n_clicks")],
     [State("navbar-collapse", "is_open")],
 )
+# add callback for toggling the collapse on small screens
 def toggle_navbar_collapse(n, is_open):
     if n:
         return not is_open
     return is_open
 
 
-content = html.Div(id="page-content", style=CONTENT_STYLE)
+@ app.callback(Output("page-content", "children"), [Input("url", "pathname")])
+def render_page_content(pathname):
+    if pathname == "/":
+        return html.P("This is the content of the home page!")
+    elif pathname == "/page-1":
+        return html.P("This is the content of page 1. Yay!")
+    elif pathname == "/page-2":
+        return html.P("Oh cool, this is page 2!")
+    # If the user tries to reach a different page, return a 404 message
+    return dbc.Jumbotron(
+        [
+            html.H1("404: Not found", className="text-danger"),
+            html.Hr(),
+            html.P(f"The pathname {pathname} was not recognised..."),
+        ]
+    )
+
+
+@ app.callback([Output("sidebar-toggler", "value"),
+                Output("offcanvas", "is_open"),
+                Output("cls_sidebar", "n_clicks")],
+               [Input("sidebar-toggler", "value"),
+                Input("cls_sidebar", "n_clicks")],
+               [State("offcanvas", "is_open")],
+               )
+def close_sidebar(value, n0, is_open):
+    if n0:
+        return [1], False, 0
+    elif not value:
+        return value, True, n0
+    elif value:
+        return value, False, n0
+    else:
+        return value, is_open, n0
+
+
+app.clientside_callback(
+    """
+    function(themeToggle) {
+        //  To use different themes,  change these links:
+        const theme1 = "https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/united/bootstrap.min.css"
+        const theme2 = "https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/slate/bootstrap.min.css"
+        const stylesheet = document.querySelector('link[rel=stylesheet][href^="https://cdn.jsdelivr"]')        
+        var themeLink = themeToggle ? theme1 : theme2;
+        stylesheet.href = themeLink
+    }
+    """,
+    Output("blank_output", "children"),
+    Input("theme", "value"),
+)
+
 
 app.layout = dbc.Container(html.Div(
-    [dcc.Location(id="url"), navbar, sidebar, content]), fluid=True, className="dbc")
+    [dcc.Location(id="url"), navbar, sidebar, content, blank]), fluid=True, className="dbc")
 
 if __name__ == "__main__":
     app.run_server(port=8888, debug=True)
