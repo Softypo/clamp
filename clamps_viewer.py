@@ -92,13 +92,11 @@ sidebar = html.Div(
                 ),
             ],
             id="offcanvas",
-            # title="Settings",
             is_open=False,
             placement="end",
             scrollable=True,
-            backdrop=False,
+            backdrop='static',
             close_button=False,
-            # autofocus=True,
 
         ),
     ],
@@ -118,9 +116,6 @@ navbar_menu = dbc.Row(
         dbc.Col(
             dbc.NavItem(dbc.NavLink("login", href="#"))
         ),
-        # dbc.Col(
-        #     daq.BooleanSwitch(id='sidebar-switch', on=False)
-        # ),
         dbc.Col(
             dbc.Checklist(
                 options=[
@@ -129,6 +124,7 @@ navbar_menu = dbc.Row(
                 value=[1],
                 id="sidebar-toggler",
                 switch=True,
+                style={"color": "grey"},
             ),
         ),
     ],
