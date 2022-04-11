@@ -11274,6 +11274,67 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+h1, .h1,
+h2,
+.h2,
+h3,
+.h3,
+h4,
+.h4,
+h5,
+.h5,
+h6,
+.h6 {
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+}
+
+legend {
+  color: #fff;
+}
+
+.alert {
+  color: #fff;
+  border: none;
+}
+.alert a,
+.alert .alert-link {
+  color: #fff;
+  text-decoration: underline;
+}
+.alert-primary {
+  background-color: #3a3f44;
+}
+.alert-secondary {
+  background-color: #7a8288;
+}
+.alert-success {
+  background-color: #62c462;
+}
+.alert-info {
+  background-color: #5bc0de;
+}
+.alert-warning {
+  background-color: #f89406;
+}
+.alert-danger {
+  background-color: #ee5f5b;
+}
+.alert-light {
+  background-color: #e9ecef;
+}
+.alert-dark {
+  background-color: #272b30;
+}
+.alert-light,
+.alert-light a:not(.btn),
+.alert-light .alert-link {
+  color: #272b30;
+}
+
 .badge.bg-light {
-  color: #aaa;
+  color: #272b30;
+}
+
+.list-group-item-action:hover {
+  background-color: #23272b;
 }
