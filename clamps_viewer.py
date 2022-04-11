@@ -227,8 +227,8 @@ app.clientside_callback(
     """
     function(themeToggle) {
         //  To use different themes,  change these links:
-        const theme1 = "https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/slate/bootstrap.min.css"
-        const theme2 = "https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/slate_l/bootstrap.min.css"
+        const theme1 = "https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/slate_l/bootstrap.min.css"
+        const theme2 = "https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/slate/bootstrap.min.css"
         const stylesheet = document.querySelector('link[rel=stylesheet][href^="https://cdn.jsdelivr"]')        
         var themeLink = themeToggle ? theme1 : theme2;
         stylesheet.href = themeLink
