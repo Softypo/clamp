@@ -8,10 +8,11 @@ import plotly.express as px
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url
 # dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
+# 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/slate/bootstrap.min.css'
 
 # initial config
-app = Dash(__name__, external_stylesheets=['https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/slate/bootstrap.min.css', dbc.icons.FONT_AWESOME], meta_tags=[
-    {"name": "viewport", "content": "width=device-width, initial-scale=1"}], title='DV Dashboard')
+app = Dash(__name__, external_stylesheets=[dbc.icons.FONT_AWESOME],
+           meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=1"}], title='DV Dashboard')
 
 app.scripts.config.serve_locally = True
 
@@ -63,13 +64,17 @@ sidebar = html.Div(
                         dbc.Col(
                             html.P("Themes",  # className="lead",
                                    style={"textAlign": "right", "marginTop": "auto", "marginBottom": "auto"}),
-                            width=9,
+                            width=8,
                         ),
                         dbc.Col(
-                            [html.Span(className="fa fa-moon"),
-                             dbc.Switch(value=False, id="theme",
-                                        className="d-inline-block ml-2",),
-                             html.Span(className="fa fa-sun")],
+                            [
+                                html.Span(className="fa fa-moon",
+                                          style={"marginRight": "0.5rem"}),
+                                dbc.Switch(value=False, id="theme",
+                                           className="d-inline-block ml-2",),
+                                html.Span(className="fa fa-sun",
+                                          style={"marginRight": "auto"}),
+                            ],
                         ),
                         # dbc.Col(
                         #     ThemeChangerAIO(
@@ -101,7 +106,7 @@ sidebar = html.Div(
         ),
     ],
     id="sidebar",
-    style=SIDEBAR_STYLE,
+    # style=SIDEBAR_STYLE,
 )
 
 navbar_menu = dbc.Row(
@@ -162,7 +167,8 @@ navbar = dbc.Navbar(
     dark=True,
 )
 
-content = html.Div(id="page-content", style=CONTENT_STYLE)
+content = html.Div(id="page-content",  # style=CONTENT_STYLE
+                   )
 
 blank = html.Div(id="blank_output")
 
