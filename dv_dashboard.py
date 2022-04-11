@@ -1,18 +1,17 @@
-from ctypes import alignment
-from pickle import TRUE
-import re
-from turtle import width
-from dash import Dash, dcc, html, dash_table, Input, Output, State, callback
+from enum import auto
+import dash
+from dash import dcc, html, dash_table, Input, Output, State, callback
 import dash_daq as daq
 import plotly.express as px
+import dash_labs as dl
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url
 # dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
 # 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/slate/bootstrap.min.css'
 
 # initial config
-app = Dash(__name__, external_stylesheets=['https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap.min.css', dbc.icons.FONT_AWESOME],
-           meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=1"}], title='DV Dashboard')
+app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=['https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap.min.css', dbc.icons.FONT_AWESOME],
+                meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=1"}], title='DV Dashboard')
 
 app.scripts.config.serve_locally = True
 
@@ -111,15 +110,21 @@ sidebar = html.Div(
 
 navbar_menu = dbc.Row(
     [
+        dbc.Col(
+            dbc.Nav(
+                [dbc.NavItem(dbc.NavLink(page["name"], href=page["path"], active="exact"))
+                 for page in dash.page_registry.values() if page["module"] != "pages.not_found_404"],
+                pills=True,
+                justified=True,
+            ),
+            width=5,
+        ),
         dbc.Col(dbc.Input(type="search", placeholder="Search")),
         dbc.Col(
             dbc.Button(
                 "Search", color="primary", className="ms-2", n_clicks=0
             ),
             width="auto",
-        ),
-        dbc.Col(
-            dbc.NavItem(dbc.NavLink("login", href="#"))
         ),
         dbc.Col(
             dbc.Checklist(
@@ -129,8 +134,9 @@ navbar_menu = dbc.Row(
                 value=[1],
                 id="sidebar-toggler",
                 switch=True,
-                style={"color": "grey"},
+                style={"color": "grey", "marginLeft": "1rem"},
             ),
+            width="auto",
         ),
     ],
     className="g-0 ms-auto flex-nowrap mt-3 mt-md-0",
@@ -167,8 +173,7 @@ navbar = dbc.Navbar(
     dark=True,
 )
 
-content = html.Div(id="page-content",  # style=CONTENT_STYLE
-                   )
+content = dl.plugins.page_container
 
 blank = html.Div(id="blank_output")
 
