@@ -103,7 +103,7 @@ $nav-link-padding-x: 2rem !default;
 $nav-link-disabled-color: $gray-500 !default;
 $nav-tabs-border-color: $gray-700 !default;
 $nav-tabs-link-hover-border-color: $nav-tabs-border-color $nav-tabs-border-color transparent !default;
-$nav-tabs-link-active-color: $white !default;
+$nav-tabs-link-active-color: $black !default;
 $nav-tabs-link-active-border-color: $nav-tabs-border-color $nav-tabs-border-color transparent !default;
 
 // Navbar
@@ -111,10 +111,10 @@ $nav-tabs-link-active-border-color: $nav-tabs-border-color $nav-tabs-border-colo
 $navbar-padding-y: 1rem !default;
 $navbar-dark-color: rgba($white, .6) !default;
 $navbar-dark-hover-color: $white !default;
-$navbar-light-color: rgba($black, .7) !default;
-$navbar-light-hover-color: $black !default;
-$navbar-light-active-color: $black !default;
-$navbar-light-toggler-border-color: rgba($black, .1) !default;
+$navbar-light-color: rgba($gray-900, .7) !default;
+$navbar-light-hover-color: $gray-900 !default;
+$navbar-light-active-color: $gray-900 !default;
+$navbar-light-toggler-border-color: rgba($gray-900, .1) !default;
 
 // Pagination
 
