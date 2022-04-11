@@ -11,7 +11,7 @@ from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_f
 # 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/slate/bootstrap.min.css'
 
 # initial config
-app = Dash(__name__, external_stylesheets=[dbc.icons.FONT_AWESOME],
+app = Dash(__name__, external_stylesheets=['https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap.min.css', dbc.icons.FONT_AWESOME],
            meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=1"}], title='DV Dashboard')
 
 app.scripts.config.serve_locally = True
