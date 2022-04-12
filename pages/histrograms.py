@@ -1,7 +1,12 @@
-import numpy as np  # pip install numpy
+from dv_dashboard import themes
+from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url, load_figure_template
+import dash_bootstrap_components as dbc
+import dash_labs as dl
 import plotly.express as px
-from dash import Dash, dcc, html, Input, Output, callback
+import dash_daq as daq
+from dash import dcc, html, dash_table, Input, Output, State, callback
 import dash
+import numpy as np
 
 dash.register_page(__name__)
 
@@ -26,9 +31,11 @@ layout = html.Div(
     Output("histograms-graph", "figure"),
     Input("histograms-mean", "value"),
     Input("histograms-std", "value"),
+    Input("theme", "value"),
 )
-def display_color(mean, std):
+def display_color(mean, std, theme):
     data = np.random.normal(mean, std, size=500)
-    fig = px.histogram(data, nbins=30, range_x=[-10, 10])
+    fig = px.histogram(data, nbins=30, range_x=[-10, 10], template=load_figure_template(
+        themes[1][1] if theme else themes[0][1]))
     fig.update_layout(showlegend=False)
     return fig

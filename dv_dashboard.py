@@ -1,4 +1,4 @@
-from enum import auto
+from doctest import OutputChecker
 import dash
 from dash import dcc, html, dash_table, Input, Output, State, callback
 import dash_daq as daq
@@ -6,11 +6,16 @@ import plotly.express as px
 import dash_labs as dl
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url
-# dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
+
+dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
 # 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/slate/bootstrap.min.css'
 
+themes = (('https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap.min.css', 'slate'),
+          ('https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/bootstrap.min.css', 'flatly'))
+
+
 # initial config
-app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=['https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap.min.css', dbc.icons.FONT_AWESOME],
+app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[themes[0][0], dbc.icons.FONT_AWESOME],
                 meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=1"}], title='DV Dashboard')
 
 app.scripts.config.serve_locally = True
@@ -157,7 +162,7 @@ navbar = dbc.Navbar(
                     align="center",
                     className="g-0",
                 ),
-                href="https://plotly.com",
+                href="https://darkvisiontech.com/",
                 style={"textDecoration": "none"},
             ),
             dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
@@ -175,7 +180,7 @@ navbar = dbc.Navbar(
 
 content = dl.plugins.page_container
 
-blank = html.Div(id="blank_output")
+session = dcc.Store(id='session', storage_type='session')
 
 
 # callbacks
@@ -192,22 +197,22 @@ def toggle_navbar_collapse(n, is_open):
     return is_open
 
 
-@ app.callback(Output("page-content", "children"), [Input("url", "pathname")])
-def render_page_content(pathname):
-    if pathname == "/":
-        return html.P("This is the content of the home page!")
-    elif pathname == "/page-1":
-        return html.P("This is the content of page 1. Yay!")
-    elif pathname == "/page-2":
-        return html.P("Oh cool, this is page 2!")
-    # If the user tries to reach a different page, return a 404 message
-    return dbc.Jumbotron(
-        [
-            html.H1("404: Not found", className="text-danger"),
-            html.Hr(),
-            html.P(f"The pathname {pathname} was not recognised..."),
-        ]
-    )
+# @ app.callback(Output("page-content", "children"), [Input("url", "pathname")])
+# def render_page_content(pathname):
+#     if pathname == "/":
+#         return html.P("This is the content of the home page!")
+#     elif pathname == "/page-1":
+#         return html.P("This is the content of page 1. Yay!")
+#     elif pathname == "/page-2":
+#         return html.P("Oh cool, this is page 2!")
+#     # If the user tries to reach a different page, return a 404 message
+#     return dbc.Jumbotron(
+#         [
+#             html.H1("404: Not found", className="text-danger"),
+#             html.Hr(),
+#             html.P(f"The pathname {pathname} was not recognised..."),
+#         ]
+#     )
 
 
 @ app.callback([Output("sidebar-toggler", "value"),
@@ -237,15 +242,16 @@ app.clientside_callback(
         const stylesheet = document.querySelector('link[rel=stylesheet][href^="https://cdn.jsdelivr"]')
         var themeLink = themeToggle ? theme1 : theme2;
         stylesheet.href = themeLink
+        return themeToggle
     }
     """,
-    Output("blank_output", "children"),
+    Output("session", "data"),
     Input("theme", "value"),
 )
 
 
 app.layout = dbc.Container(html.Div(
-    [dcc.Location(id="url"), navbar, sidebar, content, blank]), fluid=True, className="dbc")
+    [dcc.Location(id="url"), navbar, sidebar, content, session]), fluid=True, className="dbc", style={"height": "100vh"})
 
 if __name__ == "__main__":
     app.run_server(port=8888, debug=True)
