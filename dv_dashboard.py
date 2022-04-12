@@ -1,11 +1,9 @@
-from doctest import OutputChecker
 import dash
 from dash import dcc, html, dash_table, Input, Output, State, callback
 import dash_daq as daq
-import plotly.express as px
 import dash_labs as dl
 import dash_bootstrap_components as dbc
-from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url
+from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url, load_figure_template
 
 dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
 # 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/slate/bootstrap.min.css'
@@ -37,9 +35,7 @@ SIDEBAR_STYLE = {
 # the styles for the main content position it to the right of the sidebar and
 # add some padding.
 CONTENT_STYLE = {
-    "margin-left": "18rem",
-    "margin-right": "2rem",
-    "padding": "2rem 1rem",
+    # "height": "100vh",
 }
 
 # body
@@ -180,7 +176,11 @@ navbar = dbc.Navbar(
 
 content = dl.plugins.page_container
 
-session = dcc.Store(id='session', storage_type='session')
+sessions = dcc.Store(id="session", storage_type="local")
+
+voids = html.Div([html.Div(id="template"),
+                  html.Div(id="blank_output")],
+                 id="voids", style={"display": "none"})
 
 
 # callbacks
@@ -249,9 +249,35 @@ app.clientside_callback(
     Input("theme", "value"),
 )
 
+# app.clientside_callback(
+#     """
+#     function(theme) {
+#         //  To use different themes,  change these links:
+#         const theme1 = 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/bootstrap.min.css'
+#         const theme2 = 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap.min.css'
+#         const stylesheet = document.querySelector('link[rel=stylesheet][href^="https://cdn.jsdelivr"]')
+#         var themeLink = theme ? theme1 : theme2;
+#         stylesheet.href = themeLink
+#     }
+#     """,
+#     Output("blank_output", "children"),
+#     Input("session", "data"),
+# )
 
+
+@ app.callback(Output("template", "children"),
+               # Input("theme", "value"),
+               # Input("session", "modified_timestamp"),
+               Input("session", "data"),
+               )
+def fig_theme_session(data):
+    load_figure_template(themes[1][1] if data else themes[0][1])
+    return True if data else False
+
+
+# load_figure_template(session)
 app.layout = dbc.Container(html.Div(
-    [dcc.Location(id="url"), navbar, sidebar, content, session]), fluid=True, className="dbc", style={"height": "100vh"})
+    [dcc.Location(id="url"), navbar, sidebar, content, sessions, voids]), fluid=True, className="dbc", style=CONTENT_STYLE)
 
 if __name__ == "__main__":
     app.run_server(port=8888, debug=True)

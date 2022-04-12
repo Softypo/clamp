@@ -1,3 +1,4 @@
+from distutils.command.config import config
 from re import template
 from turtle import st, width
 from dv_dashboard import themes
@@ -34,13 +35,18 @@ layout = html.Div(
             dbc.Col([
                     dcc.Dropdown(
                         clamp_types,
-                        clamp_types,
+                        clamp_types[1:],
                         multi=True,
                         id="dropdown_cd",
                     ),
-                dcc.Graph(id="cd_overview", config={'displaylogo': False}),
+                dcc.Graph(id="cd_overview",
+                          animate=True,
+                          config={'displaylogo': False},
+                          style={'height': '85vh'},
+                          ),
                     ],
                 xl=6, lg=6, md=12, sm=12, xs=12,
+                # style={'height': '100vh'},
                     ),
             dbc.Col([
                 dcc.Dropdown(
@@ -48,14 +54,15 @@ layout = html.Div(
                     options=[{"label": x, "value": x} for x in days],
                     value=days[0],
                     clearable=False,
-                    style={"width": "50%"}
                 ),
-                dcc.Graph(id="bar-chart", config={'displaylogo': False}),
+                dcc.Graph(id="bar-chart", animate=True,
+                          config={'displaylogo': False}),
             ],
                 xl=6, lg=6, md=12, sm=12, xs=12,),
         ],
         ),
     ],
+    # style={'height': '100vh'},
 )
 
 # callbacks
@@ -63,19 +70,21 @@ layout = html.Div(
 
 @ callback(Output("cd_overview", "figure"),
            Input("dropdown_cd", "value"),
-           Input("session", "data"),
+           Input("template", "children"),
            )
-def clamps_overview(clamps_types, theme):
+def clamps_overview(clamps_types, template):
 
     fiber = clamps[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
                     'fiber_angle_rounded']].loc[clamps['type'].isin(clamps_types)]
 
+    load_figure_template(themes[1][1] if template else themes[0][1])
+
     fig = go.Figure()
 
     # # Add windows
-    nogozone_svg = ''.join([f'M {xy[0][0]+10},{xy[0][1]} ' if xy[1] == 0 else f'L{xy[0][0]+10},{xy[0][1]} ' for xy in zip(clamps.loc[clamps['type'] == 'CableDetectionClamp', ['fiber_plot_angle', 'depth']].values, range(clamps.loc[clamps['type'] == 'CableDetectionClamp', ['fiber_plot_angle', 'depth']].shape[0]))]) + \
-        ''.join([f' L{xy[0][0]-10},{xy[0][1]} Z' if xy[1] == 0 else f' L{xy[0][0]-10},{xy[0][1]}' for xy in zip(clamps.loc[clamps['type'] == 'CableDetectionClamp',
-                ['fiber_plot_angle', 'depth']].values, range(clamps.loc[clamps['type'] == 'CableDetectionClamp', ['fiber_plot_angle', 'depth']].shape[0]))][::-1])
+    nogozone_svg = ''.join([f'M {xy[0][0]+10},{xy[0][1]} ' if xy[1] == 0 else f'L{xy[0][0]+10},{xy[0][1]} ' for xy in zip(fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))]) + \
+        ''.join([f' L{xy[0][0]-10},{xy[0][1]} Z' if xy[1] == 0 else f' L{xy[0][0]-10},{xy[0][1]}' for xy in zip(
+            fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))][::-1])
 
     fig.update_layout(shapes=[dict(type="path", path=nogozone_svg,
                       fillcolor='rgba(255,69,0,0.2)', line=dict(width=0), layer='below')])
@@ -89,29 +98,21 @@ def clamps_overview(clamps_types, theme):
                   name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
 
     fig.update_traces(hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
-    fig.update_xaxes(range=[-185, 185])
     fig.update_yaxes(autorange="reversed")
     fig.update_layout(hovermode="y", title="Fiber cable orientation overview", legend_title="Type", legend_orientation="h", yaxis_title="Depth",
                       xaxis_title='AngleFromHighSideClockwiseDegrees')
-    fig.update_layout(load_figure_template(
-        themes[0][1] if theme else themes[1][1]))
-
+    # fig.update_layout(template=template)
+    #fig.update_xaxes(range=[-200, 200])
     return fig
 
 
 @ callback(Output("bar-chart", "figure"),
            Input("dropdown", "value"),
-           Input("theme", "value"),
+           Input("template", "children"),
            )
-def update_bar_chart(day, theme):
+def update_bar_chart(day, template):
     mask = df["day"] == day
     fig = px.bar(df[mask], x="sex", y="total_bill",
                  color="smoker", barmode="group")
+    # fig.update_layout(template=template)
     return fig
-
-
-# @ callback(Output("bar-chart", "figure"),
-#            Input("theme", "value"),)
-# def fig_template(theme):
-#     template = load_figure_template(themes[1][1] if theme else themes[0][1])
-#     return template
