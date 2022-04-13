@@ -8,13 +8,14 @@ from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_f
 dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
 # 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/slate/bootstrap.min.css'
 
-themes = (('https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap.min.css', 'slate'),
-          ('https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/bootstrap.min.css', 'flatly'))
-
+themes = {'_dark': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap.min.css', 'fig': 'slate'},
+          '_light': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/bootstrap.min.css', 'fig': 'flatly'}}
 
 # initial config
-app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[themes[0][0], dbc.icons.FONT_AWESOME],
+app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[themes['_dark']['css'], dbc.icons.FONT_AWESOME],
                 meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=1"}], title='DV Dashboard')
+load_figure_template(themes['_light']['fig'])
+load_figure_template(themes['_dark']['fig'])
 
 app.scripts.config.serve_locally = True
 
@@ -78,7 +79,7 @@ sidebar = html.Div(
                         ),
                         # dbc.Col(
                         #     ThemeChangerAIO(
-                        #         aio_id="theme", radio_props={"value": dbc.themes.FLATLY}
+                        #         aio_id="themeio", radio_props={"value": dbc.themes.SLATE}
                         #     ),
                         # ),
                     ],
@@ -271,8 +272,9 @@ app.clientside_callback(
                Input("session", "data"),
                )
 def fig_theme_session(data):
-    load_figure_template(themes[1][1] if data else themes[0][1])
-    return True if data else False
+    load_figure_template(themes['_light']['fig']
+                         if data else themes['_dark']['fig'])
+    return themes['_light']['fig'] if data else themes['_dark']['fig']
 
 
 # load_figure_template(session)

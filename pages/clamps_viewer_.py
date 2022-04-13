@@ -23,13 +23,55 @@ days = df.day.unique()
 
 # body
 
+# layout = html.Div(
+#     [
+#         dbc.Row([
+#                 dbc.Col([
+#                     html.P("Settings", className="offcanvas-title h5"), ],
+#                     xl=12, lg=12, md=12, sm=12, xs=12,),
+#                 ], className="mt-3",
+#                 ),
+#         dbc.Row([
+#             dbc.Col([
+#                     dcc.Dropdown(
+#                         clamp_types,
+#                         clamp_types[1:],
+#                         multi=True,
+#                         id="dropdown_cd",
+#                     ),
+#                 dcc.Graph(id="cd_overview",
+#                           animate=True,
+#                           config={'displaylogo': False},
+#                           style={'height': '88vh'},
+#                           ),
+#                     ],
+#                 xl=6, lg=6, md=12, sm=12, xs=12,
+#                 # style={'height': '100vh'},
+#                     ),
+#             dbc.Col([
+#                 dcc.Dropdown(
+#                     id="dropdown",
+#                     options=[{"label": x, "value": x} for x in days],
+#                     value=days[0],
+#                     clearable=False,
+#                 ),
+#                 dcc.Graph(id="bar-chart", animate=True,
+#                           config={'displaylogo': False}),
+#             ],
+#                 xl=6, lg=6, md=12, sm=12, xs=12,),
+#         ],
+#         ),
+#     ],
+#     # style={'height': '100vh'},
+# )
+
 layout = html.Div(
     [
         dbc.Row([
                 dbc.Col([
                     html.P("Settings", className="offcanvas-title h5"), ],
                     xl=12, lg=12, md=12, sm=12, xs=12,),
-                ], className="mt-3",
+                ], className="mt-2",
                 ),
         dbc.Row([
             dbc.Col([
@@ -40,9 +82,9 @@ layout = html.Div(
                         id="dropdown_cd",
                     ),
                 dcc.Graph(id="cd_overview",
-                          animate=True,
+                          animate=False,
                           config={'displaylogo': False},
-                          style={'height': '85vh'},
+                          style={'height': '87vh'},
                           ),
                     ],
                 xl=6, lg=6, md=12, sm=12, xs=12,
@@ -55,7 +97,7 @@ layout = html.Div(
                     value=days[0],
                     clearable=False,
                 ),
-                dcc.Graph(id="bar-chart", animate=True,
+                dcc.Graph(id="bar-chart", animate=False,
                           config={'displaylogo': False}),
             ],
                 xl=6, lg=6, md=12, sm=12, xs=12,),
@@ -70,14 +112,12 @@ layout = html.Div(
 
 @ callback(Output("cd_overview", "figure"),
            Input("dropdown_cd", "value"),
-           Input("template", "children"),
+           Input("session", "data"),
            )
-def clamps_overview(clamps_types, template):
+def clamps_overview(clamps_types, theme):
 
     fiber = clamps[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
                     'fiber_angle_rounded']].loc[clamps['type'].isin(clamps_types)]
-
-    load_figure_template(themes[1][1] if template else themes[0][1])
 
     fig = go.Figure()
 
@@ -102,17 +142,22 @@ def clamps_overview(clamps_types, template):
     fig.update_layout(hovermode="y", title="Fiber cable orientation overview", legend_title="Type", legend_orientation="h", yaxis_title="Depth",
                       xaxis_title='AngleFromHighSideClockwiseDegrees')
     # fig.update_layout(template=template)
-    #fig.update_xaxes(range=[-200, 200])
+    # fig.update_xaxes(range=[-185, 185])
+    # load_figure_template(themes[1][1] if data else themes[0][1])
+    fig.layout.template = themes['_light']['fig'] if theme else themes['_dark']['fig']
+    fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
     return fig
 
 
 @ callback(Output("bar-chart", "figure"),
            Input("dropdown", "value"),
-           Input("template", "children"),
+           Input("session", "data")
+           #Input("template", "children"),
            )
-def update_bar_chart(day, template):
+def update_bar_chart(day, theme):
     mask = df["day"] == day
     fig = px.bar(df[mask], x="sex", y="total_bill",
                  color="smoker", barmode="group")
-    # fig.update_layout(template=template)
+    fig.layout.template = themes['_light']['fig'] if theme else themes['_dark']['fig']
+    fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
     return fig
