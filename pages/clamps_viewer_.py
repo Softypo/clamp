@@ -23,47 +23,23 @@ days = df.day.unique()
 
 # body
 
-# layout = html.Div(
-#     [
-#         dbc.Row([
-#                 dbc.Col([
-#                     html.P("Settings", className="offcanvas-title h5"), ],
-#                     xl=12, lg=12, md=12, sm=12, xs=12,),
-#                 ], className="mt-3",
-#                 ),
-#         dbc.Row([
-#             dbc.Col([
-#                     dcc.Dropdown(
-#                         clamp_types,
-#                         clamp_types[1:],
-#                         multi=True,
-#                         id="dropdown_cd",
-#                     ),
-#                 dcc.Graph(id="cd_overview",
-#                           animate=True,
-#                           config={'displaylogo': False},
-#                           style={'height': '88vh'},
-#                           ),
-#                     ],
-#                 xl=6, lg=6, md=12, sm=12, xs=12,
-#                 # style={'height': '100vh'},
-#                     ),
-#             dbc.Col([
-#                 dcc.Dropdown(
-#                     id="dropdown",
-#                     options=[{"label": x, "value": x} for x in days],
-#                     value=days[0],
-#                     clearable=False,
-#                 ),
-#                 dcc.Graph(id="bar-chart", animate=True,
-#                           config={'displaylogo': False}),
-#             ],
-#                 xl=6, lg=6, md=12, sm=12, xs=12,),
-#         ],
-#         ),
-#     ],
-#     # style={'height': '100vh'},
-# )
+layout = html.Div(
+    [
+        dbc.Card([
+            dbc.CardHeader(
+                dbc.Tabs(
+                    [
+                        dbc.Tab(label="Tab 1", tab_id="tab-1"),
+                        dbc.Tab(label="Tab 2", tab_id="tab-2"),
+                    ],
+                    id="card-tabs",
+                    active_tab="tab-1",
+                )
+            ),
+            dbc.CardBody(html.P(id="card-content", className="card-text")),
+        ],)
+    ],)
+
 
 layout = html.Div(
     [
@@ -71,14 +47,16 @@ layout = html.Div(
                 dbc.Col([
                     html.P("Settings", className="offcanvas-title h5"), ],
                     xl=12, lg=12, md=12, sm=12, xs=12,),
-                ], className="mt-2",
-                ),
+                ], className="mt-2"),
         dbc.Row([
             dbc.Col([
                     dcc.Dropdown(
                         clamp_types,
                         clamp_types[1:],
                         multi=True,
+                        searchable=False,
+                        persistence=True,
+                        persistence_type='memory',
                         id="dropdown_cd",
                     ),
                 dcc.Graph(id="cd_overview",
@@ -101,8 +79,7 @@ layout = html.Div(
                           config={'displaylogo': False}),
             ],
                 xl=6, lg=6, md=12, sm=12, xs=12,),
-        ],
-        ),
+        ],),
     ],
     # style={'height': '100vh'},
 )
@@ -141,9 +118,7 @@ def clamps_overview(clamps_types, theme):
     fig.update_yaxes(autorange="reversed")
     fig.update_layout(hovermode="y", title="Fiber cable orientation overview", legend_title="Type", legend_orientation="h", yaxis_title="Depth",
                       xaxis_title='AngleFromHighSideClockwiseDegrees')
-    # fig.update_layout(template=template)
     # fig.update_xaxes(range=[-185, 185])
-    # load_figure_template(themes[1][1] if data else themes[0][1])
     fig.layout.template = themes['_light']['fig'] if theme else themes['_dark']['fig']
     fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
     return fig

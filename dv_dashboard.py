@@ -277,9 +277,10 @@ def fig_theme_session(data):
     return themes['_light']['fig'] if data else themes['_dark']['fig']
 
 
-# load_figure_template(session)
+# app initialization
 app.layout = dbc.Container(html.Div(
     [dcc.Location(id="url"), navbar, sidebar, content, sessions, voids]), fluid=True, className="dbc", style=CONTENT_STYLE)
 
 if __name__ == "__main__":
-    app.run_server(port=8888, debug=True)
+    app.run_server(port=8888, debug=True, threaded=True,
+                   host='0.0.0.0', use_reloader=False)
