@@ -1,6 +1,8 @@
 from distutils.command.config import config
 from re import template
 from turtle import st, width
+
+from matplotlib.pyplot import autoscale, margins, ticklabel_format
 from dv_dashboard import themes
 import pandas as pd
 from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url, load_figure_template
@@ -18,8 +20,6 @@ dash.register_page(__name__, path="/")
 
 clamps = pd.read_hdf("data/446/446cd.h5", "446cd")
 clamp_types = clamps['type'].unique()
-df = px.data.tips()
-days = df.day.unique()
 
 # body
 
@@ -55,13 +55,17 @@ layout = html.Div(
                     ),
             dbc.Col([
                 dcc.Dropdown(
-                    id="dropdown",
-                    options=[{"label": x, "value": x} for x in days],
-                    value=days[0],
-                    clearable=False,
+                    clamp_types,
+                    clamp_types[1:],
+                    multi=True,
+                    searchable=False,
+                    persistence=True,
+                    persistence_type='memory',
+                    id="dropdown_cd",
                 ),
-                dcc.Graph(id="bar-chart", animate=False,
-                          config={'displaylogo': False}),
+                dcc.Graph(id="cd_polar", animate=False,
+                          config={'displaylogo': False},
+                          style={'height': '50vh'},),
             ],
                 xl=6, lg=6, md=12, sm=12, xs=12,),
         ],),
@@ -70,15 +74,15 @@ layout = html.Div(
 
 
 tabs = {'overview': [
-    dcc.Dropdown(
-        clamp_types,
-        clamp_types[1:],
-        multi=True,
-        searchable=False,
-        persistence=True,
-        persistence_type='memory',
-        id="dropdown_cd",
-    ),
+    # dcc.Dropdown(
+    #     clamp_types,
+    #     clamp_types[1:],
+    #     multi=True,
+    #     searchable=False,
+    #     persistence=True,
+    #     persistence_type='memory',
+    #     id="dropdown_cd",
+    # ),
     dcc.Graph(id="cd_overview",
               animate=False,
               config={'displaylogo': False},
@@ -122,18 +126,39 @@ def clamps_overview(clamps_types, theme, fig):
 
     trigger = dash.callback_context.triggered[0]['prop_id'].split('.')[0]
 
+    # update template only
     if trigger == 'session':
         fig = go.Figure(fig)
         fig.layout.template = themes['_light']['fig'] if theme else themes['_dark']['fig']
         return fig
 
-    else:
+    # update fiver cable only
+    elif trigger == 'dropdown_cd':
+        fig = go.Figure(fig)
+        fig.layout.shapes = []
+        fig.data = [fig.data[0], fig.data[1], fig.data[2]]
         fiber = clamps[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
                         'fiber_angle_rounded']].loc[clamps['type'].isin(clamps_types)]
 
-        fig = go.Figure()
-
         # # Add windows
+        nogozone_svg = ''.join([f'M {xy[0][0]+10},{xy[0][1]} ' if xy[1] == 0 else f'L{xy[0][0]+10},{xy[0][1]} ' for xy in zip(fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))]) + \
+            ''.join([f' L{xy[0][0]-10},{xy[0][1]} Z' if xy[1] == 0 else f' L{xy[0][0]-10},{xy[0][1]}' for xy in zip(
+                fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))][::-1])
+
+        fig.update_layout(shapes=[dict(type="path", path=nogozone_svg,
+                                       fillcolor='rgba(255,69,0,0.2)', line=dict(width=0), layer='below')])
+
+        # Add traces
+        fig.add_trace(go.Scatter(x=fiber['fiber_plot_angle'], y=fiber['depth'], mode='lines+markers',
+                                 name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
+        return fig
+    # update everything
+    else:
+        fig = go.Figure()
+        fiber = clamps[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
+                        'fiber_angle_rounded']].loc[clamps['type'].isin(clamps_types)]
+
+        # add delta
         nogozone_svg = ''.join([f'M {xy[0][0]+10},{xy[0][1]} ' if xy[1] == 0 else f'L{xy[0][0]+10},{xy[0][1]} ' for xy in zip(fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))]) + \
             ''.join([f' L{xy[0][0]-10},{xy[0][1]} Z' if xy[1] == 0 else f' L{xy[0][0]-10},{xy[0][1]}' for xy in zip(
                 fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))][::-1])
@@ -150,10 +175,10 @@ def clamps_overview(clamps_types, theme, fig):
                                  name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
 
         fig.update_traces(hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
-        fig.update_yaxes(autorange="reversed")
         fig.update_layout(hovermode="y", title="Fiber cable orientation overview", legend_title="Type", legend_orientation="h", yaxis_title="Depth",
-                          xaxis_title='AngleFromHighSideClockwiseDegrees')
-        # fig.update_xaxes(range=[-185, 185])
+                          xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=False, margin=dict(l=0, r=0, b=0, t=50))
+        fig.update_yaxes(autorange="reversed")
+        fig.update_xaxes(dtick=20, tickangle=45)
         fig.layout.template = themes['_light']['fig'] if theme else themes['_dark']['fig']
         fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
         return fig
@@ -161,15 +186,36 @@ def clamps_overview(clamps_types, theme, fig):
     #     return dash.no_update
 
 
-@ callback(Output("bar-chart", "figure"),
-           Input("dropdown", "value"),
-           Input("session", "data")
-           #Input("template", "children"),
+@ callback(Output("cd_polar", "figure"),
+           Input("dropdown_cd", "value"),
+           Input("session", "data"),
+           # State("cd_overview", "figure"),
            )
-def update_bar_chart(day, theme):
-    mask = df["day"] == day
-    fig = px.bar(df[mask], x="sex", y="total_bill",
-                 color="smoker", barmode="group")
+def clamps_overview(clamps_types, theme):
+    fig = go.Figure()
+    fiber = clamps[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
+                    'fiber_angle_rounded']].loc[clamps['type'].isin(clamps_types)]
+
+    # add delta
+    nogozone_svg = ''.join([f'M {xy[0][0]+10},{xy[0][1]} ' if xy[1] == 0 else f'L{xy[0][0]+10},{xy[0][1]} ' for xy in zip(fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))]) + \
+        ''.join([f' L{xy[0][0]-10},{xy[0][1]} Z' if xy[1] == 0 else f' L{xy[0][0]-10},{xy[0][1]}' for xy in zip(
+            fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))][::-1])
+
+    fig.update_layout(shapes=[dict(type="path", path=nogozone_svg,
+                                   fillcolor='rgba(255,69,0,0.2)', line=dict(width=0), layer='below')])
+
+    # Add traces
+    for type in clamps['type'].unique():
+        fig.add_trace(go.Scatterpolar(theta=clamps.loc[clamps['type'] == type, 'plot_angle'], r=clamps.loc[clamps['type'] == type, 'depth'],
+                                      mode='markers', name=type, customdata=clamps.loc[clamps['type'] == type, ['hadware_name', 'fiber_angle_rounded']]))
+
+    # Add traces
+    fig.add_trace(go.Scatterpolar(r=fiber['depth'], theta=fiber['fiber_plot_angle'], mode='lines+markers',
+                                  name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
+    fig.update_traces(hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
+    fig.update_layout(title="Fiber cable orientation polarplot",
+                      legend_title="Type", legend_orientation="h", autosize=True, margin=dict(t=50, b=40, l=40, r=40))
+    #fig.layout.template.layout.margin['l'] = 40
     fig.layout.template = themes['_light']['fig'] if theme else themes['_dark']['fig']
     fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
     return fig
