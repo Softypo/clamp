@@ -215,7 +215,16 @@ def clamps_overview(clamps_types, theme):
     fig.update_traces(hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
     fig.update_layout(title="Fiber cable orientation polarplot",
                       legend_title="Type", legend_orientation="h", autosize=True, margin=dict(t=50, b=40, l=40, r=40))
-    #fig.layout.template.layout.margin['l'] = 40
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(
+                range=[min(clamps['depth'])-100, max(clamps['depth'])+100], autorange=False,),
+            angularaxis=dict(
+                dtick=15,
+                rotation=90,  # start position of angular axis
+                direction="clockwise"
+            )
+        ))
     fig.layout.template = themes['_light']['fig'] if theme else themes['_dark']['fig']
     fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
     return fig
