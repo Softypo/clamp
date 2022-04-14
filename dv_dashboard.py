@@ -1,5 +1,5 @@
 import dash
-from dash import dcc, html, dash_table, Input, Output, State, callback
+from dash import dcc, html, dash_table, Input, Output, State, callback, clientside_callback
 import dash_daq as daq
 import dash_labs as dl
 import dash_bootstrap_components as dbc
@@ -282,5 +282,8 @@ app.layout = dbc.Container(html.Div(
     [dcc.Location(id="url"), navbar, sidebar, content, sessions, voids]), fluid=True, className="dbc", style=CONTENT_STYLE)
 
 if __name__ == "__main__":
-    app.run_server(port=8888, debug=True, threaded=True,
-                   host='0.0.0.0', use_reloader=False)
+    app.run_server(port=8888,
+                   debug=True,
+                   threaded=True,
+                   # host='0.0.0.0',
+                   use_reloader=True)
