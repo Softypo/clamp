@@ -1,6 +1,6 @@
 from distutils.command.config import config
 from re import template
-from turtle import st, width
+from turtle import bgcolor, st, width
 
 from matplotlib.pyplot import autoscale, margins, ticklabel_format
 from dv_dashboard import themes
@@ -217,6 +217,7 @@ def clamps_overview(clamps_types, theme):
                       legend_title="Type", legend_orientation="h", autosize=True, margin=dict(t=50, b=40, l=40, r=40))
     fig.update_layout(
         polar=dict(
+            bgcolor='darkslategray',
             radialaxis=dict(
                 range=[min(clamps['depth'])-100, max(clamps['depth'])+100], autorange=False,),
             angularaxis=dict(
