@@ -5,17 +5,18 @@ import dash_labs as dl
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url, load_figure_template
 
-#dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
-themes = {'_dark': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap.min.css', 'fig': 'slate'},
+# To use different themes,  change these links:
+# dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
+themes = {'_dark': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap.css', 'fig': 'slate'},
           '_light': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/bootstrap.min.css', 'fig': 'flatly'}}
 
 # initial config
 app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[themes['_dark']['css'], dbc.icons.FONT_AWESOME],
-                meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=1"}], title='DV Dashboard')
+                meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=1"}], title='DV Dashboard', serve_locally=True)
 load_figure_template(themes['_light']['fig'])
 load_figure_template(themes['_dark']['fig'])
 
-app.scripts.config.serve_locally = True
+#app.scripts.config.serve_locally = True
 
 # images
 DV_LOGO = 'assets/dv_logo.png'
@@ -69,7 +70,7 @@ sidebar = html.Div(
                             [
                                 html.Span(className="fa fa-moon",
                                           style={"marginRight": "0.5rem"}),
-                                dbc.Switch(value=False, id="theme",
+                                dbc.Switch(value=False, id="themeToggle",
                                            className="d-inline-block ml-2",
                                            persistence=True, persistence_type='local'),
                                 html.Span(className="fa fa-sun",
@@ -176,7 +177,8 @@ navbar = dbc.Navbar(
 
 content = dl.plugins.page_container
 
-sessions = dcc.Store(id="session", storage_type="local")
+sessions = html.Div([dcc.Store(id="themes", storage_type="local", data=themes)],
+                    id="sessions")
 
 voids = html.Div([html.Div(id='void1'), html.Div(id='void2')],
                  id="voids", style={"display": "none"})
@@ -234,30 +236,24 @@ def close_sidebar(value, n0, is_open):
 
 app.clientside_callback(
     """
-    function(themeToggle) {
-        //  To use different themes,  change these links:
-        const theme1 = 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/bootstrap.min.css'
-        const theme2 = 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap.min.css'
+    function(themeToggle, themes) {
         const stylesheet = document.querySelector('link[rel=stylesheet][href^="https://cdn.jsdelivr"]')
-        var themeLink = themeToggle ? theme1 : theme2;
+        var themeLink = themeToggle ? themes['_light']['css'] : themes['_dark']['css'];
         stylesheet.href = themeLink
-        return themeToggle
     }
     """,
     Output("void1", "children"),
-    Input("theme", "value"),
+    Input("themeToggle", "value"),
+    State("themes", "data"),
 )
 
 
 @ app.callback(Output("void2", "children"),
-               # Input("theme", "value"),
-               # Input("session", "modified_timestamp"),
-               Input("theme", "value"),
+               Input("themeToggle", "value"),
                )
 def fig_theme_session(data):
     load_figure_template(themes['_light']['fig']
                          if data else themes['_dark']['fig'])
-    return themes['_light']['fig'] if data else themes['_dark']['fig']
 
 
 # app initialization

@@ -46,7 +46,7 @@ layout = html.Div(
                         dbc.CardBody(id="card-content", className="card-text"),
                     ],)
                     ],
-                xl=6, lg=6, md=12, sm=12, xs=12,
+                xl=7, lg=6, md=12, sm=12, xs=12,
                     ),
             dbc.Col([
                 dcc.Dropdown(
@@ -60,9 +60,14 @@ layout = html.Div(
                 ),
                 dcc.Graph(id="cd_polar", animate=False,
                           config={'displaylogo': False},
-                          style={'height': '40vh'},),
+                          style={'height': '35vh'},),
+                dash_table.DataTable(clamps.to_dict('records'), page_action='none',
+                                     sort_action='native',
+                                     style_as_list_view=True,
+                                     fixed_rows={'headers': True},
+                                     style_table={'height': '50vh', 'overflowY': 'auto'})
             ],
-                xl=6, lg=6, md=12, sm=12, xs=12,),
+                xl=5, lg=6, md=12, sm=12, xs=12,),
         ],),
     ],
 )
@@ -114,17 +119,17 @@ def tab_content(active_tab):
 
 @ callback(Output("cd_overview", "figure"),
            Input("dropdown_cd", "value"),
-           Input("theme", "value"),
+           Input("themeToggle", "value"),
            State("cd_overview", "figure"),
            )
-def clamps_overview(clamps_types, theme, fig):
+def clamps_overview(clamps_types, themeToggle, fig):
 
     trigger = dash.callback_context.triggered[0]['prop_id'].split('.')[0]
 
     # update template only
     if trigger == 'session':
         fig = go.Figure(fig)
-        fig.layout.template = themes['_light']['fig'] if theme else themes['_dark']['fig']
+        fig.layout.template = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
         return fig
 
     # update fiver cable only
@@ -146,6 +151,7 @@ def clamps_overview(clamps_types, theme, fig):
         # Add traces
         fig.add_trace(go.Scatter(x=fiber['fiber_plot_angle'], y=fiber['depth'], mode='lines+markers',
                                  name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
+        fig.update_traces(hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
         return fig
     # update everything
     else:
@@ -174,7 +180,7 @@ def clamps_overview(clamps_types, theme, fig):
                           xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=False, margin=dict(l=0, r=0, b=0, t=50))
         fig.update_yaxes(autorange="reversed")
         #fig.update_xaxes(dtick=20, tickangle=45)
-        fig.layout.template = themes['_light']['fig'] if theme else themes['_dark']['fig']
+        fig.layout.template = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
         fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
         return fig
     # else:
@@ -183,10 +189,10 @@ def clamps_overview(clamps_types, theme, fig):
 
 @ callback(Output("cd_polar", "figure"),
            Input("dropdown_cd", "value"),
-           Input("theme", "value"),
+           Input("themeToggle", "value"),
            # State("cd_overview", "figure"),
            )
-def clamps_overview(clamps_types, theme):
+def clamps_overview(clamps_types, themeToggle):
     fig = go.Figure()
     fiber = clamps[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
                     'fiber_angle_rounded']].loc[clamps['type'].isin(clamps_types)]
@@ -195,8 +201,8 @@ def clamps_overview(clamps_types, theme):
     nogozone_polar = pd.DataFrame([[angle+10, angle-10, depth]
                                   for angle, depth in fiber[['fiber_plot_angle', 'depth']].values])
 
-    fig.update_layout(shapes=[dict(type="path", path=nogozone_svg,
-                                   fillcolor='rgba(255,69,0,0.2)', line=dict(width=0), layer='below')])
+    # fig.update_layout(shapes=[dict(type="path", path=nogozone_svg,
+    #                                fillcolor='rgba(255,69,0,0.2)', line=dict(width=0), layer='below')])
 
     # Add traces
     for type in clamps['type'].unique():
@@ -204,8 +210,8 @@ def clamps_overview(clamps_types, theme):
                                       mode='markers', name=type, customdata=clamps.loc[clamps['type'] == type, ['hadware_name', 'fiber_angle_rounded']]))
 
     # Add traces
-    fig.add_trace(go.Scatterpolar(r=nogozone_polar['depth'], theta=nogozone_polar['fiber_plot_angle'], mode='lines+markers',
-                                  name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
+    # fig.add_trace(go.Scatterpolar(r=nogozone_polar['depth'], theta=nogozone_polar['fiber_plot_angle'], mode='lines+markers',
+    #                               name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
     fig.add_trace(go.Scatterpolar(r=fiber['depth'], theta=fiber['fiber_plot_angle'], mode='lines+markers',
                                   name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
     fig.update_traces(hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
@@ -220,8 +226,8 @@ def clamps_overview(clamps_types, theme):
             rotation=90,  # start position of angular axis
             direction="clockwise",
         ))
-    fig.layout.template = themes['_light']['fig'] if theme else themes['_dark']['fig']
-    if theme == False:
+    fig.layout.template = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
+    if themeToggle == False:
         fig.update_polars(bgcolor='rgb(58, 63, 68)')
     #fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
     return fig

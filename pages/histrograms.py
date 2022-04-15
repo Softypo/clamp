@@ -31,11 +31,12 @@ layout = html.Div(
     Output("histograms-graph", "figure"),
     Input("histograms-mean", "value"),
     Input("histograms-std", "value"),
-    Input("theme", "value"),
+    Input("themeToggle", "value"),
 )
-def display_color(mean, std, theme):
+def display_color(mean, std, themeToggle):
     data = np.random.normal(mean, std, size=500)
-    fig = px.histogram(data, nbins=30, range_x=[-10, 10], template=load_figure_template(
-        themes[1][1] if theme else themes[0][1]))
+    fig = px.histogram(data, nbins=30, range_x=[-10, 10])
     fig.update_layout(showlegend=False)
+    fig.layout.template = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
+    fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
     return fig
