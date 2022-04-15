@@ -5,9 +5,7 @@ import dash_labs as dl
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url, load_figure_template
 
-dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
-# 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/slate/bootstrap.min.css'
-
+#dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
 themes = {'_dark': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap.min.css', 'fig': 'slate'},
           '_light': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/bootstrap.min.css', 'fig': 'flatly'}}
 
@@ -72,7 +70,8 @@ sidebar = html.Div(
                                 html.Span(className="fa fa-moon",
                                           style={"marginRight": "0.5rem"}),
                                 dbc.Switch(value=False, id="theme",
-                                           className="d-inline-block ml-2",),
+                                           className="d-inline-block ml-2",
+                                           persistence=True, persistence_type='local'),
                                 html.Span(className="fa fa-sun",
                                           style={"marginRight": "auto"}),
                             ],
@@ -179,8 +178,7 @@ content = dl.plugins.page_container
 
 sessions = dcc.Store(id="session", storage_type="local")
 
-voids = html.Div([html.Div(id="template"),
-                  html.Div(id="blank_output")],
+voids = html.Div([html.Div(id='void1'), html.Div(id='void2')],
                  id="voids", style={"display": "none"})
 
 
@@ -246,30 +244,15 @@ app.clientside_callback(
         return themeToggle
     }
     """,
-    Output("session", "data"),
+    Output("void1", "children"),
     Input("theme", "value"),
 )
 
-# app.clientside_callback(
-#     """
-#     function(theme) {
-#         //  To use different themes,  change these links:
-#         const theme1 = 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/bootstrap.min.css'
-#         const theme2 = 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap.min.css'
-#         const stylesheet = document.querySelector('link[rel=stylesheet][href^="https://cdn.jsdelivr"]')
-#         var themeLink = theme ? theme1 : theme2;
-#         stylesheet.href = themeLink
-#     }
-#     """,
-#     Output("blank_output", "children"),
-#     Input("session", "data"),
-# )
 
-
-@ app.callback(Output("template", "children"),
+@ app.callback(Output("void2", "children"),
                # Input("theme", "value"),
                # Input("session", "modified_timestamp"),
-               Input("session", "data"),
+               Input("theme", "value"),
                )
 def fig_theme_session(data):
     load_figure_template(themes['_light']['fig']
@@ -278,8 +261,8 @@ def fig_theme_session(data):
 
 
 # app initialization
-app.layout = dbc.Container(html.Div(
-    [dcc.Location(id="url"), navbar, sidebar, content, sessions, voids]), fluid=True, className="dbc", style=CONTENT_STYLE)
+app.layout = dbc.Container(
+    [dcc.Location(id="url"), navbar, sidebar, content, sessions, voids], fluid=True, className="dbc", style=CONTENT_STYLE)
 
 if __name__ == "__main__":
     app.run_server(port=8888,

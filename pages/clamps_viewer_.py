@@ -1,8 +1,3 @@
-from distutils.command.config import config
-from re import template
-from turtle import bgcolor, st, width
-
-from matplotlib.pyplot import autoscale, margins, ticklabel_format
 from dv_dashboard import themes
 import pandas as pd
 from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url, load_figure_template
@@ -65,7 +60,7 @@ layout = html.Div(
                 ),
                 dcc.Graph(id="cd_polar", animate=False,
                           config={'displaylogo': False},
-                          style={'height': '50vh'},),
+                          style={'height': '40vh'},),
             ],
                 xl=6, lg=6, md=12, sm=12, xs=12,),
         ],),
@@ -119,7 +114,7 @@ def tab_content(active_tab):
 
 @ callback(Output("cd_overview", "figure"),
            Input("dropdown_cd", "value"),
-           Input("session", "data"),
+           Input("theme", "value"),
            State("cd_overview", "figure"),
            )
 def clamps_overview(clamps_types, theme, fig):
@@ -178,7 +173,7 @@ def clamps_overview(clamps_types, theme, fig):
         fig.update_layout(hovermode="y", title="Fiber cable orientation overview", legend_title="Type", legend_orientation="h", yaxis_title="Depth",
                           xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=False, margin=dict(l=0, r=0, b=0, t=50))
         fig.update_yaxes(autorange="reversed")
-        fig.update_xaxes(dtick=20, tickangle=45)
+        #fig.update_xaxes(dtick=20, tickangle=45)
         fig.layout.template = themes['_light']['fig'] if theme else themes['_dark']['fig']
         fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
         return fig
@@ -188,7 +183,7 @@ def clamps_overview(clamps_types, theme, fig):
 
 @ callback(Output("cd_polar", "figure"),
            Input("dropdown_cd", "value"),
-           Input("session", "data"),
+           Input("theme", "value"),
            # State("cd_overview", "figure"),
            )
 def clamps_overview(clamps_types, theme):
@@ -197,9 +192,8 @@ def clamps_overview(clamps_types, theme):
                     'fiber_angle_rounded']].loc[clamps['type'].isin(clamps_types)]
 
     # add delta
-    nogozone_svg = ''.join([f'M {xy[0][0]+10},{xy[0][1]} ' if xy[1] == 0 else f'L{xy[0][0]+10},{xy[0][1]} ' for xy in zip(fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))]) + \
-        ''.join([f' L{xy[0][0]-10},{xy[0][1]} Z' if xy[1] == 0 else f' L{xy[0][0]-10},{xy[0][1]}' for xy in zip(
-            fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))][::-1])
+    nogozone_polar = pd.DataFrame([[angle+10, angle-10, depth]
+                                  for angle, depth in fiber[['fiber_plot_angle', 'depth']].values])
 
     fig.update_layout(shapes=[dict(type="path", path=nogozone_svg,
                                    fillcolor='rgba(255,69,0,0.2)', line=dict(width=0), layer='below')])
@@ -210,22 +204,24 @@ def clamps_overview(clamps_types, theme):
                                       mode='markers', name=type, customdata=clamps.loc[clamps['type'] == type, ['hadware_name', 'fiber_angle_rounded']]))
 
     # Add traces
+    fig.add_trace(go.Scatterpolar(r=nogozone_polar['depth'], theta=nogozone_polar['fiber_plot_angle'], mode='lines+markers',
+                                  name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
     fig.add_trace(go.Scatterpolar(r=fiber['depth'], theta=fiber['fiber_plot_angle'], mode='lines+markers',
                                   name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
     fig.update_traces(hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
     fig.update_layout(title="Fiber cable orientation polarplot",
                       legend_title="Type", legend_orientation="h", autosize=True, margin=dict(t=50, b=40, l=40, r=40))
-    fig.update_layout(
-        polar=dict(
-            bgcolor='darkslategray',
-            radialaxis=dict(
-                range=[min(clamps['depth'])-100, max(clamps['depth'])+100], autorange=False,),
-            angularaxis=dict(
-                dtick=15,
-                rotation=90,  # start position of angular axis
-                direction="clockwise"
-            )
+    fig.update_polars(
+        hole=0.05,
+        radialaxis=dict(
+            range=[max(clamps['depth'])+100, min(clamps['depth'])-100]),
+        angularaxis=dict(
+            dtick=15,
+            rotation=90,  # start position of angular axis
+            direction="clockwise",
         ))
     fig.layout.template = themes['_light']['fig'] if theme else themes['_dark']['fig']
-    fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
+    if theme == False:
+        fig.update_polars(bgcolor='rgb(58, 63, 68)')
+    #fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
     return fig
