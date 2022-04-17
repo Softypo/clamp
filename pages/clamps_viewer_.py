@@ -94,8 +94,9 @@ tabs = {'overview': [
               animate=False,
               responsive=True,
               config={'displaylogo': False,
-                      'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d']},
-              style={'height': '80vh'},
+                      'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d', ],
+                      },
+        style={'height': '80vh'},
               ),
 ],
     'tubeview': [
@@ -165,7 +166,7 @@ def clamps_overview(clamps_types, themeToggle, relayoutData, fig):
                                  name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
         fig.update_traces(
             hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
-        fig.update_yaxes(autorange="reversed")
+        # fig.update_yaxes(autorange="reversed")
         return fig
 
     # fix right click bug
@@ -208,6 +209,11 @@ def clamps_overview(clamps_types, themeToggle, relayoutData, fig):
                           xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=True, margin=dict(l=0, r=0, b=0, t=50), showlegend=False)
         fig.update_yaxes(autorange="reversed")
         # fig.update_xaxes(dtick=20, tickangle=45)
+        fig.layout.modebar = {
+            'orientation': 'v',
+            'bgcolor': 'salmon',
+            'color': 'white',
+            'activecolor': '#9ED3CD'}
         fig.layout.template = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
         fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
         return fig
@@ -252,8 +258,21 @@ def clamps_overview(clamps_types, themeToggle):
             rotation=90,  # start position of angular axis
             direction="clockwise",
         ))
-    fig.layout.template = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
-    if themeToggle == False:
+    #fig.layout.template = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
+    if themeToggle:
+        fig.layout.template = themes['_light']['fig']
+        fig.layout.modebar = {
+            'orientation': 'v',
+            'bgcolor': 'salmon',
+            'color': 'white',
+            'activecolor': '#9ED3CD'}
+    else:
+        fig.layout.template = themes['_dark']['fig']
         fig.update_polars(bgcolor='rgb(58, 63, 68)')
+        fig.layout.modebar = {
+            'orientation': 'v',
+            'bgcolor': 'rgb(39, 43, 48)',
+            'color': 'white',
+            'activecolor': 'grey'}
     # fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
     return fig
