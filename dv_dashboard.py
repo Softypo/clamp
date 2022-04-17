@@ -1,3 +1,4 @@
+from click import style
 import dash
 from dash import dcc, html, dash_table, Input, Output, State, callback, clientside_callback
 import dash_daq as daq
@@ -16,7 +17,7 @@ app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[them
 load_figure_template(themes['_light']['fig'])
 load_figure_template(themes['_dark']['fig'])
 
-#app.scripts.config.serve_locally = True
+# app.scripts.config.serve_locally = True
 
 # images
 DV_LOGO = 'assets/dv_logo.png'
@@ -35,7 +36,8 @@ SIDEBAR_STYLE = {
 # the styles for the main content position it to the right of the sidebar and
 # add some padding.
 CONTENT_STYLE = {
-    # "height": "100vh",
+    "padding": "0.5rem 0rem",
+    "height": "80vh",
 }
 
 # body
@@ -116,7 +118,7 @@ navbar_menu = dbc.Row(
             dbc.Nav(
                 [dbc.NavItem(dbc.NavLink(page["name"], href=page["path"], active="exact"))
                  for page in dash.page_registry.values() if page["module"] != "pages.not_found_404"],
-                pills=True,
+                pills=False,
                 justified=True,
             ),
             width=5,
@@ -173,6 +175,8 @@ navbar = dbc.Navbar(
     ),
     color="black",
     dark=True,
+    # fixed="top",
+    # sticky="top",
 )
 
 content = dl.plugins.page_container
@@ -258,7 +262,7 @@ def fig_theme_session(data):
 
 # app initialization
 app.layout = dbc.Container(
-    [dcc.Location(id="url"), navbar, sidebar, content, sessions, voids], fluid=True, className="dbc", style=CONTENT_STYLE)
+    [dcc.Location(id="url"), navbar, sidebar, content, sessions, voids], fluid=True, className="dbc")
 
 if __name__ == "__main__":
     app.run_server(port=8888,
