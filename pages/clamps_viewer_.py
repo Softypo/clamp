@@ -1,3 +1,4 @@
+from distutils.command.config import config
 from dv_dashboard import themes, CONTENT_STYLE
 import pandas as pd
 from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url, load_figure_template
@@ -44,40 +45,58 @@ layout = html.Div(
                             )
                         ),
                         dbc.CardBody(id="card-content", className="card-text"),
-                    ],)
+                    ],),
                     ],
                 xl=7, lg=6, md=12, sm=12, xs=12,
-                #style={"padding-right": "0.2rem"},
+                style=CONTENT_STYLE,
                     ),
             dbc.Col([
-                dcc.Dropdown(
-                    clamp_types,
-                    clamp_types[1:],
-                    multi=True,
-                    searchable=False,
-                    persistence=True,
-                    persistence_type='memory',
-                    id="dropdown_cd",
+                dbc.Row(
+                    dcc.Graph(id="cd_polar", animate=False,
+                              config={'displaylogo': False},
+                              style={'height': '35vh'},),
                 ),
-                dcc.Graph(id="cd_polar", animate=False,
-                          config={'displaylogo': False},
-                          style={'height': '30vh'},),
-                dash_table.DataTable(clamps.to_dict('records'),
-                                     id='cd_table',
-                                     page_action='none',
-                                     sort_action='native',
-                                     style_as_list_view=True,
-                                     fixed_rows={'headers': True, 'data': 0},
-                                     style_table={'minHeight': 'auto', 'height': '55vh', 'maxHeight': '100vh',
-                                                  'minWidth': 'auto', 'width': 'auto', 'maxWidth': 'auto'},
-                                     )
+                dbc.Row([
+                    dbc.Col(
+                        dcc.Dropdown(
+                            clamp_types,
+                            clamp_types[1:],
+                            multi=True,
+                            searchable=False,
+                            persistence=True,
+                            persistence_type='memory',
+                            id="dropdown_cd",
+                            style={"width": "100%"},
+                        ), width=11,),
+                    dbc.Col(
+                        dcc.Clipboard(
+                            id="table_copy",
+                            style={
+                                "fontSize": 15,
+                                "position": "relative",
+                                "top": "0.5rem",
+                                "right": "0.5rem",
+                                # "padding": "50%",
+                            },
+                        ),
+                    ), ],),
+                dbc.Row(
+                    dash_table.DataTable(clamps.to_dict('records'),
+                                         id='cd_table',
+                                         page_action='none',
+                                         sort_action='native',
+                                         style_as_list_view=True,
+                                         fixed_rows={
+                        'headers': True, 'data': 0},
+                        style_table={'minHeight': 'auto', 'height': '50vh', 'maxHeight': '50vh',
+                                     'minWidth': 'auto', 'width': 'auto', 'maxWidth': 'auto'},
+                    ),),
             ],
                 xl=5, lg=6, md=12, sm=12, xs=12,
-                #style={"padding-left": "0.2rem"},
+                style=CONTENT_STYLE,
             ),
         ],),
-    ],
-    style=CONTENT_STYLE,)
+    ],)
 
 
 tabs = {'overview': [
@@ -94,9 +113,10 @@ tabs = {'overview': [
               animate=False,
               responsive=True,
               config={'displaylogo': False,
-                      'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d', ],
+                      'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
+                      'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}
                       },
-        style={'height': '80vh'},
+              style={'height': '80vh'},
               ),
 ],
     'tubeview': [
@@ -121,10 +141,27 @@ tabs = {'overview': [
 # callbacks
 
 @ callback(
-    Output("card-content", "children"), [Input("card-tabs", "active_tab")]
-)
+    Output("card-content", "children"), [Input("card-tabs", "active_tab")])
 def tab_content(active_tab):
     return tabs[active_tab]
+
+
+@callback(
+    Output("cd_table", "data"),
+    Input("dropdown_cd", "value"),
+)
+def filterclamps_table(value):
+    return clamps[clamps.type.isin(value)].to_dict('records')
+
+
+@callback(
+    Output("table_copy", "content"),
+    Input("table_copy", "n_clicks"),
+    State("cd_table", "data"),
+)
+def customcopy_table(_, data):
+    # See options for .to_csv() or .to_excel() or .to_string() in the  pandas documentation
+    return pd.DataFrame(data).to_csv(index=False)  # includes headers
 
 
 @ callback(Output("cd_overview", "figure"),
@@ -142,7 +179,22 @@ def clamps_overview(clamps_types, themeToggle, relayoutData, fig):
     # update template only
     if trigger == 'themeToggle':
         fig = go.Figure(fig)
-        fig.layout.template = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
+        # fig.layout.template = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
+        if themeToggle:
+            fig.layout.template = themes['_light']['fig']
+            fig.layout.modebar = {
+                'orientation': 'v',
+                'bgcolor': 'salmon',
+                'color': 'white',
+                'activecolor': '#9ED3CD'}
+        else:
+            fig.layout.template = themes['_dark']['fig']
+            fig.layout.modebar = {
+                'orientation': 'v',
+                'bgcolor': 'rgb(39, 43, 48)',
+                'color': 'white',
+                'activecolor': 'grey'}
+            fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
         return fig
 
     # update fiver cable only
@@ -214,8 +266,22 @@ def clamps_overview(clamps_types, themeToggle, relayoutData, fig):
             'bgcolor': 'salmon',
             'color': 'white',
             'activecolor': '#9ED3CD'}
-        fig.layout.template = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
-        fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
+        # fig.layout.template = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
+        if themeToggle:
+            fig.layout.template = themes['_light']['fig']
+            fig.layout.modebar = {
+                'orientation': 'v',
+                'bgcolor': 'salmon',
+                'color': 'white',
+                'activecolor': '#9ED3CD'}
+        else:
+            fig.layout.template = themes['_dark']['fig']
+            fig.layout.modebar = {
+                'orientation': 'v',
+                'bgcolor': 'rgb(39, 43, 48)',
+                'color': 'white',
+                'activecolor': 'grey'}
+            fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
         return fig
 
 
@@ -258,7 +324,7 @@ def clamps_overview(clamps_types, themeToggle):
             rotation=90,  # start position of angular axis
             direction="clockwise",
         ))
-    #fig.layout.template = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
+    # fig.layout.template = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
     if themeToggle:
         fig.layout.template = themes['_light']['fig']
         fig.layout.modebar = {

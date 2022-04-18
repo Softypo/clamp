@@ -22,7 +22,7 @@ load_figure_template(themes['_dark']['fig'])
 # images
 DV_LOGO = 'assets/dv_logo.png'
 
-# the style arguments for the sidebar. We use position:fixed and a fixed width
+# styles
 SIDEBAR_STYLE = {
     "position": "fixed",
     "top": 0,
@@ -33,11 +33,13 @@ SIDEBAR_STYLE = {
 
 }
 
-# the styles for the main content position it to the right of the sidebar and
-# add some padding.
+NAVBAR_STYLE = {
+    "padding": "0.4rem",
+}
+
 CONTENT_STYLE = {
-    "padding": "0.5rem 0rem",
-    "height": "80vh",
+    "padding": "0.5rem 0.8rem",
+    "height": "85vh",
 }
 
 # body
@@ -171,10 +173,11 @@ navbar = dbc.Navbar(
                 is_open=False,
                 navbar=True,
             ),
-        ]
+        ],
     ),
     color="black",
     dark=True,
+    style=NAVBAR_STYLE,
     # fixed="top",
     # sticky="top",
 )
@@ -268,5 +271,5 @@ if __name__ == "__main__":
     app.run_server(port=8888,
                    debug=True,
                    threaded=True,
-                   # host='0.0.0.0',
+                   host='0.0.0.0',
                    use_reloader=True)
