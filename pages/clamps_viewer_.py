@@ -17,8 +17,41 @@ dash.register_page(__name__, path="/")
 clamps = pd.read_hdf("data/446/446cd.h5", "446cd")
 clamp_types = clamps['type'].unique()
 
-# body
+# functions
 
+
+def clampsoverview_fig(clamps_types, clamps):
+    fig = go.Figure()
+    cc = clamps.copy()
+    fiber = cc[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
+                'fiber_angle_rounded']].loc[cc['type'].isin(clamps_types)]
+
+    # add delta
+    nogozone_svg = ''.join([f'M {xy[0][0]+10},{xy[0][1]} ' if xy[1] == 0 else f'L{xy[0][0]+10},{xy[0][1]} ' for xy in zip(fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))]) + \
+        ''.join([f' L{xy[0][0]-10},{xy[0][1]} Z' if xy[1] == 0 else f' L{xy[0][0]-10},{xy[0][1]}' for xy in zip(
+            fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))][::-1])
+
+    fig.update_layout(shapes=[dict(type="path", path=nogozone_svg,
+                      fillcolor='rgba(255,69,0,0.2)', line=dict(width=0), layer='below')])
+
+    # Add traces
+    for type in cc['type'].unique():
+        fig.add_trace(go.Scatter(x=cc.loc[cc['type'] == type, 'plot_angle'], y=cc.loc[cc['type'] == type, 'depth'],
+                                 mode='markers', name=type, customdata=cc.loc[cc['type'] == type, ['hadware_name', 'angle_rounded']]))
+
+    fig.add_trace(go.Scatter(x=fiber['fiber_plot_angle'], y=fiber['depth'], mode='lines+markers',
+                             name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
+
+    fig.update_traces(hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
+    fig.update_layout(hovermode="y", title="Fiber cable orientation overview", title_x=0.5, legend_title="Type", legend_orientation="h", yaxis_title="Depth",
+                      xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=True, margin=dict(l=0, r=0, b=0, t=50), showlegend=False)
+    fig.update_yaxes(autorange="reversed")
+    fig.layout.modebar = {'orientation': 'v'}
+    fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
+    return fig
+
+
+# body
 
 layout = html.Div(
     [
@@ -110,6 +143,7 @@ tabs = {'overview': [
     #     id="dropdown_cd",
     # ),
     dcc.Graph(id="cd_overview",
+              figure=clampsoverview_fig(clamp_types, clamps),
               animate=False,
               responsive=True,
               config={'displaylogo': False,
@@ -170,14 +204,18 @@ def customcopy_table(_, data):
            Input('cd_overview', 'relayoutData'),
            State("cd_overview", "figure"),
            )
-def clamps_overview(clamps_types, themeToggle, relayoutData, fig):
+def clampsoverview_listener(clamps_types, themeToggle, relayoutData, fig):
 
     trigger = dash.callback_context.triggered[0]['prop_id'].split('.')[0]
 
     cc = clamps.copy()
 
+    print('trigger: ', trigger)
+    print('relayout: ', relayoutData)
+
     # update template only
     if trigger == 'themeToggle':
+        print("themeToggle")
         fig = go.Figure(fig)
         # fig.layout.template = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
         if themeToggle:
@@ -199,6 +237,7 @@ def clamps_overview(clamps_types, themeToggle, relayoutData, fig):
 
     # update fiver cable only
     elif trigger == 'dropdown_cd':
+        print('update fiver cable only')
         fig = go.Figure(fig)
         fig.layout.shapes = []
         fig.data = [fig.data[0], fig.data[1], fig.data[2]]
@@ -221,13 +260,36 @@ def clamps_overview(clamps_types, themeToggle, relayoutData, fig):
         # fig.update_yaxes(autorange="reversed")
         return fig
 
+    # elif trigger == 'cd_overview':
+    #     try:
+    #         if relayoutData['xaxis.range[0]'] == relayoutData['xaxis.range[1]'] and relayoutData['yaxis.range[0]'] == relayoutData['yaxis.range[1]']:
+    #             print(
+    #                 'xaxis.range[0] == xaxis.range[1] and yaxis.range[0] == yaxis.range[1]')
+    #             fig = go.Figure(fig)
+    #             fig.update_yaxes(autorange="reversed")
+    #             return fig
+    #     except:
+    #         return dash.no_update
     # fix right click bug
-    elif trigger == 'cd_overview' and relayoutData is not None:
-        if 'xaxis.range[1]' in relayoutData and 'yaxis.range[1]' in relayoutData:
-            if relayoutData['xaxis.range[0]'] == relayoutData['xaxis.range[1]'] and relayoutData['yaxis.range[0]'] == relayoutData['yaxis.range[1]']:
-                fig = go.Figure(fig)
-                fig.update_yaxes(autorange="reversed")
-                return fig
+    elif trigger == 'cd_overview' and fig is not None:
+        print('fixing right click bug')
+        #print('fig: ', fig)
+        if relayoutData is not None:
+            print('len: ', len(relayoutData))
+            if len(relayoutData) > 1:
+                print('len > 1')
+                if 'xaxis.range[1]' in relayoutData and 'yaxis.range[1]' in relayoutData:
+                    print('xaxis.range[1] and yaxis.range[1]')
+                    if relayoutData['xaxis.range[0]'] == relayoutData['xaxis.range[1]'] and relayoutData['yaxis.range[0]'] == relayoutData['yaxis.range[1]']:
+                        print(
+                            'xaxis.range[0] == xaxis.range[1] and yaxis.range[0] == yaxis.range[1]')
+                        fig = go.Figure(fig)
+                        fig.update_yaxes(autorange="reversed")
+                        return fig
+                    else:
+                        return dash.no_update
+                else:
+                    return dash.no_update
             else:
                 return dash.no_update
         else:
@@ -235,6 +297,7 @@ def clamps_overview(clamps_types, themeToggle, relayoutData, fig):
 
     # update everything
     else:
+        print('update everything')
         fig = go.Figure()
         fiber = cc[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
                     'fiber_angle_rounded']].loc[cc['type'].isin(clamps_types)]
@@ -261,12 +324,8 @@ def clamps_overview(clamps_types, themeToggle, relayoutData, fig):
                           xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=True, margin=dict(l=0, r=0, b=0, t=50), showlegend=False)
         fig.update_yaxes(autorange="reversed")
         # fig.update_xaxes(dtick=20, tickangle=45)
-        fig.layout.modebar = {
-            'orientation': 'v',
-            'bgcolor': 'salmon',
-            'color': 'white',
-            'activecolor': '#9ED3CD'}
         # fig.layout.template = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
+        fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
         if themeToggle:
             fig.layout.template = themes['_light']['fig']
             fig.layout.modebar = {
@@ -281,7 +340,6 @@ def clamps_overview(clamps_types, themeToggle, relayoutData, fig):
                 'bgcolor': 'rgb(39, 43, 48)',
                 'color': 'white',
                 'activecolor': 'grey'}
-            fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
         return fig
 
 
@@ -290,7 +348,7 @@ def clamps_overview(clamps_types, themeToggle, relayoutData, fig):
            Input("themeToggle", "value"),
            # State("cd_overview", "figure"),
            )
-def clamps_overview(clamps_types, themeToggle):
+def clampspolar_listener(clamps_types, themeToggle):
     fig = go.Figure()
     fiber = clamps[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
                     'fiber_angle_rounded']].loc[clamps['type'].isin(clamps_types)]
