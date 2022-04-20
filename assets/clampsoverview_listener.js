@@ -2,15 +2,16 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
     clientside: {
         clampsoverview_listener: function (clamps_types, themeToggle, relayoutData, fig, themes) {
             // storeURLs is an array that holds the image URLs
-            const trigger = dash_clientside.callback_context.triggered[0].prop_id.split(".")[0];
+            const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[1]);
+            console.log(fig);
 
-            if (figure === undefined) {
-                return dash_clientside.no_update;
-            }
+            // if (fig === undefined) {
+            //     return dash_clientside.no_update;
+            // }
 
             if (trigger === "themeToggle") {
                 if (themeToggle) {
-                    fig.layout.template = themes['_light']['fig']
+                    fig.layout.template = themes._light.fig
                     fig.layout.modebar = {
                         'orientation': 'v',
                         'bgcolor': 'salmon',
@@ -18,7 +19,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                         'activecolor': '#9ED3CD'
                     }
                 } else {
-                    fig.layout.template = themes['_dark']['fig']
+                    fig.layout.template = themes._dark.fig
                     fig.layout.modebar = {
                         'orientation': 'v',
                         'bgcolor': 'rgb(39, 43, 48)',
@@ -35,7 +36,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 //             trace.visibility = True;
                 //         }
                 //     });
-                // } else if (trigger === "cd_overview" && relayoutData !== undefined) {
+                // } else if (trigger === "relayoutData" && relayoutData !== undefined) {
                 //     if (length(relayoutData) > 1) {
                 //         if ('xaxis.range[1]' in relayoutData && 'yaxis.range[1]' in relayoutData) {
                 //             if (relayoutData['xaxis.range[1]'] !== relayoutData['xaxis.range[0]'] && relayoutData['yaxis.range[1]'] !== relayoutData['yaxis.range[0]']) {

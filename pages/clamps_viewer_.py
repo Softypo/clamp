@@ -211,7 +211,8 @@ clientside_callback(
      Input("dropdown_cd", "value"),
      Input("themeToggle", "value"),
      Input('cd_overview', 'relayoutData'),
-     State("cd_overview", "figure")
+     State("cd_overview", "figure"),
+     State("themes", "data"),
      ),
 )
 
