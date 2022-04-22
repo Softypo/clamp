@@ -24,22 +24,24 @@ DV_LOGO = 'assets/dv_logo.png'
 
 # styles
 SIDEBAR_STYLE = {
-    "position": "fixed",
-    "top": 0,
-    "left": 0,
-    "bottom": 0,
-    "width": "16rem",
-    "padding": "2rem 1rem",
+    # "position": "fixed",
+    # "top": 0,
+    # "left": 0,
+    # "bottom": 0,
+    # "width": "16rem",
+    # "padding": "2rem 1rem",
 
 }
 
 NAVBAR_STYLE = {
     "padding": "0.4rem",
+    # "height": "4vh",
 }
 
 CONTENT_STYLE = {
-    "padding": "0.5rem 0.8rem",
-    "height": "85vh",
+    "marginTop": '8px',
+    # "padding": "0.5rem",
+    "height": "94vh",
 }
 
 # body
@@ -265,11 +267,11 @@ def fig_theme_session(data):
 
 # app initialization
 app.layout = dbc.Container(
-    [dcc.Location(id="url"), navbar, sidebar, content, sessions, voids], fluid=True, className="dbc")
+    [dcc.Location(id="url"), navbar, sidebar, content, sessions, voids], fluid=True, className="dbc", style={"height": "100vh"})
 
 if __name__ == "__main__":
     app.run_server(port=8888,
                    debug=True,
                    threaded=True,
-                   host='0.0.0.0',
+                   # host='0.0.0.0',
                    use_reloader=True)

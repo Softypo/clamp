@@ -47,7 +47,7 @@ def clampsoverview_fig(clamps_types, clamps):
 
     fig.update_traces(hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
     fig.update_layout(hovermode="y", title="Fiber cable orientation overview", title_x=0.5, legend_title="Type", legend_orientation="h", yaxis_title="Depth",
-                      xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=True, margin=dict(l=0, r=0, b=0, t=50), showlegend=False)
+                      xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=True, margin=dict(l=80, r=80, b=25, t=50, pad=4), showlegend=False)
     fig.update_yaxes(autorange="reversed")
     fig.layout.modebar = {'orientation': 'v'}
     fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
@@ -56,83 +56,76 @@ def clampsoverview_fig(clamps_types, clamps):
 
 # body
 
-layout = html.Div(
-    [
-        # dbc.Row([
-        #         dbc.Col([
-        #             html.P("Settings", className="offcanvas-title h5"), ],
-        #             xl=12, lg=12, md=12, sm=12, xs=12,),
-        #         ], className="mt-2"),
-        dbc.Row([
-            dbc.Col([
-                    dbc.Card([
-                        dbc.CardHeader(
-                            dbc.Tabs(
-                                [
-                                    dbc.Tab(label="Overview",
-                                            tab_id="overview", key="overview"),
-                                    dbc.Tab(label="Tubeview",
-                                            tab_id="tubeview", key="tubeview"),
-                                ],
-                                id="card-tabs",
-                                active_tab="overview",
-                                persistence=True,
-                                persistence_type="memory",
-                            )
-                        ),
-                        dbc.CardBody(id="card-content", className="card-text"),
-                    ],),
-                    ],
-                xl=7, lg=6, md=12, sm=12, xs=12,
-                style=CONTENT_STYLE,
-                    ),
-            dbc.Col([
-                dbc.Row(
-                    dcc.Graph(id="cd_polar", animate=False,
-                              config={'displaylogo': False},
-                              style={'height': '35vh'},),
+layout = dbc.Row([
+    dbc.Col([
+            dbc.Card([
+                dbc.CardHeader(
+                    dbc.Tabs(
+                        [
+                            dbc.Tab(label="Overview",
+                                    tab_id="overview", key="overview"),
+                            dbc.Tab(label="Tubeview",
+                                    tab_id="tubeview", key="tubeview"),
+                        ],
+                        id="card-tabs",
+                        active_tab="overview",
+                        persistence=True,
+                        persistence_type="memory",
+                    )
                 ),
-                dbc.Row([
-                    dbc.Col(
-                        dcc.Dropdown(
-                            clamp_types,
-                            clamp_types[1:],
-                            multi=True,
-                            searchable=False,
-                            persistence=True,
-                            persistence_type='memory',
-                            id="dropdown_cd",
-                            style={"width": "100%"},
-                        ), width=11,),
-                    dbc.Col(
-                        dcc.Clipboard(
-                            id="table_copy",
-                            style={
-                                "fontSize": 15,
-                                "position": "relative",
-                                "top": "0.5rem",
-                                "right": "0.5rem",
-                                # "padding": "50%",
-                            },
-                        ),
-                    ), ],),
-                dbc.Row(
-                    dash_table.DataTable(clamps.to_dict('records'),
-                                         id='cd_table',
-                                         page_action='none',
-                                         sort_action='native',
-                                         style_as_list_view=True,
-                                         fixed_rows={
-                        'headers': True, 'data': 0},
-                        style_table={'minHeight': 'auto', 'height': '50vh', 'maxHeight': '50vh',
-                                     'minWidth': 'auto', 'width': 'auto', 'maxWidth': 'auto'},
-                    ),),
+                dbc.CardBody(
+                    id="card-content", className="card-text", style={'height': '1rem'}),
+            ], style={'height': '100%'}),
             ],
-                xl=5, lg=6, md=12, sm=12, xs=12,
-                style=CONTENT_STYLE,
+            xl=7, lg=6, md=12, sm=12, xs=12,
+            style=CONTENT_STYLE,
             ),
-        ],),
-    ],)
+    dbc.Col([
+            dbc.Row(
+                dcc.Graph(id="cd_polar", animate=False,
+                          config={'displaylogo': False},
+                          style={'height': '35%'},),
+            ),
+            dbc.Row([
+                dbc.Col(
+                    dcc.Dropdown(
+                        clamp_types,
+                        clamp_types[1:],
+                        multi=True,
+                        searchable=False,
+                        persistence=True,
+                        persistence_type='memory',
+                        id="dropdown_cd",
+                        style={"width": "100%"},
+                    ), width=11,),
+                dbc.Col(
+                    dcc.Clipboard(
+                        id="table_copy",
+                        style={
+                            "fontSize": 15,
+                            "position": "relative",
+                            "top": "0.5rem",
+                            "right": "0.5rem",
+                            # "padding": "50%",
+                        },
+                    ),
+                ), ],),
+            dbc.Row(
+                dash_table.DataTable(clamps.to_dict('records'),
+                                     id='cd_table',
+                                     page_action='none',
+                                     sort_action='native',
+                                     style_as_list_view=True,
+                                     fixed_rows={
+                    'headers': True, 'data': 0},
+                    style_table={'minHeight': 'auto', 'height': '100%', 'maxHeight': '100%',
+                                 'minWidth': 'auto', 'width': 'auto', 'maxWidth': 'auto'},
+                ), style={'height': '60%'}),
+            ],
+            xl=5, lg=6, md=12, sm=12, xs=12,
+            style=CONTENT_STYLE,
+            ),
+],)
 
 
 tabs = {'overview': [
@@ -153,7 +146,7 @@ tabs = {'overview': [
                       'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
                       'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}
                       },
-              style={'height': '80vh'},
+              style={'height': '100%'},
               ),
 ],
     'tubeview': [
@@ -169,7 +162,7 @@ tabs = {'overview': [
     dcc.Graph(id="cd_overview2",
               animate=False,
               config={'displaylogo': False},
-              style={'height': '80vh'},
+              #style={'height': '100%'},
               ),
 ]
 }
@@ -183,7 +176,7 @@ def tab_content(active_tab):
     return tabs[active_tab]
 
 
-@callback(
+@ callback(
     Output("cd_table", "data"),
     Input("dropdown_cd", "value"),
 )
@@ -191,7 +184,7 @@ def filterclamps_table(value):
     return clamps[clamps.type.isin(value)].to_dict('records')
 
 
-@callback(
+@ callback(
     Output("table_copy", "content"),
     Input("table_copy", "n_clicks"),
     State("cd_table", "data"),
