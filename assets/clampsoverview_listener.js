@@ -3,7 +3,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
         clampsoverview_listener: function (clamps_types, themeToggle, relayoutData, fig, themes) {
             // storeURLs is an array that holds the image URLs
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
-            //console.log(fig.layout.template);
+            console.log(fig);
 
 
             const _dark = {
@@ -1147,8 +1147,8 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                         'color': 'white',
                         'activecolor': '#9ED3CD'
                     }
-                    console.log(fig.layout.template)
-                    console.log(fig.layout.modebar)
+                    //console.log(fig.layout.template)
+                    //console.log(fig.layout.modebar)
                 } else {
                     console.log("themeToggle_dark")
                     fig.layout.template = _dark
@@ -1158,8 +1158,8 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                         'color': 'white',
                         'activecolor': 'grey'
                     }
-                    console.log(fig.layout.template)
-                    console.log(fig.layout.modebar)
+                    //console.log(fig.layout.template)
+                    //console.log(fig.layout.modebar)
                 }
                 // } else if (trigger === "dropdown_cd") {
                 //     //console.log(nClicks);

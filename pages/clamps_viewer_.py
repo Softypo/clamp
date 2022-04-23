@@ -74,7 +74,7 @@ layout = dbc.Row([
                     )
                 ),
                 dbc.CardBody(
-                    id="card-content", className="card-text", style={'height': '1rem'}),
+                    id="card-content", className="card-text", style={'height': '100%'}),
             ], style={'height': '100%'}),
             ],
             xl=7, lg=6, md=12, sm=12, xs=12,
@@ -109,7 +109,7 @@ layout = dbc.Row([
                             # "padding": "50%",
                         },
                     ),
-                ), ],),
+                ), ], style={'height': 'auto'}),
             dbc.Row(
                 dash_table.DataTable(clamps.to_dict('records'),
                                      id='cd_table',
@@ -118,14 +118,14 @@ layout = dbc.Row([
                                      style_as_list_view=True,
                                      fixed_rows={
                     'headers': True, 'data': 0},
-                    style_table={'minHeight': 'auto', 'height': '100%', 'maxHeight': '100%',
+                    style_table={'minHeight': '100%', 'height': '100%', 'maxHeight': '100%',
                                  'minWidth': 'auto', 'width': 'auto', 'maxWidth': 'auto'},
                 ), style={'height': '60%'}),
             ],
             xl=5, lg=6, md=12, sm=12, xs=12,
             style=CONTENT_STYLE,
             ),
-],)
+], style={'height': '100%'})
 
 
 tabs = {'overview': [
