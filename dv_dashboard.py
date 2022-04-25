@@ -13,7 +13,13 @@ themes = {'_dark': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_da
 
 # initial config
 app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[themes['_dark']['css'], dbc.icons.FONT_AWESOME],
-                meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=1"}], title='DV Dashboard', serve_locally=True)
+                title='DV Dashboard',
+                serve_locally=True,
+                meta_tags=[
+                    {"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=1"},
+                    {"name": "color-scheme", "content": "light dark"}, ]
+                )
+
 load_figure_template(themes['_light']['fig'])
 load_figure_template(themes['_dark']['fig'])
 
@@ -271,7 +277,7 @@ app.layout = dbc.Container(
 
 if __name__ == "__main__":
     app.run_server(port=8888,
-                   debug=False,
+                   debug=True,
                    threaded=True,
                    # host='0.0.0.0',
                    use_reloader=True)
