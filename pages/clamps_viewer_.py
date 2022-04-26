@@ -197,47 +197,46 @@ def customcopy_table(_, data):
     return pd.DataFrame(data).to_csv(index=False)  # includes headers
 
 
+clientside_callback(
+    ClientsideFunction(
+        namespace="clientside",
+        function_name="clampsoverview_listener"
+    ),
+    Output("cd_overview", "figure"),
+    Input("dropdown_cd", "value"),
+    Input("themeToggle", "value"),
+    Input('cd_overview', 'relayoutData'),
+    State("cover", "data"),
+    State("themes", "data"),
+)
+
 # clientside_callback(
-#     ClientsideFunction(
-#         namespace="clientside",
-#         function_name="clampsoverview_listener"
-#     ),
-#     (Output("cd_polar", "figure"),
-#      Input("dropdown_cd", "value"),
+#     """
+#     function(themeToggle, Figure) {
+#         if (themeToggle) {
+#         Figure['layout']['modebar'] = {
+#                 'orientation': 'v',
+#                 'bgcolor': 'salmon',
+#                 'color': 'white',
+#                 'activecolor': '#9ED3CD'};
+#         }
+#         else{
+#         Figure['layout']['modebar'] = {
+#             'orientation': 'v',
+#             'bgcolor': 'red',
+#             'color': 'white',
+#             'activecolor': '#9ED3CD'};
+#         }
+#         return Figure;
+#     }
+#     """,
+#     (Output("cd_overview", "figure"),
+#      # Input("dropdown_cd", "value"),
 #      Input("themeToggle", "value"),
-#      #Input('cd_overview', 'relayoutData'),
 #      State("cover", "data"),
-#      State("themes", "data"),
+#      # State("themes", "data"),
 #      ),
 # )
-
-clientside_callback(
-    """
-    function(themeToggle, Figure) {
-        if (themeToggle) {
-        Figure['layout']['modebar'] = {
-                'orientation': 'v',
-                'bgcolor': 'salmon',
-                'color': 'white',
-                'activecolor': '#9ED3CD'};
-        }
-        else{
-        Figure['layout']['modebar'] = {
-            'orientation': 'v',
-            'bgcolor': 'red',
-            'color': 'white',
-            'activecolor': '#9ED3CD'};
-        }
-        return Figure;
-    }
-    """,
-    (Output("cd_overview", "figure"),
-     # Input("dropdown_cd", "value"),
-     Input("themeToggle", "value"),
-     State("cover", "data"),
-     # State("themes", "data"),
-     ),
-)
 
 # @ callback(Output("cd_overview", "figure"),
 #            Input("dropdown_cd", "value"),

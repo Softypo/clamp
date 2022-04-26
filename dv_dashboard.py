@@ -251,15 +251,15 @@ def close_sidebar(value, n0, is_open):
         return value, is_open, n0
 
 
-# app.clientside_callback(
-#     ClientsideFunction(
-#         namespace="clientside",
-#         function_name="theme_switcher",
-#     ),
-#     Output("void1", "children"),
-#     Input("themeToggle", "value"),
-#     State("themes", "data"),
-# )
+app.clientside_callback(
+    ClientsideFunction(
+        namespace="clientside",
+        function_name="theme_switcher",
+    ),
+    Output("void1", "children"),
+    Input("themeToggle", "value"),
+    State("themes", "data"),
+)
 
 
 @ app.callback(Output("void2", "children"),
