@@ -7,12 +7,13 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
 
             if (trigger == '') {
                 console.log("trigger is undefined");
-                return fig;
+                return dash_clientside.no_update;
             }
             else if (fig === undefined) {
                 console.log("fig is undefined");
                 return dash_clientside.no_update;
             }
+            new_fig = Object.assign({}, fig);
 
             const _dark = {
                 "annotationdefaults": {
@@ -1143,25 +1144,25 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             if (trigger == "themeToggle") {
                 if (themeToggle) {
                     console.log("themeToggle_light")
-                    fig.layout.template = _light
-                    fig.layout.modebar = {
+                    new_fig.layout.template = _light
+                    new_fig.layout.modebar = {
                         'orientation': 'v',
                         'bgcolor': 'salmon',
                         'color': 'white',
                         'activecolor': '#9ED3CD'
                     }
-                    console.log(fig.layout.template)
+                    console.log(new_fig.layout.template)
                     //console.log(fig.layout.modebar)
                 } else {
                     console.log("themeToggle_dark")
-                    fig.layout.template = _dark
-                    fig.layout.modebar = {
+                    new_fig.layout.template = _dark
+                    new_fig.layout.modebar = {
                         'orientation': 'v',
                         'bgcolor': 'rgb(39, 43, 48)',
                         'color': 'white',
                         'activecolor': 'grey'
                     }
-                    console.log(fig.layout.template)
+                    console.log(new_fig.layout.template)
                     //console.log(fig.layout.modebar)
                 }
                 // } else if (trigger === "dropdown_cd") {
@@ -1184,8 +1185,8 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 // }
                 // end of main function
             }
-            console.log(fig)
-            return fig;
+            console.log(new_fig)
+            return new_fig;
         }
     }
 });
