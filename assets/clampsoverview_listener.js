@@ -3,8 +3,16 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
         clampsoverview_listener: function (clamps_types, themeToggle, relayoutData, fig, themes) {
             // storeURLs is an array that holds the image URLs
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
-            //console.log(fig);
+            //const trigger = window.dash_clientside.callback_context.triggered;
 
+            if (trigger == '') {
+                console.log("trigger is undefined");
+                return fig;
+            }
+            else if (fig === undefined) {
+                console.log("fig is undefined");
+                return dash_clientside.no_update;
+            }
 
             const _dark = {
                 "annotationdefaults": {
@@ -1129,11 +1137,6 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 }
             }
 
-
-
-            // if (fig === undefined) {
-            //     return dash_clientside.no_update;
-            // }
             console.log(trigger)
             console.log(themeToggle)
 
@@ -1141,23 +1144,23 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 if (themeToggle) {
                     console.log("themeToggle_light")
                     fig.layout.template = _light
-                    // fig.layout.modebar = {
-                    //     'orientation': 'v',
-                    //     'bgcolor': 'salmon',
-                    //     'color': 'white',
-                    //     'activecolor': '#9ED3CD'
-                    // }
+                    fig.layout.modebar = {
+                        'orientation': 'v',
+                        'bgcolor': 'salmon',
+                        'color': 'white',
+                        'activecolor': '#9ED3CD'
+                    }
                     console.log(fig.layout.template)
                     //console.log(fig.layout.modebar)
                 } else {
                     console.log("themeToggle_dark")
                     fig.layout.template = _dark
-                    // fig.layout.modebar = {
-                    //     'orientation': 'v',
-                    //     'bgcolor': 'rgb(39, 43, 48)',
-                    //     'color': 'white',
-                    //     'activecolor': 'grey'
-                    // }
+                    fig.layout.modebar = {
+                        'orientation': 'v',
+                        'bgcolor': 'rgb(39, 43, 48)',
+                        'color': 'white',
+                        'activecolor': 'grey'
+                    }
                     console.log(fig.layout.template)
                     //console.log(fig.layout.modebar)
                 }
@@ -1182,7 +1185,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 // end of main function
             }
             console.log(fig)
-            return { 'data': fig.data, 'layout': fig.layout };
+            return fig;
         }
     }
 });

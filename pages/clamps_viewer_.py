@@ -23,11 +23,11 @@ clamp_types = clamps['type'].unique()
 
 # functions
 
-def clampsoverview_fig(clamps_types, clamps):
+def clampsoverview_fig(clamp_types, clamps):
     fig = go.Figure()
     cc = clamps.copy()
     fiber = cc[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
-                'fiber_angle_rounded']].loc[cc['type'].isin(clamps_types)]
+                'fiber_angle_rounded']].loc[cc['type'].isin(clamp_types)]
 
     # add delta
     nogozone_svg = ''.join([f'M {xy[0][0]+10},{xy[0][1]} ' if xy[1] == 0 else f'L{xy[0][0]+10},{xy[0][1]} ' for xy in zip(fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))]) + \
@@ -57,6 +57,8 @@ def clampsoverview_fig(clamps_types, clamps):
 # body
 
 layout = dbc.Row([
+    dcc.Store(id="cover", storage_type="session",
+              data=clampsoverview_fig(clamp_types, clamps)),
     dbc.Col([
             dbc.Card([
                 dbc.CardHeader(
@@ -139,13 +141,13 @@ tabs = {'overview': [
     #     id="dropdown_cd",
     # ),
     dcc.Graph(id="cd_overview",
-              figure=clampsoverview_fig(clamp_types, clamps),
-              animate=False,
-              responsive=True,
-              config={'displaylogo': False,
-                      'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
-                      'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}
-                      },
+              #figure=clampsoverview_fig(clamp_types, clamps),
+              # animate=False,
+              # responsive=True,
+              #   config={'displaylogo': False,
+              #           'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
+              #           'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}
+              #           },
               style={'height': '100%'},
               ),
 ],
@@ -204,7 +206,7 @@ clientside_callback(
      Input("dropdown_cd", "value"),
      Input("themeToggle", "value"),
      Input('cd_overview', 'relayoutData'),
-     State("cd_overview", "figure"),
+     State("cover", "data"),
      State("themes", "data"),
      ),
 )

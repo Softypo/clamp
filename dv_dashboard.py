@@ -192,8 +192,9 @@ navbar = dbc.Navbar(
 
 content = dl.plugins.page_container
 
-sessions = html.Div([dcc.Store(id="themes", storage_type="local", data=themes)],
-                    id="sessions")
+stores = html.Div([dcc.Store(id="dw", storage_type="session"),
+                   dcc.Store(id="themes", storage_type="local", data=themes)],
+                  id="stores")
 
 voids = html.Div([html.Div(id='void1'), html.Div(id='void2')],
                  id="voids", style={"display": "none"})
@@ -273,7 +274,7 @@ def fig_theme_session(data):
 
 # app initialization
 app.layout = dbc.Container(
-    [dcc.Location(id="url"), navbar, sidebar, content, sessions, voids], fluid=True, className="dbc", style={"height": "100vh"})
+    [dcc.Location(id="url"), navbar, sidebar, content, stores, voids], fluid=True, className="dbc", style={"height": "100vh"})
 
 if __name__ == "__main__":
     app.run_server(port=8888,
