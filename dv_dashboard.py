@@ -4,7 +4,8 @@ from dash import dcc, html, dash_table, Input, Output, State, callback, clientsi
 import dash_daq as daq
 import dash_labs as dl
 import dash_bootstrap_components as dbc
-from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url, load_figure_template
+from dash_bootstrap_templates import load_figure_template, ThemeSwitchAIO
+from dash.dependencies import ClientsideFunction
 
 # To use different themes,  change these links:
 # dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
@@ -204,8 +205,8 @@ voids = html.Div([html.Div(id='void1'), html.Div(id='void2')],
 
 @ app.callback(
     Output("navbar-collapse", "is_open"),
-    [Input("navbar-toggler", "n_clicks")],
-    [State("navbar-collapse", "is_open")],
+    Input("navbar-toggler", "n_clicks"),
+    State("navbar-collapse", "is_open"),
 )
 # add callback for toggling the collapse on small screens
 def toggle_navbar_collapse(n, is_open):
@@ -232,12 +233,12 @@ def toggle_navbar_collapse(n, is_open):
 #     )
 
 
-@ app.callback([Output("sidebar-toggler", "value"),
-                Output("offcanvas", "is_open"),
-                Output("cls_sidebar", "n_clicks")],
-               [Input("sidebar-toggler", "value"),
-                Input("cls_sidebar", "n_clicks")],
-               [State("offcanvas", "is_open")],
+@ app.callback(Output("sidebar-toggler", "value"),
+               Output("offcanvas", "is_open"),
+               Output("cls_sidebar", "n_clicks"),
+               Input("sidebar-toggler", "value"),
+               Input("cls_sidebar", "n_clicks"),
+               State("offcanvas", "is_open"),
                )
 def close_sidebar(value, n0, is_open):
     if n0:
@@ -250,18 +251,15 @@ def close_sidebar(value, n0, is_open):
         return value, is_open, n0
 
 
-app.clientside_callback(
-    """
-    function(themeToggle, themes) {
-        const stylesheet = document.querySelector('link[rel=stylesheet][href^="https://cdn.jsdelivr"]')
-        var themeLink = themeToggle ? themes['_light']['css'] : themes['_dark']['css'];
-        stylesheet.href = themeLink
-    }
-    """,
-    Output("void1", "children"),
-    Input("themeToggle", "value"),
-    State("themes", "data"),
-)
+# app.clientside_callback(
+#     ClientsideFunction(
+#         namespace="clientside",
+#         function_name="theme_switcher",
+#     ),
+#     Output("void1", "children"),
+#     Input("themeToggle", "value"),
+#     State("themes", "data"),
+# )
 
 
 @ app.callback(Output("void2", "children"),

@@ -6,6 +6,46 @@ import numpy as np
 import pandas as pd
 import datetime
 
+
+# data
+
+clamps = pd.read_hdf("data/446/446cd.h5", "446cd")
+clamp_types = clamps['type'].unique()
+
+
+# functions
+
+def clampsoverview_fig(clamp_types, clamps):
+    fig = go.Figure()
+    cc = clamps.copy()
+    fiber = cc[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
+                'fiber_angle_rounded']].loc[cc['type'].isin(clamp_types)]
+
+    # add delta
+    nogozone_svg = ''.join([f'M {xy[0][0]+10},{xy[0][1]} ' if xy[1] == 0 else f'L{xy[0][0]+10},{xy[0][1]} ' for xy in zip(fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))]) + \
+        ''.join([f' L{xy[0][0]-10},{xy[0][1]} Z' if xy[1] == 0 else f' L{xy[0][0]-10},{xy[0][1]}' for xy in zip(
+            fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))][::-1])
+
+    fig.update_layout(shapes=[dict(type="path", path=nogozone_svg,
+                      fillcolor='rgba(255,69,0,0.2)', line=dict(width=0), layer='below')])
+
+    # Add traces
+    for type in cc['type'].unique():
+        fig.add_trace(go.Scatter(x=cc.loc[cc['type'] == type, 'plot_angle'], y=cc.loc[cc['type'] == type, 'depth'],
+                                 mode='markers', name=type, customdata=cc.loc[cc['type'] == type, ['hadware_name', 'angle_rounded']]))
+
+    fig.add_trace(go.Scatter(x=fiber['fiber_plot_angle'], y=fiber['depth'], mode='lines+markers',
+                             name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
+
+    fig.update_traces(hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
+    fig.update_layout(hovermode="y", title="Fiber cable orientation overview", title_x=0.5, legend_title="Type", legend_orientation="h", yaxis_title="Depth",
+                      xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=True, margin=dict(l=80, r=80, b=25, t=50, pad=4), showlegend=False)
+    fig.update_yaxes(autorange="reversed")
+    fig.layout.modebar = {'orientation': 'v'}
+    fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
+    return fig
+
+
 # some random values
 a = datetime.datetime.today()
 numdays = 100
@@ -27,6 +67,7 @@ dataS = [dict(
 # Graph layout
 layoutS = go.Layout(
     title="Meter",
+    modebar=dict(orientation='v'),
     xaxis=dict(
         rangeslider_visible=True,
         rangeselector=dict(
@@ -53,7 +94,8 @@ app.layout = html.Div(
         html.Div(children='''
             Rand rand rand.
         '''),
-
+        dcc.Store(id='memory', storage_type='memory',
+                  data=clampsoverview_fig(clamp_types, clamps)),
         dcc.Input(
             id='input-y',
             placeholder='Insert y value',
@@ -62,7 +104,7 @@ app.layout = html.Div(
         ),
         html.Div(id='result'),
 
-        dcc.Graph(id='RandGraph', figure=dict(data=dataS, layout=layoutS))
+        dcc.Graph(id='RandGraph')
     ])
 )
 
@@ -70,43 +112,18 @@ app.layout = html.Div(
 app.clientside_callback(
     """
     function(relOut, Figure) {
-        if (typeof relOut !== 'undefined') {
-            if (typeof relOut["xaxis.range"] !== 'undefined') {
-                //get active filter from graph
-                fromS = new Date(relOut["xaxis.range"][0]).getTime()
-                toS = new Date(relOut["xaxis.range"][1]).getTime()
-
-                xD = Figure.data[0].x
-                yD = Figure.data[0].y
-
-                //filter y data with graph display
-                yFilt = xD.reduce(function (pV,cV,cI){
-                    sec = new Date(cV).getTime()
-                    if (sec >= fromS && sec <= toS) {
-                        pV.push(yD[cI])
-                    }
-                    return pV
-                }, [])
-
-                yMax = Math.max.apply(Math, yFilt)
-                yMin = Math.min.apply(Math, yFilt)
-            } else {
-                yMin = Math.min.apply(Math, Figure.data[0].y)
-                yMax = Math.max.apply(Math, Figure.data[0].y)
-            }
-        } else {
-            yMin = Math.min.apply(Math, Figure.data[0].y)
-            yMax = Math.max.apply(Math, Figure.data[0].y)
+        if (relOut > 5) {
+        Figure['layout']['modebar'] = {
+                'orientation': 'v',
+                'bgcolor': 'salmon',
+                'color': 'white',
+                'activecolor': '#9ED3CD'};
         }
-        Figure.layout.yaxis = {
-            'range': [yMin,yMax],
-            'type': 'linear'
-        }
-        return {'data': Figure.data, 'layout': Figure.layout};
+        return Figure;
     }
     """,
     Output('RandGraph', 'figure'),
-    [Input('RandGraph', 'relayoutData')], [State('RandGraph', 'figure')]
+    [Input('input-y', 'value')], [State('memory', 'data')]
 )
 
 # Server side implementation (slow)
@@ -142,5 +159,5 @@ app.clientside_callback(
 #     return Fig
 
 
-# if __name__ == '__main__':
-#     app.run_server(debug=True, port=8888)
+if __name__ == '__main__':
+    app.run_server(debug=True, port=8888)

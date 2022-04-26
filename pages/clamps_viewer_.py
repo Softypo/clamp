@@ -1,7 +1,8 @@
 from distutils.command.config import config
+import re
 from dv_dashboard import themes, CONTENT_STYLE
 import pandas as pd
-from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url, load_figure_template
+# from dash_bootstrap_templates import template_from_url, load_figure_template
 import dash_bootstrap_components as dbc
 import dash_labs as dl
 import plotly.graph_objects as go
@@ -57,7 +58,7 @@ def clampsoverview_fig(clamp_types, clamps):
 # body
 
 layout = dbc.Row([
-    dcc.Store(id="cover", storage_type="session",
+    dcc.Store(id="cover", storage_type="memory",
               data=clampsoverview_fig(clamp_types, clamps)),
     dbc.Col([
             dbc.Card([
@@ -141,13 +142,13 @@ tabs = {'overview': [
     #     id="dropdown_cd",
     # ),
     dcc.Graph(id="cd_overview",
-              #figure=clampsoverview_fig(clamp_types, clamps),
-              # animate=False,
-              # responsive=True,
-              #   config={'displaylogo': False,
-              #           'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
-              #           'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}
-              #           },
+              figure=clampsoverview_fig(clamp_types, clamps),
+              animate=False,
+              responsive=True,
+              config={'displaylogo': False,
+                      'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
+                      'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}
+                      },
               style={'height': '100%'},
               ),
 ],
@@ -164,7 +165,7 @@ tabs = {'overview': [
     dcc.Graph(id="cd_overview2",
               animate=False,
               config={'displaylogo': False},
-              #style={'height': '100%'},
+              # style={'height': '100%'},
               ),
 ]
 }
@@ -196,18 +197,45 @@ def customcopy_table(_, data):
     return pd.DataFrame(data).to_csv(index=False)  # includes headers
 
 
+# clientside_callback(
+#     ClientsideFunction(
+#         namespace="clientside",
+#         function_name="clampsoverview_listener"
+#     ),
+#     (Output("cd_polar", "figure"),
+#      Input("dropdown_cd", "value"),
+#      Input("themeToggle", "value"),
+#      #Input('cd_overview', 'relayoutData'),
+#      State("cover", "data"),
+#      State("themes", "data"),
+#      ),
+# )
+
 clientside_callback(
-    # from dash.dependencies import ClientsideFunction
-    ClientsideFunction(
-        namespace="clientside",
-        function_name="clampsoverview_listener"
-    ),
+    """
+    function(themeToggle, Figure) {
+        if (themeToggle) {
+        Figure['layout']['modebar'] = {
+                'orientation': 'v',
+                'bgcolor': 'salmon',
+                'color': 'white',
+                'activecolor': '#9ED3CD'};
+        }
+        else{
+        Figure['layout']['modebar'] = {
+            'orientation': 'v',
+            'bgcolor': 'red',
+            'color': 'white',
+            'activecolor': '#9ED3CD'};
+        }
+        return Figure;
+    }
+    """,
     (Output("cd_overview", "figure"),
-     Input("dropdown_cd", "value"),
+     # Input("dropdown_cd", "value"),
      Input("themeToggle", "value"),
-     Input('cd_overview', 'relayoutData'),
      State("cover", "data"),
-     State("themes", "data"),
+     # State("themes", "data"),
      ),
 )
 
@@ -356,60 +384,60 @@ clientside_callback(
 #         return fig
 
 
-@ callback(Output("cd_polar", "figure"),
-           Input("dropdown_cd", "value"),
-           Input("themeToggle", "value"),
-           # State("cd_overview", "figure"),
-           )
-def clampspolar_listener(clamps_types, themeToggle):
-    fig = go.Figure()
-    fiber = clamps[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
-                    'fiber_angle_rounded']].loc[clamps['type'].isin(clamps_types)]
+# @ callback(Output("cd_polar", "figure"),
+#            Input("dropdown_cd", "value"),
+#            Input("themeToggle", "value"),
+#            # State("cd_overview", "figure"),
+#            )
+# def clampspolar_listener(clamps_types, themeToggle):
+#     fig = go.Figure()
+#     fiber = clamps[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
+#                     'fiber_angle_rounded']].loc[clamps['type'].isin(clamps_types)]
 
-    # add delta
-    nogozone_polar = pd.DataFrame([[angle+10, angle-10, depth]
-                                   for angle, depth in fiber[['fiber_plot_angle', 'depth']].values])
+#     # add delta
+#     nogozone_polar = pd.DataFrame([[angle+10, angle-10, depth]
+#                                    for angle, depth in fiber[['fiber_plot_angle', 'depth']].values])
 
-    # fig.update_layout(shapes=[dict(type="path", path=nogozone_svg,
-    #                                fillcolor='rgba(255,69,0,0.2)', line=dict(width=0), layer='below')])
+#     # fig.update_layout(shapes=[dict(type="path", path=nogozone_svg,
+#     #                                fillcolor='rgba(255,69,0,0.2)', line=dict(width=0), layer='below')])
 
-    # Add traces
-    for type in clamps['type'].unique():
-        fig.add_trace(go.Scatterpolar(theta=clamps.loc[clamps['type'] == type, 'plot_angle'], r=clamps.loc[clamps['type'] == type, 'depth'],
-                                      mode='markers', name=type, customdata=clamps.loc[clamps['type'] == type, ['hadware_name', 'fiber_angle_rounded']]))
+#     # Add traces
+#     for type in clamps['type'].unique():
+#         fig.add_trace(go.Scatterpolar(theta=clamps.loc[clamps['type'] == type, 'plot_angle'], r=clamps.loc[clamps['type'] == type, 'depth'],
+#                                       mode='markers', name=type, customdata=clamps.loc[clamps['type'] == type, ['hadware_name', 'fiber_angle_rounded']]))
 
-    # Add traces
-    # fig.add_trace(go.Scatterpolar(r=nogozone_polar['depth'], theta=nogozone_polar['fiber_plot_angle'], mode='lines+markers',
-    #                               name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
-    fig.add_trace(go.Scatterpolar(r=fiber['depth'], theta=fiber['fiber_plot_angle'], mode='lines+markers',
-                                  name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
-    fig.update_traces(hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
-    fig.update_layout(title="Fiber cable orientation polarplot", title_x=0.5,
-                      legend_title="Type", legend_orientation="h", autosize=True, margin=dict(t=50, b=40, l=40, r=40))
-    fig.update_polars(
-        hole=0.05,
-        radialaxis=dict(
-            range=[max(clamps['depth'])+100, min(clamps['depth'])-100]),
-        angularaxis=dict(
-            dtick=15,
-            rotation=90,  # start position of angular axis
-            direction="clockwise",
-        ))
-    # fig.layout.template = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
-    if themeToggle:
-        fig.layout.template = themes['_light']['fig']
-        fig.layout.modebar = {
-            'orientation': 'v',
-            'bgcolor': 'salmon',
-            'color': 'white',
-            'activecolor': '#9ED3CD'}
-    else:
-        fig.layout.template = themes['_dark']['fig']
-        fig.update_polars(bgcolor='rgb(58, 63, 68)')
-        fig.layout.modebar = {
-            'orientation': 'v',
-            'bgcolor': 'rgb(39, 43, 48)',
-            'color': 'white',
-            'activecolor': 'grey'}
-    # fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
-    return fig
+#     # Add traces
+#     # fig.add_trace(go.Scatterpolar(r=nogozone_polar['depth'], theta=nogozone_polar['fiber_plot_angle'], mode='lines+markers',
+#     #                               name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
+#     fig.add_trace(go.Scatterpolar(r=fiber['depth'], theta=fiber['fiber_plot_angle'], mode='lines+markers',
+#                                   name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
+#     fig.update_traces(hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
+#     fig.update_layout(title="Fiber cable orientation polarplot", title_x=0.5,
+#                       legend_title="Type", legend_orientation="h", autosize=True, margin=dict(t=50, b=40, l=40, r=40))
+#     fig.update_polars(
+#         hole=0.05,
+#         radialaxis=dict(
+#             range=[max(clamps['depth'])+100, min(clamps['depth'])-100]),
+#         angularaxis=dict(
+#             dtick=15,
+#             rotation=90,  # start position of angular axis
+#             direction="clockwise",
+#         ))
+#     # fig.layout.template = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
+#     if themeToggle:
+#         fig.layout.template = themes['_light']['fig']
+#         fig.layout.modebar = {
+#             'orientation': 'v',
+#             'bgcolor': 'salmon',
+#             'color': 'white',
+#             'activecolor': '#9ED3CD'}
+#     else:
+#         fig.layout.template = themes['_dark']['fig']
+#         fig.update_polars(bgcolor='rgb(58, 63, 68)')
+#         fig.layout.modebar = {
+#             'orientation': 'v',
+#             'bgcolor': 'rgb(39, 43, 48)',
+#             'color': 'white',
+#             'activecolor': 'grey'}
+#     # fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
+#     return fig
