@@ -21,8 +21,8 @@ app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[them
                     {"name": "color-scheme", "content": "light dark"}, ]
                 )
 
-load_figure_template(themes['_light']['fig'])
-load_figure_template(themes['_dark']['fig'])
+# load_figure_template(themes['_light']['fig'])
+# load_figure_template(themes['_dark']['fig'])
 
 # app.scripts.config.serve_locally = True
 
