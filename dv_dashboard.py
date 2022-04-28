@@ -1,4 +1,3 @@
-from click import style
 import dash
 from dash import dcc, html, dash_table, Input, Output, State, callback, clientside_callback
 import dash_daq as daq
@@ -6,6 +5,8 @@ import dash_labs as dl
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template, ThemeSwitchAIO
 from dash.dependencies import ClientsideFunction
+
+import plotly.io as pio
 
 # To use different themes,  change these links:
 # dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
@@ -18,11 +19,13 @@ app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[them
                 serve_locally=True,
                 meta_tags=[
                     {"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=1"},
-                    {"name": "color-scheme", "content": "light dark"}, ]
+                    {"name": "color-scheme", "content": "light dark"}, ],
+                # external_scripts=['https://cdn.plot.ly/plotly-2.11.1.min.js']
                 )
 
 # load_figure_template(themes['_light']['fig'])
 # load_figure_template(themes['_dark']['fig'])
+#load_figure_template([themes['_dark']['fig'], themes['_light']['fig']])
 
 # app.scripts.config.serve_locally = True
 
@@ -263,11 +266,13 @@ app.clientside_callback(
 
 
 @ app.callback(Output("void2", "children"),
+               #Input("url", "href"),
                Input("themeToggle", "value"),
                )
-def fig_theme_session(data):
+def fig_theme_session(themeToggle):
     load_figure_template(themes['_light']['fig']
-                         if data else themes['_dark']['fig'])
+                         if themeToggle else themes['_dark']['fig'])
+    #pio.templates.default = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
 
 
 # app initialization

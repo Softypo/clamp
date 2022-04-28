@@ -6,7 +6,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             //stylesheet.href = themeLink;
             setTimeout(function () { stylesheet.href = themeLink; }, 500);
         },
-        clampsoverview_listener: function (clamps_types, themeToggle, relayoutData, fig, store, themes) {
+        clampsoverview_listener: function (clamps_types, themeToggle, fig, store, themes) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
 
             //console.log(window.dash_clientside);
@@ -24,6 +24,10 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             else if (fig === undefined) {
                 console.log("fig is undefined");
                 new_fig = { ...store };
+            }
+            if (trigger == 'cd_overview') {
+                console.log("cd no update");
+                return dash_clientside.no_update;
             }
 
             console.log(trigger);
@@ -1152,41 +1156,44 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 }
             }
 
-            //if (trigger == "themeToggle") {
-            if (themeToggle) {
-                console.log("themeToggle_light");
-                new_fig['layout']['template'] = _light
-                new_fig['layout']['modebar'] = {
-                    'orientation': 'v',
-                    'bgcolor': 'salmon',
-                    'color': 'white',
-                    'activecolor': '#9ED3CD'
-                };
-                //console.log(new_fig.layout.template)
-                //console.log(fig.layout.modebar)
-            } else {
-                console.log("themeToggle_dark");
-                new_fig['layout']['template']['layout'] = _dark
-                new_fig['layout']['modebar'] = {
-                    'orientation': 'v',
-                    'bgcolor': 'rgb(39, 43, 48)',
-                    'color': 'white',
-                    'activecolor': 'grey'
-                };
+            if (trigger == "themeToggle") {
+                if (themeToggle) {
+                    console.log("themeToggle_light");
+                    new_fig['layout']['template'] = _light
+                    new_fig['layout']['modebar'] = {
+                        'orientation': 'v',
+                        'bgcolor': 'salmon',
+                        'color': 'white',
+                        'activecolor': '#9ED3CD'
+                    };
+                    //console.log(new_fig.layout.template)
+                    //console.log(fig.layout.modebar)
+                } else {
+                    console.log("themeToggle_dark");
+                    new_fig['layout']['template']['layout'] = _dark
+                    new_fig['layout']['modebar'] = {
+                        'orientation': 'v',
+                        'bgcolor': 'rgb(39, 43, 48)',
+                        'color': 'white',
+                        'activecolor': 'grey'
+                    };
+                }
             }
             //console.log(new_fig.layout.template)
             //console.log(fig.layout.modebar)
             //}
-            if (trigger == "dropdown_cd") {
-                //console.log(nClicks);
-                new_fig.data.forEach(trace => {
-                    if (clamps_types.includes(trace.name)) {
-                        console.log(trace.name);
-                    } else {
-                        //trace.visibility = false;
-                    }
-                });
-            }
+            // if (trigger == "dropdown_cd") {
+            //     //console.log(nClicks);
+            //     new_fig.data.forEach((trace, index) => {
+            //         if (clamps_types.includes(trace.name)) {
+            //             let fiver = new_fig.data[index]
+            //             console.log(fiver);
+            //         } else {
+            //             let fiver = new_fig.data[index]
+            //             //trace.visibility = false;
+            //         }
+            //     });
+            // }
             // } else if (trigger === "relayoutData" && relayoutData !== undefined) {
             //     if (length(relayoutData) > 1) {
             //         if ('xaxis.range[1]' in relayoutData && 'yaxis.range[1]' in relayoutData) {
