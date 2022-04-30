@@ -142,7 +142,7 @@ tabs = {'overview': [
     #     id="dropdown_cd",
     # ),
     dcc.Graph(id="cd_overview",
-              #figure=clampsoverview_fig(clamp_types, clamps),
+              figure=clampsoverview_fig(clamp_types, clamps),
               animate=False,
               responsive=True,
               config={'displaylogo': False,
