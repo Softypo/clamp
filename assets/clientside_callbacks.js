@@ -11,24 +11,24 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
 
             //console.log(window.dash_clientside);
 
-            let new_fig = { ...fig };
+            let new_fig = { ...store };
 
-            if (trigger == '' || trigger == undefined) {
-                console.log("trigger is undefined");
-                return dash_clientside.no_update;
-            }
-            else if (store === undefined) {
-                console.log("store fig is undefined");
-                return dash_clientside.no_update;
-            }
-            else if (fig === undefined) {
-                console.log("fig is undefined");
-                new_fig = { ...store };
-            }
-            if (trigger == 'cd_overview') {
-                console.log("cd no update");
-                return dash_clientside.no_update;
-            }
+            // if (trigger == '' || trigger == undefined) {
+            //     console.log("trigger is undefined");
+            //     return dash_clientside.no_update;
+            // }
+            // else if (store === undefined) {
+            //     console.log("store fig is undefined");
+            //     return dash_clientside.no_update;
+            // }
+            // else if (fig === undefined) {
+            //     console.log("fig is undefined");
+            //     new_fig = { ...store };
+            // }
+            // if (trigger == 'cd_overview') {
+            //     console.log("cd no update");
+            //     return dash_clientside.no_update;
+            // }
 
             console.log(trigger);
             console.log(themeToggle);
@@ -1156,29 +1156,41 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 }
             }
 
-            if (trigger == "themeToggle") {
-                if (themeToggle) {
-                    console.log("themeToggle_light");
-                    new_fig['layout']['template'] = _light
-                    new_fig['layout']['modebar'] = {
-                        'orientation': 'v',
-                        'bgcolor': 'salmon',
-                        'color': 'white',
-                        'activecolor': '#9ED3CD'
-                    };
-                    //console.log(new_fig.layout.template)
-                    //console.log(fig.layout.modebar)
-                } else {
-                    console.log("themeToggle_dark");
-                    new_fig['layout']['template']['layout'] = _dark
-                    new_fig['layout']['modebar'] = {
-                        'orientation': 'v',
-                        'bgcolor': 'rgb(39, 43, 48)',
-                        'color': 'white',
-                        'activecolor': 'grey'
-                    };
-                }
+            // if (trigger == "themeToggle") {
+            if (themeToggle) {
+                console.log("themeToggle_light");
+                fetch(themes['_light']['json'])
+                    .then(url => url.json())
+                    .then(output => { new_fig['layout']['template'] = output });
+                // new_fig['layout']['template'] = _light
+                new_fig['layout']['modebar'] = {
+                    'orientation': 'v',
+                    'bgcolor': 'salmon',
+                    'color': 'white',
+                    'activecolor': '#9ED3CD'
+                };
+                //console.log(new_fig.layout.template)
+                //console.log(fig.layout.modebar)
+            } else {
+                console.log("themeToggle_dark");
+                console.log(themes['_dark']['json']);
+                // url = fetch(themes['_dark']['json'])
+                // console.log(url);
+                // new_fig['layout']['template'] = url.json();
+                // fetch(themes['_dark']['json']).then(url => url.json()).then(data => new_fig['layout']['template'] = data);
+                // $.getJSON(themes['_dark']['json'], function(data) {new_fig['layout']['template'] = data});
+                fetch(themes['_dark']['json'])
+                    .then(url => url.json())
+                    .then(output => { new_fig['layout']['template'] = output; console.log(output) });
+                // new_fig['layout']['template']['layout'] = _dark
+                new_fig['layout']['modebar'] = {
+                    'orientation': 'v',
+                    'bgcolor': 'rgb(39, 43, 48)',
+                    'color': 'white',
+                    'activecolor': 'grey'
+                };
             }
+            // }
             //console.log(new_fig.layout.template)
             //console.log(fig.layout.modebar)
             //}
@@ -1204,8 +1216,8 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             //     }
             // }
             // end of main function
-            console.log(new_fig);
-            return { 'data': new_fig['data'], 'layout': new_fig['layout'] };
+            // console.log(new_fig);
+            return new_fig;
         }
     }
 });

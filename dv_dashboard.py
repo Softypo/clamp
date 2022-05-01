@@ -10,8 +10,11 @@ import plotly.io as pio
 
 # To use different themes,  change these links:
 # dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
-themes = {'_dark': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap.css', 'fig': 'slate'},
-          '_light': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/bootstrap.min.css', 'fig': 'flatly'}}
+themes = {'_dark': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap.css',
+                    'fig': 'slate', 'json': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/slate.json'},
+          '_light': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/bootstrap.min.css',
+                     'fig': 'united', 'json': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/united.json'}
+          }
 
 # initial config
 app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[themes['_dark']['css'], dbc.icons.FONT_AWESOME],
@@ -25,7 +28,7 @@ app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[them
 
 # load_figure_template(themes['_light']['fig'])
 # load_figure_template(themes['_dark']['fig'])
-#load_figure_template([themes['_dark']['fig'], themes['_light']['fig']])
+load_figure_template([themes['_dark']['fig'], themes['_light']['fig']])
 
 # app.scripts.config.serve_locally = True
 
@@ -265,14 +268,14 @@ app.clientside_callback(
 )
 
 
-@ app.callback(Output("void2", "children"),
-               #Input("url", "href"),
-               Input("themeToggle", "value"),
-               )
-def fig_theme_session(themeToggle):
-    load_figure_template(themes['_light']['fig']
-                         if themeToggle else themes['_dark']['fig'])
-    #pio.templates.default = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
+# @ app.callback(Output("void2", "children"),
+#                #Input("url", "href"),
+#                Input("themeToggle", "value"),
+#                )
+# def fig_theme_session(themeToggle):
+#     load_figure_template(themes['_light']['fig']
+#                          if themeToggle else themes['_dark']['fig'])
+#     #pio.templates.default = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
 
 
 # app initialization
