@@ -11,7 +11,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
 
             //console.log(window.dash_clientside);
 
-            let new_fig = { ...store };
+            let new_fig = { ...fig };
 
             // if (trigger == '' || trigger == undefined) {
             //     console.log("trigger is undefined");
@@ -61,7 +61,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 // fetch(themes['_dark']['json']).then(url => url.json()).then(data => new_fig['layout']['template'] = data);
                 // $.getJSON(themes['_dark']['json'], function(data) {new_fig['layout']['template'] = data});
                 // new_fig['layout']['template'] = fetch(themes['_dark']['json'])
-                //     .then(url => url.json())
+                //     .then(url => { console.log(url); url.response.json() })
                 //     .then(output => { new_fig['layout']['template'] = output; console.log(output) })
                 const request = new XMLHttpRequest();
                 request.open('GET', themes['_dark']['json'], false); // true creates a promise, so it wont work
@@ -82,16 +82,22 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             //}
             if (trigger == "dropdown_cd") {
                 //console.log(nClicks);
-                fiver = {};
+                y = [];
+                x = [];
+                c = [];
                 new_fig.data.forEach((trace, index) => {
                     if (clamps_types.includes(trace.name)) {
-                        fiver = Object.assign(fiver, new_fig.data[index]);
-                    } else if (trace.name == "fiver") {
-                        new_fig.data[index] = fiver;
+                        y = y.concat(new_fig.data[3]['y']);
+                        x = x.concat(new_fig.data[3]['x']);
+                        c = c.concat(new_fig.data[3]['customdata']);
+                    } else if (trace.name == "Fiber Wire") {
+                        new_fig.data[index]['y'] = y;
+                        new_fig.data[index]['x'] = x;
+                        new_fig.data[index]['customdata'] = c;
                         //trace.visibility = false;
                     }
                 });
-                console.log(fiver);
+                //console.log(fiver);
             }
             // } else if (trigger === "relayoutData" && relayoutData !== undefined) {
             //     if (length(relayoutData) > 1) {
