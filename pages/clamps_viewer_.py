@@ -44,7 +44,7 @@ def clampsoverview_fig(clamp_types, clamps):
                                  mode='markers', name=type, customdata=cc.loc[cc['type'] == type, ['hadware_name', 'angle_rounded']]))
 
     fig.add_trace(go.Scatter(x=fiber['fiber_plot_angle'], y=fiber['depth'], mode='lines+markers',
-                             name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
+                             name='Fiber Wire', marker_color='crimson', customdata=fiber[['type', 'fiber_angle_rounded']]))
 
     fig.update_traces(hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
     fig.update_layout(hovermode="y", title="Fiber cable orientation overview", title_x=0.5, legend_title="Type", legend_orientation="h", yaxis_title="Depth",
@@ -58,6 +58,8 @@ def clampsoverview_fig(clamp_types, clamps):
 # body
 
 layout = dbc.Row([
+    dcc.Store(id="ctbl", storage_type="memory",
+              data=clamps.to_dict('records')),
     dcc.Store(id="cover", storage_type="memory",
               data=clampsoverview_fig(clamp_types, clamps)),
     dbc.Col([
@@ -142,7 +144,7 @@ tabs = {'overview': [
     #     id="dropdown_cd",
     # ),
     dcc.Graph(id="cd_overview",
-              figure=clampsoverview_fig(clamp_types, clamps),
+              #figure=clampsoverview_fig(clamp_types, clamps),
               animate=False,
               responsive=True,
               config={'displaylogo': False,

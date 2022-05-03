@@ -11,7 +11,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
 
             //console.log(window.dash_clientside);
 
-            let new_fig = { ...fig };
+            const new_fig = JSON.parse(JSON.stringify(store));
 
             // if (trigger == '' || trigger == undefined) {
             //     console.log("trigger is undefined");
@@ -80,25 +80,30 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             //console.log(new_fig.layout.template)
             //console.log(fig.layout.modebar)
             //}
-            if (trigger == "dropdown_cd") {
-                //console.log(nClicks);
-                y = [];
-                x = [];
-                c = [];
-                new_fig.data.forEach((trace, index) => {
-                    if (clamps_types.includes(trace.name)) {
-                        y = y.concat(new_fig.data[3]['y']);
-                        x = x.concat(new_fig.data[3]['x']);
-                        c = c.concat(new_fig.data[3]['customdata']);
-                    } else if (trace.name == "Fiber Wire") {
-                        new_fig.data[index]['y'] = y;
-                        new_fig.data[index]['x'] = x;
-                        new_fig.data[index]['customdata'] = c;
-                        //trace.visibility = false;
-                    }
-                });
-                //console.log(fiver);
-            }
+            //if (trigger == "dropdown_cd") {
+            //console.log(nClicks);
+            y = [];
+            x = [];
+            c = [];
+            new_fig.data.forEach((trace, index) => {
+                if (trace.name == "Fiber Wire") {
+                    trace.customdata.forEach((type, indext) => {
+                        if (clamps_types.includes(type[0])) {
+                            y = y.concat(new_fig.data[index]['y'][indext]);
+                            x = x.concat(new_fig.data[index]['x'][indext]);
+                            c = c.concat([type]);
+                        }
+                    });
+                    new_fig.data[index]['y'] = y;
+                    new_fig.data[index]['x'] = x;
+                    new_fig.data[index]['customdata'] = c;
+                    //trace.visibility = false;
+                    console.log(clamps_types);
+                    console.log(y.length);
+                    console.log(new_fig.data[index]['y'].length);
+                }
+            });
+            //}
             // } else if (trigger === "relayoutData" && relayoutData !== undefined) {
             //     if (length(relayoutData) > 1) {
             //         if ('xaxis.range[1]' in relayoutData && 'yaxis.range[1]' in relayoutData) {
@@ -110,6 +115,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             // }
             // end of main function
             console.log(new_fig);
+            console.log(store);
             return new_fig;
         }
     }
