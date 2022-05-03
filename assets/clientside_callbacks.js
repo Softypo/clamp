@@ -94,9 +94,10 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                             c = c.concat([type]);
                         }
                     });
+                    y = y.sort((a, b) => a + b);
                     new_fig.data[index]['y'] = y;
-                    new_fig.data[index]['x'] = x;
-                    new_fig.data[index]['customdata'] = c;
+                    new_fig.data[index]['x'] = x.sort((a, b) => y.indexOf(a) - y.indexOf(b));
+                    new_fig.data[index]['customdata'] = c.sort((a, b) => y.indexOf(a) - y.indexOf(b));
                     //trace.visibility = false;
                     console.log(clamps_types);
                     console.log(y.length);
