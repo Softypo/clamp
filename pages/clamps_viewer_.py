@@ -18,13 +18,13 @@ dash.register_page(__name__, path="/")
 
 # data
 
-clamps = pd.read_hdf("data/446/446cd.h5", "446cd")
+clamps = pd.read_hdf("data/446/446cd.h5", "cd446")
 clamp_types = clamps['type'].unique()
 
 
 # functions
 
-def clampsoverview_fig(clamp_types, clamps):
+def clampsoverview_fig(clamp_types, clamps, fiver=True):
     fig = go.Figure()
     cc = clamps.copy()
     fiber = cc[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
@@ -42,12 +42,12 @@ def clampsoverview_fig(clamp_types, clamps):
     for type in cc['type'].unique():
         fig.add_trace(go.Scatter(x=cc.loc[cc['type'] == type, 'plot_angle'], y=cc.loc[cc['type'] == type, 'depth'],
                                  mode='markers', name=type, customdata=cc.loc[cc['type'] == type, ['hadware_name', 'angle_rounded']]))
-
-    fig.add_trace(go.Scatter(x=fiber['fiber_plot_angle'], y=fiber['depth'], mode='lines+markers',
-                             name='Fiber Wire', marker_color='crimson', customdata=fiber[['type', 'fiber_angle_rounded']]))
+    if fiver:
+        fig.add_trace(go.Scatter(x=fiber['fiber_plot_angle'], y=fiber['depth'], mode='lines+markers',
+                                 name='Fiber Wire', marker_color='crimson', customdata=fiber[['type', 'fiber_angle_rounded']]))
 
     fig.update_traces(hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
-    fig.update_layout(hovermode="y", title="Fiber cable orientation overview", title_x=0.5, legend_title="Type", legend_orientation="h", yaxis_title="Depth",
+    fig.update_layout(hovermode="y unified", title="Fiber cable orientation overview", title_x=0.5, legend_title="Type", legend_orientation="h", yaxis_title="Depth",
                       xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=True, margin=dict(l=80, r=80, b=25, t=50, pad=4), showlegend=False)
     fig.update_yaxes(autorange="reversed")
     fig.layout.modebar = {'orientation': 'v'}
@@ -116,7 +116,7 @@ layout = dbc.Row([
                     ),
                 ), ], style={'height': 'auto'}),
             dbc.Row(
-                dash_table.DataTable(clamps.to_dict('records'),
+                dash_table.DataTable(clamps.round(3).to_dict('records'),
                                      id='cd_table',
                                      page_action='none',
                                      sort_action='native',
@@ -144,7 +144,7 @@ tabs = {'overview': [
     #     id="dropdown_cd",
     # ),
     dcc.Graph(id="cd_overview",
-              #figure=clampsoverview_fig(clamp_types, clamps),
+              # figure=clampsoverview_fig(clamp_types, clamps, False),
               animate=False,
               responsive=True,
               config={'displaylogo': False,
@@ -185,7 +185,7 @@ def tab_content(active_tab):
     Input("dropdown_cd", "value"),
 )
 def filterclamps_table(value):
-    return clamps[clamps.type.isin(value)].to_dict('records')
+    return clamps[clamps.type.isin(value)].round(3).to_dict('records')
 
 
 @ callback(
