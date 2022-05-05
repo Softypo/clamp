@@ -9,10 +9,16 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
         clampsoverview_listener: function (clamps_types, themeToggle, fig, store, themes) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
 
-            //console.log(window.dash_clientside);
+            new_fig = {};
+            if (fig === undefined) {
+                console.log("fig is undefined");
+                store_fig = JSON.parse(JSON.stringify(store));
+                new_fig = JSON.parse(JSON.stringify(store));
+            } else {
+                store_fig = JSON.parse(JSON.stringify(store));
+                new_fig = { ...fig };
 
-            const new_fig = JSON.parse(JSON.stringify(store));
-
+            };
             // if (trigger == '' || trigger == undefined) {
             //     console.log("trigger is undefined");
             //     return dash_clientside.no_update;
@@ -80,31 +86,32 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             //console.log(new_fig.layout.template)
             //console.log(fig.layout.modebar)
             //}
-            //if (trigger == "dropdown_cd") {
+            // if (trigger == "dropdown_cd") {
             //console.log(nClicks);
             y = [];
             x = [];
             c = [];
-            new_fig.data.forEach((trace, index) => {
+            store_fig.data.forEach((trace, index) => {
                 if (trace.name == "Fiber Wire") {
                     trace.customdata.forEach((type, indext) => {
                         if (clamps_types.includes(type[0])) {
-                            y = y.concat(new_fig.data[index]['y'][indext]);
-                            x = x.concat(new_fig.data[index]['x'][indext]);
+                            y = y.concat(store_fig.data[index]['y'][indext]);
+                            x = x.concat(store_fig.data[index]['x'][indext]);
                             c = c.concat([type]);
                         }
                     });
-                    y = y.sort((a, b) => a + b);
+                    //console.log(c);
+                    //y = y.sort((a, b) => a - b);
                     new_fig.data[index]['y'] = y;
-                    new_fig.data[index]['x'] = x.sort((a, b) => y.indexOf(a) - y.indexOf(b));
-                    new_fig.data[index]['customdata'] = c.sort((a, b) => y.indexOf(a) - y.indexOf(b));
+                    new_fig.data[index]['x'] = x //.sort((a, b) => y.indexOf(a) - y.indexOf(b));
+                    new_fig.data[index]['customdata'] = c //.sort((a, b) => y.indexOf(a) - y.indexOf(b));
                     //trace.visibility = false;
-                    console.log(clamps_types);
-                    console.log(y.length);
-                    console.log(new_fig.data[index]['y'].length);
+                    //console.log(clamps_types);
+                    //console.log(y.length);
+                    //console.log(new_fig.data[index]['y'].length);
                 }
             });
-            //}
+            // };
             // } else if (trigger === "relayoutData" && relayoutData !== undefined) {
             //     if (length(relayoutData) > 1) {
             //         if ('xaxis.range[1]' in relayoutData && 'yaxis.range[1]' in relayoutData) {

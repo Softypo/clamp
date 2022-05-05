@@ -1,5 +1,7 @@
 from distutils.command.config import config
 import re
+
+from tables import Column
 from dv_dashboard import themes, CONTENT_STYLE
 import pandas as pd
 # from dash_bootstrap_templates import template_from_url, load_figure_template
@@ -28,7 +30,7 @@ def clampsoverview_fig(clamp_types, clamps, fiver=True):
     fig = go.Figure()
     cc = clamps.copy()
     fiber = cc[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
-                'fiber_angle_rounded']].loc[cc['type'].isin(clamp_types)]
+                'fiberTOH']].loc[cc['type'].isin(clamp_types)]
 
     # add delta
     nogozone_svg = ''.join([f'M {xy[0][0]+10},{xy[0][1]} ' if xy[1] == 0 else f'L{xy[0][0]+10},{xy[0][1]} ' for xy in zip(fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))]) + \
@@ -41,17 +43,17 @@ def clampsoverview_fig(clamp_types, clamps, fiver=True):
     # Add traces
     for type in cc['type'].unique():
         fig.add_trace(go.Scatter(x=cc.loc[cc['type'] == type, 'plot_angle'], y=cc.loc[cc['type'] == type, 'depth'],
-                                 mode='markers', name=type, customdata=cc.loc[cc['type'] == type, ['hadware_name', 'angle_rounded']]))
+                                 mode='markers', name=type, customdata=cc.loc[cc['type'] == type, ['hadware_name', 'clampsTOH']].round(0)))
     if fiver:
         fig.add_trace(go.Scatter(x=fiber['fiber_plot_angle'], y=fiber['depth'], mode='lines+markers',
-                                 name='Fiber Wire', marker_color='crimson', customdata=fiber[['type', 'fiber_angle_rounded']]))
+                                 name='Fiber Wire', marker_color='crimson', customdata=fiber[['type', 'fiberTOH']].round(0)))
 
     fig.update_traces(hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
     fig.update_layout(hovermode="y unified", title="Fiber cable orientation overview", title_x=0.5, legend_title="Type", legend_orientation="h", yaxis_title="Depth",
                       xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=True, margin=dict(l=80, r=80, b=25, t=50, pad=4), showlegend=False)
     fig.update_yaxes(autorange="reversed")
     fig.layout.modebar = {'orientation': 'v'}
-    fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
+    fig.layout.transition = {'duration': 1000, 'easing': 'cubic-in-out'}
     return fig
 
 
@@ -116,7 +118,7 @@ layout = dbc.Row([
                     ),
                 ), ], style={'height': 'auto'}),
             dbc.Row(
-                dash_table.DataTable(clamps.round(3).to_dict('records'),
+                dash_table.DataTable(clamps.iloc[:, [0, 1, 4, 5, 6]].round(3).to_dict('records'),
                                      id='cd_table',
                                      page_action='none',
                                      sort_action='native',
@@ -185,7 +187,7 @@ def tab_content(active_tab):
     Input("dropdown_cd", "value"),
 )
 def filterclamps_table(value):
-    return clamps[clamps.type.isin(value)].round(3).to_dict('records')
+    return clamps[clamps.type.isin(value)].iloc[:, [0, 1, 4, 5, 6]].round(3).to_dict('records')
 
 
 @ callback(
@@ -206,7 +208,7 @@ clientside_callback(
     Output("cd_overview", "figure"),
     Input("dropdown_cd", "value"),
     Input("themeToggle", "value"),
-    #Input('cd_overview', 'relayoutData'),
+    # Input('cd_overview', 'relayoutData'),
     State('cd_overview', 'figure'),
     State("cover", "data"),
     State("themes", "data"),
@@ -393,11 +395,11 @@ clientside_callback(
 def clampspolar_listener(clamps_types, themeToggle):
     fig = go.Figure()
     fiber = clamps[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
-                    'fiber_angle_rounded']].loc[clamps['type'].isin(clamps_types)]
+                   'fiberTOH']].loc[clamps['type'].isin(clamps_types)]
 
     # add delta
     nogozone_polar = pd.DataFrame([[angle+10, angle-10, depth]
-                                   for angle, depth in fiber[['fiber_plot_angle', 'depth']].values])
+                                  for angle, depth in fiber[['fiber_plot_angle', 'depth']].values])
 
     # fig.update_layout(shapes=[dict(type="path", path=nogozone_svg,
     #                                fillcolor='rgba(255,69,0,0.2)', line=dict(width=0), layer='below')])
@@ -405,13 +407,13 @@ def clampspolar_listener(clamps_types, themeToggle):
     # Add traces
     for type in clamps['type'].unique():
         fig.add_trace(go.Scatterpolar(theta=clamps.loc[clamps['type'] == type, 'plot_angle'], r=clamps.loc[clamps['type'] == type, 'depth'],
-                                      mode='markers', name=type, customdata=clamps.loc[clamps['type'] == type, ['hadware_name', 'fiber_angle_rounded']]))
+                                      mode='markers', name=type, customdata=clamps.loc[clamps['type'] == type, ['hadware_name', 'clampsTOH']].round(0)))
 
     # Add traces
     # fig.add_trace(go.Scatterpolar(r=nogozone_polar['depth'], theta=nogozone_polar['fiber_plot_angle'], mode='lines+markers',
     #                               name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
     fig.add_trace(go.Scatterpolar(r=fiber['depth'], theta=fiber['fiber_plot_angle'], mode='lines+markers',
-                                  name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
+                                  name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiberTOH']].round(0)))
     fig.update_traces(hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
     fig.update_layout(title="Fiber cable orientation polarplot", title_x=0.5,
                       legend_title="Type", legend_orientation="h", autosize=True, margin=dict(t=50, b=40, l=40, r=40))
