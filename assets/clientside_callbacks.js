@@ -88,9 +88,11 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             //}
             // if (trigger == "dropdown_cd") {
             //console.log(nClicks);
-            y = [];
-            x = [];
-            c = [];
+            let y = [];
+            let x = [];
+            let c = [];
+            let nogozone_go = [];
+            let nogozone_back = [];
             store_fig.data.forEach((trace, index) => {
                 if (trace.name == "Fiber Wire") {
                     trace.customdata.forEach((type, indext) => {
@@ -98,13 +100,20 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                             y = y.concat(store_fig.data[index]['y'][indext]);
                             x = x.concat(store_fig.data[index]['x'][indext]);
                             c = c.concat([type]);
+                            nogozone_go = nogozone_go.concat(`L${store_fig.data[index]['x'][indext] - 10},${store_fig.data[index]['y'][indext]}`);
+                            nogozone_back = nogozone_back.concat(`L${store_fig.data[index]['x'][indext] + 10},${store_fig.data[index]['y'][indext]}`);
                         }
                     });
+                    if (nogozone_go[0] != undefined) {
+                        nogozone_go[0] = nogozone_go[0].replace('L', 'M ');
+                        nogozone_back[0] = nogozone_back[0] + ' Z';
+                    };
                     //console.log(c);
                     //y = y.sort((a, b) => a - b);
                     new_fig.data[index]['y'] = y;
                     new_fig.data[index]['x'] = x //.sort((a, b) => y.indexOf(a) - y.indexOf(b));
                     new_fig.data[index]['customdata'] = c //.sort((a, b) => y.indexOf(a) - y.indexOf(b));
+                    new_fig.layout.shapes[0]['path'] = nogozone_go + nogozone_back.reverse();
                     //trace.visibility = false;
                     //console.log(clamps_types);
                     //console.log(y.length);

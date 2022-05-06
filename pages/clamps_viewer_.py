@@ -56,6 +56,16 @@ def clampsoverview_fig(clamp_types, clamps, fiver=True):
     fig.layout.transition = {'duration': 1000, 'easing': 'cubic-in-out'}
     return fig
 
+    ['linear', 'quad', 'cubic', 'sin', 'exp', 'circle',
+     'elastic', 'back', 'bounce', 'linear-in', 'quad-in',
+     'cubic-in', 'sin-in', 'exp-in', 'circle-in', 'elastic-in',
+     'back-in', 'bounce-in', 'linear-out', 'quad-out',
+     'cubic-out', 'sin-out', 'exp-out', 'circle-out',
+     'elastic-out', 'back-out', 'bounce-out', 'linear-in-out',
+     'quad-in-out', 'cubic-in-out', 'sin-in-out', 'exp-in-out',
+     'circle-in-out', 'elastic-in-out', 'back-in-out',
+     'bounce-in-out']
+
 
 # body
 
@@ -442,5 +452,5 @@ def clampspolar_listener(clamps_types, themeToggle):
             'bgcolor': 'rgb(39, 43, 48)',
             'color': 'white',
             'activecolor': 'grey'}
-    # fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
+    # fig.layout.transition = {'duration': 1000, 'easing': 'circle-in-out'}
     return fig
