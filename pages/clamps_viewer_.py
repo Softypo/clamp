@@ -49,8 +49,12 @@ def clampsoverview_fig(clamp_types, clamps, fiver=True):
                                  name='Fiber Wire', marker_color='crimson', customdata=fiber[['type', 'fiberTOH']].round(0)))
 
     fig.update_traces(hovertemplate='%{customdata[0]}<br>%{customdata[1]}')
-    fig.update_layout(hovermode="y unified", title="Fiber cable orientation overview", title_x=0.5, legend_title="Type", legend_orientation="h", yaxis_title="Depth",
-                      xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=True, margin=dict(l=80, r=80, b=25, t=50, pad=4), showlegend=False)
+    fig.update_layout(hovermode="y unified", legend_title="Type", legend_orientation="h", yaxis_title="Depth",
+                      showlegend=False,
+                      xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=True, margin=dict(l=80, r=40, b=25, t=20, pad=4),
+                      #title="Fiber cable orientation overview",
+                      # title_x=0.5,
+                      )
     fig.update_yaxes(autorange="reversed")
     fig.layout.modebar = {'orientation': 'v'}
     fig.layout.transition = {'duration': 1000, 'easing': 'cubic-in-out'}
@@ -101,7 +105,8 @@ layout = dbc.Row([
             dbc.Row(
                 dcc.Graph(id="cd_polar", animate=False,
                           config={'displaylogo': False},
-                          style={'height': '35%'},),
+                          style={'height': 'auto'},
+                          ),
             ),
             dbc.Row([
                 dbc.Col(
@@ -130,19 +135,18 @@ layout = dbc.Row([
             dbc.Row(
                 dash_table.DataTable(clamps.iloc[:, [0, 1, 4, 5, 6]].round(3).to_dict('records'),
                                      id='cd_table',
-                                     page_action='none',
+                                     page_action='native',
                                      sort_action='native',
                                      style_as_list_view=True,
-                                     fixed_rows={
-                    'headers': True, 'data': 0},
-                    style_table={'minHeight': '100%', 'height': '100%', 'maxHeight': '100%',
-                                 'minWidth': 'auto', 'width': 'auto', 'maxWidth': 'auto'},
-                ), style={'height': '60%'}),
+                                     fixed_rows={'headers': True, 'data': 0},
+                                     style_table={'minHeight': '100%', 'height': '100%', 'maxHeight': '100%',
+                                                  'minWidth': 'auto', 'width': 'auto', 'maxWidth': 'auto'},
+                                     ), style={'height': '100%'}),
             ],
             xl=5, lg=6, md=12, sm=12, xs=12,
             style=CONTENT_STYLE,
             ),
-], style={'height': '100%'})
+])
 
 
 tabs = {'overview': [
@@ -405,11 +409,11 @@ clientside_callback(
 def clampspolar_listener(clamps_types, themeToggle):
     fig = go.Figure()
     fiber = clamps[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
-                   'fiberTOH']].loc[clamps['type'].isin(clamps_types)]
+                    'fiberTOH']].loc[clamps['type'].isin(clamps_types)]
 
     # add delta
     nogozone_polar = pd.DataFrame([[angle+10, angle-10, depth]
-                                  for angle, depth in fiber[['fiber_plot_angle', 'depth']].values])
+                                   for angle, depth in fiber[['fiber_plot_angle', 'depth']].values])
 
     # fig.update_layout(shapes=[dict(type="path", path=nogozone_svg,
     #                                fillcolor='rgba(255,69,0,0.2)', line=dict(width=0), layer='below')])
