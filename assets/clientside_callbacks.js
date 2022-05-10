@@ -6,7 +6,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             //stylesheet.href = themeLink;
             setTimeout(function () { stylesheet.href = themeLink; }, 500);
         },
-        clampsoverview_listener: function (clamps_types, themeToggle, fig, store, themes) {
+        clampsoverview_listener: function (clamps_types, themeToggle, relayoutData, fig, store, themes) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
 
             new_fig = {};
@@ -121,15 +121,15 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 }
             });
             // };
-            // } else if (trigger === "relayoutData" && relayoutData !== undefined) {
-            //     if (length(relayoutData) > 1) {
-            //         if ('xaxis.range[1]' in relayoutData && 'yaxis.range[1]' in relayoutData) {
-            //             if (relayoutData['xaxis.range[1]'] !== relayoutData['xaxis.range[0]'] && relayoutData['yaxis.range[1]'] !== relayoutData['yaxis.range[0]']) {
-            //                 fig.layout.yaxis.autorange = "reversed";
-            //             }
-            //         }
-            //     }
-            // }
+            if (trigger === "relayoutData" && relayoutData !== undefined) {
+                if (length(relayoutData) > 1) {
+                    if ('xaxis.range[1]' in relayoutData && 'yaxis.range[1]' in relayoutData) {
+                        if (relayoutData['xaxis.range[1]'] !== relayoutData['xaxis.range[0]'] && relayoutData['yaxis.range[1]'] !== relayoutData['yaxis.range[0]']) {
+                            fig.layout.yaxis.autorange = "reversed";
+                        }
+                    }
+                }
+            };
             // end of main function
             console.log(new_fig);
             console.log(store);
