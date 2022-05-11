@@ -21,14 +21,14 @@ app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[them
                 title='DV Dashboard',
                 serve_locally=True,
                 meta_tags=[
-                    {"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=1"},
-                    {"name": "color-scheme", "content": "light dark"}, ],
+                    {"name": "color-scheme", "content": "light dark"},
+                    {"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=1"}],
                 # external_scripts=['https://cdn.plot.ly/plotly-2.11.1.min.js']
                 )
 
 # load_figure_template(themes['_light']['fig'])
 # load_figure_template(themes['_dark']['fig'])
-load_figure_template([themes['_dark']['fig'], themes['_light']['fig']])
+#load_figure_template([themes['_dark']['fig'], themes['_light']['fig']])
 
 # app.scripts.config.serve_locally = True
 
@@ -56,7 +56,7 @@ CONTENT_STYLE = {
     # "padding": "0.5rem",
     "height": "94vh",
     "display": "flex",
-    "flex-flow": "column",
+    "flexFlow": "column",
 }
 
 # body
@@ -103,6 +103,26 @@ sidebar = html.Div(
                         #         aio_id="themeio", radio_props={"value": dbc.themes.SLATE}
                         #     ),
                         # ),
+                    ],
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            html.P("Unit System",  # className="lead",
+                                   style={"textAlign": "right", "marginTop": "auto", "marginBottom": "auto"}),
+                            width=8,
+                        ),
+                        dbc.Col(
+                            [
+                                html.Span(className="fa fa-globe",
+                                          style={"marginRight": "0.5rem"}),
+                                dbc.Switch(value=False, id="unitToggle",
+                                           className="d-inline-block ml-2",
+                                           persistence=True, persistence_type='local'),
+                                html.Span(className="fa fa-flag-usa",
+                                          style={"marginRight": "auto"}),
+                            ],
+                        ),
                     ],
                 ),
                 html.P(
