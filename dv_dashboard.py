@@ -54,7 +54,7 @@ NAVBAR_STYLE = {
 CONTENT_STYLE = {
     "marginTop": '8px',
     # "padding": "0.5rem",
-    "height": "94vh",
+    "height": "93vh",
     "display": "flex",
     "flexFlow": "column",
 }
@@ -116,7 +116,7 @@ sidebar = html.Div(
                             [
                                 html.Span(className="fa fa-globe",
                                           style={"marginRight": "0.5rem"}),
-                                dbc.Switch(value=False, id="unitToggle",
+                                dbc.Switch(value=False, id="unitsToggle",
                                            className="d-inline-block ml-2",
                                            persistence=True, persistence_type='local'),
                                 html.Span(className="fa fa-flag-usa",
@@ -289,6 +289,15 @@ app.clientside_callback(
     State("themes", "data"),
 )
 
+app.clientside_callback(
+    ClientsideFunction(
+        namespace="clientside",
+        function_name="units_switcher",
+    ),
+    Output("cover", "data"),
+    Input("unitsToggle", "value"),
+    State("cover", "data"),
+)
 
 # @ app.callback(Output("void2", "children"),
 #                #Input("url", "href"),
@@ -306,7 +315,7 @@ app.layout = dbc.Container(
 
 if __name__ == "__main__":
     app.run_server(port=8888,
-                   debug=True,
+                   debug=False,
                    threaded=True,
                    # host='0.0.0.0',
                    use_reloader=True)

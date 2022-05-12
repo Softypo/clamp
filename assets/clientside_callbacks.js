@@ -6,7 +6,33 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             //stylesheet.href = themeLink;
             setTimeout(function () { stylesheet.href = themeLink; }, 500);
         },
-        clampsoverview_listener: function (clamps_types, themeToggle, unitToggle, relayoutData, fig, store, themes) {
+        units_switcher: function (unitsToggle, store) {
+            new_fig = JSON.parse(JSON.stringify(store));
+            if (unitsToggle) {
+                if (new_fig.layout.yaxis.title.text == 'Depth (ft)') return new_fig;
+                new_fig.data.forEach((trace, index) => {
+                    //ft = trace.y * 3.28084;
+                    console.log(index);
+                    new_fig.data[index].y = trace.y.map(y => y * 3.28084);
+                });
+                new_fig.layout.yaxis.title.text = 'Depth (ft)';
+                new_fig.layout.yaxis.ticksuffix = ' ft';
+                delete new_fig.layout.yaxis.range;
+                //new_fig.layout.yaxis.range = new_fig.layout.yaxis.range.map(y => y * 3.28084);
+            } else {
+                if (new_fig.layout.yaxis.title.text == 'Depth (m)') return new_fig;
+                new_fig.data.forEach((trace, index) => {
+                    //ft = trace.y * 3.28084;
+                    console.log(index);
+                    new_fig.data[index].y = trace.y.map(y => y * 0.3048);
+                });
+                new_fig.layout.yaxis.title.text = 'Depth (m)';
+                new_fig.layout.yaxis.ticksuffix = ' m';
+                delete new_fig.layout.yaxis.range;
+            };
+            return new_fig;
+        },
+        clampsoverview_listener: function (clamps_types, themeToggle, relayoutData, store, fig, themes) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
 
             new_fig = {};
@@ -19,21 +45,31 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 new_fig = { ...fig };
             };
 
-            console.log("_fig", new_fig);
+            // if (trigger == "unitsToggle") {
+            //     if (unitsToggle) {
+            //         new_fig.data.forEach((trace, index) => {
+            //             ft = trace.y * 3.28084;
+            //             new_fig.data[index].y = new_fig.data[index].y.map(y => y * 3.28084);
+            //         });
+            //         delete new_fig.layout.yaxis.range;
+            //         // new_fig.layout.yaxis.range = new_fig.layout.yaxis.range.map(y => y * 3.28084);
+            //     };
+            // };
 
-            if (trigger == "unitToggle") {
-                if (unitToggle) {
-                    new_fig.data.forEach((trace, index) => {
-                        ft = trace.y * 3.28084;
-                        new_fig.data[index].y = new_fig.data[index].y.map(y => y * 3.28084);
-                    });
-                    delete new_fig.layout.yaxis.range;
-                    // new_fig.layout.yaxis.range = new_fig.layout.yaxis.range.map(y => y * 3.28084);
-                };
-            };
-
-            // console.log(trigger);
+            console.log(trigger);
             // console.log(themeToggle);
+
+            //console.log("_fig", new_fig);
+
+            if (trigger == "cd_overview" && Object.keys(relayoutData).length == 4) {
+                // console.log(Object.keys(relayoutData).length);
+                if (relayoutData['xaxis.range[1]'] == relayoutData['xaxis.range[0]'] && relayoutData['yaxis.range[1]'] == relayoutData['yaxis.range[0]']) {
+                    new_fig.layout.xaxis = { ...store_fig.layout.xaxis };
+                    new_fig.layout.yaxis = { ...store_fig.layout.yaxis };
+                    // new_fig = { ...store_fig };
+                }
+                return new_fig;
+            };
 
             if (themeToggle) {
                 const request = new XMLHttpRequest();
@@ -60,6 +96,8 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                     'activecolor': 'grey'
                 };
             };
+            if (trigger == "themeToggle") { console.log('r', new_fig); return new_fig; };
+
 
             let y = [];
             let x = [];
@@ -88,14 +126,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 };
             });
 
-            if (trigger == "cd_overview" && Object.keys(relayoutData).length == 4) {
-                // console.log(Object.keys(relayoutData).length);
-                if (relayoutData['xaxis.range[1]'] == relayoutData['xaxis.range[0]'] && relayoutData['yaxis.range[1]'] == relayoutData['yaxis.range[0]']) {
-                    new_fig.layout.xaxis = { ...store_fig.layout.xaxis };
-                    new_fig.layout.yaxis = { ...store_fig.layout.yaxis };
-                    // new_fig = { ...store_fig };
-                }
-            };
+
             // end of main function
             console.log(new_fig);
             // console.log(store);

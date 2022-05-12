@@ -270,10 +270,10 @@ clientside_callback(
     Output("cd_overview", "figure"),
     Input("dropdown_cd", "value"),
     Input("themeToggle", "value"),
-    Input("unitToggle", "value"),
+    #Input("unitsToggle", "value"),
     Input('cd_overview', 'relayoutData'),
+    Input("cover", "data"),
     State('cd_overview', 'figure'),
-    State("cover", "data"),
     State("themes", "data"),
 )
 
