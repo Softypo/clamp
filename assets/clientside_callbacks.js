@@ -8,6 +8,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
         },
         units_switcher: function (unitsToggle, store) {
             new_fig = JSON.parse(JSON.stringify(store));
+            console.log('pre u', new_fig);
             if (unitsToggle) {
                 if (new_fig.layout.yaxis.title.text == 'Depth (ft)') return new_fig;
                 new_fig.data.forEach((trace, index) => {
@@ -17,8 +18,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 });
                 new_fig.layout.yaxis.title.text = 'Depth (ft)';
                 new_fig.layout.yaxis.ticksuffix = ' ft';
-                delete new_fig.layout.yaxis.range;
-                //new_fig.layout.yaxis.range = new_fig.layout.yaxis.range.map(y => y * 3.28084);
+                // delete new_fig.layout.yaxis.range;
             } else {
                 if (new_fig.layout.yaxis.title.text == 'Depth (m)') return new_fig;
                 new_fig.data.forEach((trace, index) => {
@@ -28,16 +28,19 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 });
                 new_fig.layout.yaxis.title.text = 'Depth (m)';
                 new_fig.layout.yaxis.ticksuffix = ' m';
-                delete new_fig.layout.yaxis.range;
+                // delete new_fig.layout.yaxis.range;
             };
+            new_fig.layout.autosize = true;
+            // delete new_fig.layout.yaxis.autorange
+            // new_fig.layout.yaxis.range = [Math.max(...new_fig.data[3].y), Math.min(...new_fig.data[3].y)];
+            console.log('port u', new_fig);
             return new_fig;
         },
         clampsoverview_listener: function (clamps_types, themeToggle, relayoutData, store, fig, themes) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
 
             new_fig = {};
-            if (fig === undefined) {
-                // console.log("fig is undefined");
+            if (fig === undefined || trigger == "cover") {
                 store_fig = JSON.parse(JSON.stringify(store));
                 new_fig = JSON.parse(JSON.stringify(store));
             } else {
@@ -56,7 +59,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             //     };
             // };
 
-            console.log(trigger);
+            // console.log(trigger);
             // console.log(themeToggle);
 
             //console.log("_fig", new_fig);
@@ -128,7 +131,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
 
 
             // end of main function
-            console.log(new_fig);
+            // console.log(new_fig);
             // console.log(store);
             return new_fig;
         },
