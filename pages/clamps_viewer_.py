@@ -1,7 +1,3 @@
-from distutils.command.config import config
-import re
-
-from tables import Column
 from dv_dashboard import themes, CONTENT_STYLE
 import pandas as pd
 # from dash_bootstrap_templates import template_from_url, load_figure_template
@@ -20,7 +16,8 @@ dash.register_page(__name__, path="/")
 
 # data
 
-clamps = pd.read_hdf("data/446/446cd.h5", "cd446")
+#clamps = pd.read_hdf("data/446/446cd.h5", "cd446")
+clamps = pd.read_pickle("data/446/446cd.pkl")
 clamp_types = clamps['type'].unique()
 
 
@@ -153,7 +150,7 @@ layout = dbc.Row([
                           config={'displaylogo': False,
                                   'modeBarButtonsToRemove': ['select2d'],
                                   'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
-                          style={'height': '100%'},
+                          style={'height': '23em'},
                           ),
             ),
             dbc.Row([

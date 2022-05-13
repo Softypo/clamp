@@ -30,10 +30,11 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 new_fig.layout.yaxis.ticksuffix = ' m';
                 // delete new_fig.layout.yaxis.range;
             };
-            new_fig.layout.autosize = true;
-            // delete new_fig.layout.yaxis.autorange
-            // new_fig.layout.yaxis.range = [Math.max(...new_fig.data[3].y), Math.min(...new_fig.data[3].y)];
-            console.log('port u', new_fig);
+            // new_fig.layout.autosize = true;
+            delete new_fig.layout.yaxis.autorange
+            // new_fig.layout.yaxis.autorange = true;
+            new_fig.layout.yaxis.range = [Math.max(...new_fig.data[3].y) + 500, Math.min(...new_fig.data[3].y) - 500];
+            console.log('post u', new_fig);
             return new_fig;
         },
         clampsoverview_listener: function (clamps_types, themeToggle, relayoutData, store, fig, themes) {
@@ -128,6 +129,8 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                     new_fig.layout.shapes[0]['path'] = nogozone_go + nogozone_back.reverse();
                 };
             });
+
+            // new_fig.layout.transition = { "duration": 1000, "easing": "cubic-in-out" };
 
 
             // end of main function
