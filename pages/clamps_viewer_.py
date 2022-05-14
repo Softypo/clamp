@@ -1,3 +1,4 @@
+from turtle import home
 from dv_dashboard import themes, CONTENT_STYLE
 import pandas as pd
 # from dash_bootstrap_templates import template_from_url, load_figure_template
@@ -75,17 +76,17 @@ def clampspolar_fig(clamp_types, clamps, fiver=True):
     # Add traces
     for type in clamps['type'].unique():
         fig.add_trace(go.Scatterpolar(theta=clamps.loc[clamps['type'] == type, 'plot_angle'], r=clamps.loc[clamps['type'] == type, 'depth'],
-                                      mode='markers', name=type, customdata=clamps.loc[clamps['type'] == type, ['hadware_name', 'clampsTOH']].round(0)))
+                                      mode='markers', name=type, customdata=clamps.loc[clamps['type'] == type, ['type', 'depth', 'clampsTOH']].round(0)))
 
     # Add traces
     # fig.add_trace(go.Scatterpolar(r=nogozone_polar['depth'], theta=nogozone_polar['fiber_plot_angle'], mode='lines+markers',
     #                               name='Fiber Wire', marker_color='crimson', customdata=fiber[['hadware_name', 'fiber_angle_rounded']]))
     if fiver:
         fig.add_trace(go.Scatterpolar(r=fiber['depth'], theta=fiber['fiber_plot_angle'], mode='lines+markers',
-                      name='Fiber Wire', marker_color='crimson', customdata=fiber[['type', 'fiberTOH']].round(0)))
+                      name='Fiber Wire', marker_color='crimson', customdata=fiber[['type', 'depth', 'fiberTOH']].round(0)))
 
     fig.update_traces(
-        hovertemplate='%{customdata[0]}<br>%{customdata[1]} deg (TOH)')
+        hovertemplate='%{customdata[1]} m<br>%{customdata[2]} deg (TOH)')
     fig.update_layout(title="Fiber cable orientation polarplot", title_x=0.5, legend_title="Type",
                       legend_orientation="h", autosize=True, margin=dict(t=50, b=40, l=40, r=40))
     fig.update_polars(
@@ -266,12 +267,12 @@ clientside_callback(
     ),
     Output("cd_overview", "figure"),
     Input("dropdown_cd", "value"),
-    Input("themeToggle", "value"),
+    #Input("themeToggle", "value"),
     #Input("unitsToggle", "value"),
     Input('cd_overview', 'relayoutData'),
     Input("cover", "data"),
     State('cd_overview', 'figure'),
-    State("themes", "data"),
+    #State("themes", "data"),
 )
 
 clientside_callback(
@@ -281,8 +282,24 @@ clientside_callback(
     ),
     Output("cd_polar", "figure"),
     Input("dropdown_cd", "value"),
-    Input("themeToggle", "value"),
+    #Input("themeToggle", "value"),
+    Input("cpolar", "data"),
     State('cd_polar', 'figure'),
+    #State("themes", "data"),
+)
+
+clientside_callback(
+    ClientsideFunction(
+        namespace="clientside",
+        function_name="cstore_switcher",
+    ),
+    Output("ctbl", "data"),
+    Output("cover", "data"),
+    Output("cpolar", "data"),
+    Input("themeToggle", "value"),
+    Input("unitsToggle", "value"),
+    State("ctbl", "data"),
+    State("cover", "data"),
     State("cpolar", "data"),
     State("themes", "data"),
 )

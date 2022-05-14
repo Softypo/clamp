@@ -6,59 +6,97 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             //stylesheet.href = themeLink;
             setTimeout(function () { stylesheet.href = themeLink; }, 100);
         },
-        units_switcher: function (unitsToggle, ctbl, cover, cpolar) {
+        cstore_switcher: function (themeToggle, unitsToggle, ctbl, cover, cpolar, themes) {
+            const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
             cover_fig = JSON.parse(JSON.stringify(cover));
             cpolar_fig = JSON.parse(JSON.stringify(cpolar));
             console.log('pre u', cpolar_fig);
-            if (unitsToggle) {
-                if (cover_fig.layout.yaxis.title.text == 'Depth (ft)') return [ctbl, cover_fig, cpolar_fig];
-                cover_fig.data.forEach((trace, index) => {
-                    //ft = trace.y * 3.28084;
-                    console.log(index);
-                    cover_fig.data[index].y = trace.y.map(y => y * 3.28084);
-                    cpolar_fig.data[index].r = cpolar_fig.data[index].r.map(y => y * 3.28084);
-                });
-                cover_fig.layout.yaxis.title.text = 'Depth (ft)';
-                cover_fig.layout.yaxis.ticksuffix = ' ft';
-                // delete cover_fig.layout.yaxis.range;
-            } else {
-                if (cover_fig.layout.yaxis.title.text == 'Depth (m)') return [ctbl, cover_fig, cpolar_fig];
-                cover_fig.data.forEach((trace, index) => {
-                    //ft = trace.y * 3.28084;
-                    console.log(index);
-                    cover_fig.data[index].y = trace.y.map(y => y * 0.3048);
-                    cpolar_fig.data[index].r = cpolar_fig.data[index].r.map(y => y * 0.3048);
-                });
-                cover_fig.layout.yaxis.title.text = 'Depth (m)';
-                cover_fig.layout.yaxis.ticksuffix = ' m';
-                // delete cover_fig.layout.yaxis.range;
+
+            if (cover_fig.layout.theme === undefined) {
+                let template = {};
+                let modebar = {};
+                if (themeToggle && cover_fig.layout.theme == 'dark') {
+                    const request = new XMLHttpRequest();
+                    request.open('GET', themes['_light']['json'], false); // true creates a promise, so it wont work
+                    request.send();
+                    template = JSON.parse(request.response);
+                    modebar = {
+                        'orientation': 'v',
+                        'bgcolor': 'salmon',
+                        'color': 'white',
+                        'activecolor': '#9ED3CD'
+                    };
+                } else if (cover_fig.layout.theme == 'light') {
+                    const request = new XMLHttpRequest();
+                    request.open('GET', themes['_dark']['json'], false); // true creates a promise, so it wont work
+                    request.send();
+                    template = JSON.parse(request.response);
+                    modebar = {
+                        'orientation': 'v',
+                        'bgcolor': 'rgb(39, 43, 48)',
+                        'color': 'white',
+                        'activecolor': 'grey'
+                    };
+                } else {
+                    template = cover_fig['layout']['template']
+                    modebar = cover_fig['layout']['modebar']
+                };
+                cover_fig['layout']['template'] = template;
+                cover_fig['layout']['modebar'] = modebar;
+                cpolar_fig['layout']['template'] = template;
+                cpolar_fig['layout']['modebar'] = modebar;
             };
 
-
-            let nogozone_go = [];
-            let nogozone_back = [];
-            cover_fig.data.forEach((trace, index) => {
-                if (trace.name == "Fiber Wire") {
-                    trace.customdata.forEach((type, indext) => {
-                        nogozone_go = nogozone_go.concat(`L${cover_fig.data[index]['x'][indext] - 20},${cover_fig.data[index]['y'][indext]}`);
-                        nogozone_back = nogozone_back.concat(`L${cover_fig.data[index]['x'][indext] + 20},${cover_fig.data[index]['y'][indext]}`);
+            if (trigger == "unitsToggle") {
+                if (unitsToggle) {
+                    if (cover_fig.layout.yaxis.title.text == 'Depth (ft)') return [ctbl, cover_fig, cpolar_fig];
+                    cover_fig.data.forEach((trace, index) => {
+                        cover_fig.data[index].y = trace.y.map(y => y * 3.28084);
+                        cpolar_fig.data[index].r = cpolar_fig.data[index].r.map(y => y * 3.28084);
+                        cpolar_fig.data[index].customdata = cpolar_fig.data[index].customdata.map(c => [c[0], c[1] * 3.28084, c[2]]);
+                        cpolar_fig.data[index].hovertemplate = '%{customdata[1]} ft<br>%{customdata[2]} deg (TOH)';
                     });
-                    if (nogozone_go[0] != undefined) {
-                        nogozone_go[0] = nogozone_go[0].replace('L', 'M ');
-                        nogozone_back[0] = nogozone_back[0] + ' Z';
-                    };
-                    cover_fig.layout.shapes[0]['path'] = nogozone_go + nogozone_back.reverse();
+                    cover_fig.layout.yaxis.title.text = 'Depth (ft)';
+                    cover_fig.layout.yaxis.ticksuffix = ' ft';
+                    // delete cover_fig.layout.yaxis.range;
+                    cpolar_fig.layout.polar.radialaxis.range = [Math.max(...cpolar_fig.data[3].r) + 300, Math.min(...cpolar_fig.data[3].r) - 300];
+                } else {
+                    if (cover_fig.layout.yaxis.title.text == 'Depth (m)') return [ctbl, cover_fig, cpolar_fig];
+                    cover_fig.data.forEach((trace, index) => {
+                        cover_fig.data[index].y = trace.y.map(y => y * 0.3048);
+                        cpolar_fig.data[index].r = cpolar_fig.data[index].r.map(y => y * 0.3048);
+                        cpolar_fig.data[index].customdata = cpolar_fig.data[index].customdata.map(c => [c[0], c[1] * 0.3048, c[2]]);
+                        cpolar_fig.data[index].hovertemplate = '%{customdata[1]} m<br>%{customdata[2]} deg (TOH)';
+                    });
+                    cover_fig.layout.yaxis.title.text = 'Depth (m)';
+                    cover_fig.layout.yaxis.ticksuffix = ' m';
+                    // delete cover_fig.layout.yaxis.range;
+                    cpolar_fig.layout.polar.radialaxis.range = [Math.max(...cpolar_fig.data[3].r) + 100, Math.min(...cpolar_fig.data[3].r) - 100];
                 };
-            });
+                let nogozone_go = [];
+                let nogozone_back = [];
+                cover_fig.data.forEach((trace, index) => {
+                    if (trace.name == "Fiber Wire") {
+                        trace.customdata.forEach((type, indext) => {
+                            nogozone_go = nogozone_go.concat(`L${cover_fig.data[index]['x'][indext] - 20},${cover_fig.data[index]['y'][indext]}`);
+                            nogozone_back = nogozone_back.concat(`L${cover_fig.data[index]['x'][indext] + 20},${cover_fig.data[index]['y'][indext]}`);
+                        });
+                        if (nogozone_go[0] != undefined) {
+                            nogozone_go[0] = nogozone_go[0].replace('L', 'M ');
+                            nogozone_back[0] = nogozone_back[0] + ' Z';
+                        };
+                        cover_fig.layout.shapes[0]['path'] = nogozone_go + nogozone_back.reverse();
+                    };
+                });
+            };
 
             // cover_fig.layout.autosize = true;
             // delete cover_fig.layout.yaxis.autorange
             // cover_fig.layout.yaxis.autorange = true;
-            // cover_fig.layout.yaxis.range = [Math.max(...cover_fig.data[3].y) + 500, Math.min(...cover_fig.data[3].y) - 500];
             console.log('post u', cpolar_fig);
             return [ctbl, cover_fig, cpolar_fig];
         },
-        clampsoverview_listener: function (clamps_types, themeToggle, relayoutData, store, fig, themes) {
+        clampsoverview_listener: function (clamps_types, relayoutData, store, fig) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
 
             new_fig = {};
@@ -97,32 +135,32 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 return new_fig;
             };
 
-            if (themeToggle) {
-                const request = new XMLHttpRequest();
-                request.open('GET', themes['_light']['json'], false); // true creates a promise, so it wont work
-                request.send();
-                new_fig['layout']['template'] = JSON.parse(request.response);
-                new_fig['layout']['modebar'] = {
-                    'orientation': 'v',
-                    'bgcolor': 'salmon',
-                    'color': 'white',
-                    'activecolor': '#9ED3CD'
-                };
-                //console.log(new_fig.layout.template)
-                //console.log(fig.layout.modebar)
-            } else {
-                const request = new XMLHttpRequest();
-                request.open('GET', themes['_dark']['json'], false); // true creates a promise, so it wont work
-                request.send();
-                new_fig['layout']['template'] = JSON.parse(request.response);
-                new_fig['layout']['modebar'] = {
-                    'orientation': 'v',
-                    'bgcolor': 'rgb(39, 43, 48)',
-                    'color': 'white',
-                    'activecolor': 'grey'
-                };
-            };
-            if (trigger == "themeToggle") { delete new_fig.layout.transition; return new_fig; };
+            // if (themeToggle) {
+            //     const request = new XMLHttpRequest();
+            //     request.open('GET', themes['_light']['json'], false); // true creates a promise, so it wont work
+            //     request.send();
+            //     new_fig['layout']['template'] = JSON.parse(request.response);
+            //     new_fig['layout']['modebar'] = {
+            //         'orientation': 'v',
+            //         'bgcolor': 'salmon',
+            //         'color': 'white',
+            //         'activecolor': '#9ED3CD'
+            //     };
+            //     //console.log(new_fig.layout.template)
+            //     //console.log(fig.layout.modebar)
+            // } else {
+            //     const request = new XMLHttpRequest();
+            //     request.open('GET', themes['_dark']['json'], false); // true creates a promise, so it wont work
+            //     request.send();
+            //     new_fig['layout']['template'] = JSON.parse(request.response);
+            //     new_fig['layout']['modebar'] = {
+            //         'orientation': 'v',
+            //         'bgcolor': 'rgb(39, 43, 48)',
+            //         'color': 'white',
+            //         'activecolor': 'grey'
+            //     };
+            // };
+            // if (trigger == "themeToggle") { delete new_fig.layout.transition; return new_fig; };
 
             if (trigger == "dropdown_cd") {
                 let y = [];
@@ -160,7 +198,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             // console.log(store);
             return new_fig;
         },
-        clampspolar_listener: function (clamps_types, themeToggle, fig, store, themes) {
+        clampspolar_listener: function (clamps_types, store, fig) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
 
             new_fig = {};
@@ -175,31 +213,32 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             // console.log(trigger);
             // console.log(themeToggle);
 
-            if (themeToggle) {
-                const request = new XMLHttpRequest();
-                request.open('GET', themes['_light']['json'], false); // true creates a promise, so it wont work
-                request.send();
-                new_fig['layout']['template'] = JSON.parse(request.response);
-                new_fig['layout']['modebar'] = {
-                    'orientation': 'v',
-                    'bgcolor': 'salmon',
-                    'color': 'white',
-                    'activecolor': '#9ED3CD'
-                };
-                //console.log(new_fig.layout.template)
-                //console.log(fig.layout.modebar)
-            } else {
-                const request = new XMLHttpRequest();
-                request.open('GET', themes['_dark']['json'], false); // true creates a promise, so it wont work
-                request.send();
-                new_fig['layout']['template'] = JSON.parse(request.response);
-                new_fig['layout']['modebar'] = {
-                    'orientation': 'v',
-                    'bgcolor': 'rgb(39, 43, 48)',
-                    'color': 'white',
-                    'activecolor': 'grey'
-                };
-            };
+            // if (themeToggle) {
+            //     const request = new XMLHttpRequest();
+            //     request.open('GET', themes['_light']['json'], false); // true creates a promise, so it wont work
+            //     request.send();
+            //     new_fig['layout']['template'] = JSON.parse(request.response);
+            //     new_fig['layout']['modebar'] = {
+            //         'orientation': 'v',
+            //         'bgcolor': 'salmon',
+            //         'color': 'white',
+            //         'activecolor': '#9ED3CD'
+            //     };
+            //     //console.log(new_fig.layout.template)
+            //     //console.log(fig.layout.modebar)
+            // } else {
+            //     const request = new XMLHttpRequest();
+            //     request.open('GET', themes['_dark']['json'], false); // true creates a promise, so it wont work
+            //     request.send();
+            //     new_fig['layout']['template'] = JSON.parse(request.response);
+            //     new_fig['layout']['modebar'] = {
+            //         'orientation': 'v',
+            //         'bgcolor': 'rgb(39, 43, 48)',
+            //         'color': 'white',
+            //         'activecolor': 'grey'
+            //     };
+            // };
+
             let r = [];
             let theta = [];
             let c = [];

@@ -18,6 +18,7 @@ themes = {'_dark': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_da
 
 # initial config
 app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[themes['_dark']['css'], dbc.icons.FONT_AWESOME],
+                suppress_callback_exceptions=True,
                 title='DV Dashboard',
                 serve_locally=True,
                 meta_tags=[
@@ -287,20 +288,6 @@ app.clientside_callback(
     Output("void1", "children"),
     Input("themeToggle", "value"),
     State("themes", "data"),
-)
-
-app.clientside_callback(
-    ClientsideFunction(
-        namespace="clientside",
-        function_name="units_switcher",
-    ),
-    Output("ctbl", "data"),
-    Output("cover", "data"),
-    Output("cpolar", "data"),
-    Input("unitsToggle", "value"),
-    State("ctbl", "data"),
-    State("cover", "data"),
-    State("cpolar", "data"),
 )
 
 # @ app.callback(Output("void2", "children"),
