@@ -56,7 +56,7 @@ def clampsoverview_fig(clamp_types, clamps, fiver=True):
     #fig.update_xaxes(range=[-185, 185])
     fig.update_yaxes(autorange="reversed", ticksuffix=" m")
     fig.layout.modebar = {'orientation': 'v'}
-    fig.layout.transition = {'duration': 1000, 'easing': 'cubic-in-out'}
+    # fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
     return fig
 
 

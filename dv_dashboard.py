@@ -294,9 +294,13 @@ app.clientside_callback(
         namespace="clientside",
         function_name="units_switcher",
     ),
+    Output("ctbl", "data"),
     Output("cover", "data"),
+    Output("cpolar", "data"),
     Input("unitsToggle", "value"),
+    State("ctbl", "data"),
     State("cover", "data"),
+    State("cpolar", "data"),
 )
 
 # @ app.callback(Output("void2", "children"),

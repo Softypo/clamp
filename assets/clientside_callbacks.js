@@ -4,38 +4,59 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             const stylesheet = document.querySelector('link[rel=stylesheet][href^="https://cdn.jsdelivr"]');
             var themeLink = themeToggle ? themes['_light']['css'] : themes['_dark']['css'];
             //stylesheet.href = themeLink;
-            setTimeout(function () { stylesheet.href = themeLink; }, 500);
+            setTimeout(function () { stylesheet.href = themeLink; }, 100);
         },
-        units_switcher: function (unitsToggle, store) {
-            new_fig = JSON.parse(JSON.stringify(store));
-            console.log('pre u', new_fig);
+        units_switcher: function (unitsToggle, ctbl, cover, cpolar) {
+            cover_fig = JSON.parse(JSON.stringify(cover));
+            cpolar_fig = JSON.parse(JSON.stringify(cpolar));
+            console.log('pre u', cpolar_fig);
             if (unitsToggle) {
-                if (new_fig.layout.yaxis.title.text == 'Depth (ft)') return new_fig;
-                new_fig.data.forEach((trace, index) => {
+                if (cover_fig.layout.yaxis.title.text == 'Depth (ft)') return [ctbl, cover_fig, cpolar_fig];
+                cover_fig.data.forEach((trace, index) => {
                     //ft = trace.y * 3.28084;
                     console.log(index);
-                    new_fig.data[index].y = trace.y.map(y => y * 3.28084);
+                    cover_fig.data[index].y = trace.y.map(y => y * 3.28084);
+                    cpolar_fig.data[index].r = cpolar_fig.data[index].r.map(y => y * 3.28084);
                 });
-                new_fig.layout.yaxis.title.text = 'Depth (ft)';
-                new_fig.layout.yaxis.ticksuffix = ' ft';
-                // delete new_fig.layout.yaxis.range;
+                cover_fig.layout.yaxis.title.text = 'Depth (ft)';
+                cover_fig.layout.yaxis.ticksuffix = ' ft';
+                // delete cover_fig.layout.yaxis.range;
             } else {
-                if (new_fig.layout.yaxis.title.text == 'Depth (m)') return new_fig;
-                new_fig.data.forEach((trace, index) => {
+                if (cover_fig.layout.yaxis.title.text == 'Depth (m)') return [ctbl, cover_fig, cpolar_fig];
+                cover_fig.data.forEach((trace, index) => {
                     //ft = trace.y * 3.28084;
                     console.log(index);
-                    new_fig.data[index].y = trace.y.map(y => y * 0.3048);
+                    cover_fig.data[index].y = trace.y.map(y => y * 0.3048);
+                    cpolar_fig.data[index].r = cpolar_fig.data[index].r.map(y => y * 0.3048);
                 });
-                new_fig.layout.yaxis.title.text = 'Depth (m)';
-                new_fig.layout.yaxis.ticksuffix = ' m';
-                // delete new_fig.layout.yaxis.range;
+                cover_fig.layout.yaxis.title.text = 'Depth (m)';
+                cover_fig.layout.yaxis.ticksuffix = ' m';
+                // delete cover_fig.layout.yaxis.range;
             };
-            // new_fig.layout.autosize = true;
-            delete new_fig.layout.yaxis.autorange
-            // new_fig.layout.yaxis.autorange = true;
-            new_fig.layout.yaxis.range = [Math.max(...new_fig.data[3].y) + 500, Math.min(...new_fig.data[3].y) - 500];
-            console.log('post u', new_fig);
-            return new_fig;
+
+
+            let nogozone_go = [];
+            let nogozone_back = [];
+            cover_fig.data.forEach((trace, index) => {
+                if (trace.name == "Fiber Wire") {
+                    trace.customdata.forEach((type, indext) => {
+                        nogozone_go = nogozone_go.concat(`L${cover_fig.data[index]['x'][indext] - 20},${cover_fig.data[index]['y'][indext]}`);
+                        nogozone_back = nogozone_back.concat(`L${cover_fig.data[index]['x'][indext] + 20},${cover_fig.data[index]['y'][indext]}`);
+                    });
+                    if (nogozone_go[0] != undefined) {
+                        nogozone_go[0] = nogozone_go[0].replace('L', 'M ');
+                        nogozone_back[0] = nogozone_back[0] + ' Z';
+                    };
+                    cover_fig.layout.shapes[0]['path'] = nogozone_go + nogozone_back.reverse();
+                };
+            });
+
+            // cover_fig.layout.autosize = true;
+            // delete cover_fig.layout.yaxis.autorange
+            // cover_fig.layout.yaxis.autorange = true;
+            // cover_fig.layout.yaxis.range = [Math.max(...cover_fig.data[3].y) + 500, Math.min(...cover_fig.data[3].y) - 500];
+            console.log('post u', cpolar_fig);
+            return [ctbl, cover_fig, cpolar_fig];
         },
         clampsoverview_listener: function (clamps_types, themeToggle, relayoutData, store, fig, themes) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
@@ -72,6 +93,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                     new_fig.layout.yaxis = { ...store_fig.layout.yaxis };
                     // new_fig = { ...store_fig };
                 }
+                // delete new_fig.layout.transition;
                 return new_fig;
             };
 
@@ -100,37 +122,37 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                     'activecolor': 'grey'
                 };
             };
-            if (trigger == "themeToggle") { console.log('r', new_fig); return new_fig; };
+            if (trigger == "themeToggle") { delete new_fig.layout.transition; return new_fig; };
 
-
-            let y = [];
-            let x = [];
-            let c = [];
-            let nogozone_go = [];
-            let nogozone_back = [];
-            store_fig.data.forEach((trace, index) => {
-                if (trace.name == "Fiber Wire") {
-                    trace.customdata.forEach((type, indext) => {
-                        if (clamps_types.includes(type[0])) {
-                            y = y.concat(store_fig.data[index]['y'][indext]);
-                            x = x.concat(store_fig.data[index]['x'][indext]);
-                            c = c.concat([type]);
-                            nogozone_go = nogozone_go.concat(`L${store_fig.data[index]['x'][indext] - 20},${store_fig.data[index]['y'][indext]}`);
-                            nogozone_back = nogozone_back.concat(`L${store_fig.data[index]['x'][indext] + 20},${store_fig.data[index]['y'][indext]}`);
-                        }
-                    });
-                    if (nogozone_go[0] != undefined) {
-                        nogozone_go[0] = nogozone_go[0].replace('L', 'M ');
-                        nogozone_back[0] = nogozone_back[0] + ' Z';
+            if (trigger == "dropdown_cd") {
+                let y = [];
+                let x = [];
+                let c = [];
+                let nogozone_go = [];
+                let nogozone_back = [];
+                store_fig.data.forEach((trace, index) => {
+                    if (trace.name == "Fiber Wire") {
+                        trace.customdata.forEach((type, indext) => {
+                            if (clamps_types.includes(type[0])) {
+                                y = y.concat(store_fig.data[index]['y'][indext]);
+                                x = x.concat(store_fig.data[index]['x'][indext]);
+                                c = c.concat([type]);
+                                nogozone_go = nogozone_go.concat(`L${store_fig.data[index]['x'][indext] - 20},${store_fig.data[index]['y'][indext]}`);
+                                nogozone_back = nogozone_back.concat(`L${store_fig.data[index]['x'][indext] + 20},${store_fig.data[index]['y'][indext]}`);
+                            }
+                        });
+                        if (nogozone_go[0] != undefined) {
+                            nogozone_go[0] = nogozone_go[0].replace('L', 'M ');
+                            nogozone_back[0] = nogozone_back[0] + ' Z';
+                        };
+                        new_fig.data[index]['y'] = y;
+                        new_fig.data[index]['x'] = x;
+                        new_fig.data[index]['customdata'] = c;
+                        new_fig.layout.shapes[0]['path'] = nogozone_go + nogozone_back.reverse();
                     };
-                    new_fig.data[index]['y'] = y;
-                    new_fig.data[index]['x'] = x;
-                    new_fig.data[index]['customdata'] = c;
-                    new_fig.layout.shapes[0]['path'] = nogozone_go + nogozone_back.reverse();
-                };
-            });
-
-            // new_fig.layout.transition = { "duration": 1000, "easing": "cubic-in-out" };
+                });
+                new_fig.layout.transition = { "duration": 500, "easing": "cubic-in-out" };
+            };
 
 
             // end of main function
@@ -142,8 +164,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
 
             new_fig = {};
-            if (fig === undefined) {
-                // console.log("fig is undefined");
+            if (fig === undefined || trigger == "cpolar") {
                 store_fig = JSON.parse(JSON.stringify(store));
                 new_fig = JSON.parse(JSON.stringify(store));
             } else {
