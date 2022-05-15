@@ -8,29 +8,35 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
         },
         cstore_switcher: function (themeToggle, unitsToggle, ctbl, cover, cpolar, themes) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
-            cover_fig = JSON.parse(JSON.stringify(cover));
-            cpolar_fig = JSON.parse(JSON.stringify(cpolar));
-            console.log('pre u', cpolar_fig);
+            // ctbl_new = JSON.parse(JSON.stringify(ctbl));
+            // cover_fig = JSON.parse(JSON.stringify(cover));
+            // cpolar_fig = JSON.parse(JSON.stringify(cpolar));
+            let ctbl_new = [...ctbl];
+            let cover_fig = { ...cover };
+            let cpolar_fig = { ...cpolar };
+            console.log('pre u', ctbl);
 
-            if (cover_fig.layout.theme === undefined) {
+            if (trigger == "themeToggle" || cover_fig.layout.template.theme === undefined) {
                 let template = {};
                 let modebar = {};
-                if (themeToggle && cover_fig.layout.theme == 'dark') {
+                if (themeToggle && (cover_fig.layout.template.theme == '_dark' || cover_fig.layout.template.theme === undefined)) {
                     const request = new XMLHttpRequest();
                     request.open('GET', themes['_light']['json'], false); // true creates a promise, so it wont work
                     request.send();
                     template = JSON.parse(request.response);
+                    template['theme'] = '_light';
                     modebar = {
                         'orientation': 'v',
                         'bgcolor': 'salmon',
                         'color': 'white',
                         'activecolor': '#9ED3CD'
                     };
-                } else if (cover_fig.layout.theme == 'light') {
+                } else if (cover_fig.layout.template.theme == '_light' || cover_fig.layout.template.theme === undefined) {
                     const request = new XMLHttpRequest();
                     request.open('GET', themes['_dark']['json'], false); // true creates a promise, so it wont work
                     request.send();
                     template = JSON.parse(request.response);
+                    template['theme'] = '_dark';
                     modebar = {
                         'orientation': 'v',
                         'bgcolor': 'rgb(39, 43, 48)',
@@ -38,13 +44,13 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                         'activecolor': 'grey'
                     };
                 } else {
-                    template = cover_fig['layout']['template']
-                    modebar = cover_fig['layout']['modebar']
+                    template = cover_fig.layout.template;
+                    modebar = cover_fig.layout.modebar;
                 };
-                cover_fig['layout']['template'] = template;
-                cover_fig['layout']['modebar'] = modebar;
-                cpolar_fig['layout']['template'] = template;
-                cpolar_fig['layout']['modebar'] = modebar;
+                cover_fig.layout.template = template;
+                cover_fig.layout.modebar = modebar;
+                cpolar_fig.layout.template = template;
+                cpolar_fig.layout.modebar = modebar;
             };
 
             if (trigger == "unitsToggle") {
@@ -60,6 +66,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                     cover_fig.layout.yaxis.ticksuffix = ' ft';
                     // delete cover_fig.layout.yaxis.range;
                     cpolar_fig.layout.polar.radialaxis.range = [Math.max(...cpolar_fig.data[3].r) + 300, Math.min(...cpolar_fig.data[3].r) - 300];
+                    ctbl_new = ctbl_new.map(dic => Object.assign(dic, { 'depth': dic.depth * 3.28084 }));
                 } else {
                     if (cover_fig.layout.yaxis.title.text == 'Depth (m)') return [ctbl, cover_fig, cpolar_fig];
                     cover_fig.data.forEach((trace, index) => {
@@ -72,6 +79,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                     cover_fig.layout.yaxis.ticksuffix = ' m';
                     // delete cover_fig.layout.yaxis.range;
                     cpolar_fig.layout.polar.radialaxis.range = [Math.max(...cpolar_fig.data[3].r) + 100, Math.min(...cpolar_fig.data[3].r) - 100];
+                    ctbl_new = ctbl_new.map(dic => Object.assign(dic, { 'depth': dic.depth * 3.28084 }));
                 };
                 let nogozone_go = [];
                 let nogozone_back = [];
@@ -93,18 +101,16 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             // cover_fig.layout.autosize = true;
             // delete cover_fig.layout.yaxis.autorange
             // cover_fig.layout.yaxis.autorange = true;
-            console.log('post u', cpolar_fig);
-            return [ctbl, cover_fig, cpolar_fig];
+            console.log('post u', ctbl_new);
+            return [ctbl_new, cover_fig, cpolar_fig];
         },
-        clampsoverview_listener: function (clamps_types, relayoutData, store, fig) {
+        clampsoverview_listener: function (clamps_types, relayoutData, store_fig, fig) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
 
-            new_fig = {};
+            let new_fig;
             if (fig === undefined || trigger == "cover") {
-                store_fig = JSON.parse(JSON.stringify(store));
-                new_fig = JSON.parse(JSON.stringify(store));
+                new_fig = structuredClone(store_fig);
             } else {
-                store_fig = JSON.parse(JSON.stringify(store));
                 new_fig = { ...fig };
             };
 
@@ -162,7 +168,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             // };
             // if (trigger == "themeToggle") { delete new_fig.layout.transition; return new_fig; };
 
-            if (trigger == "dropdown_cd") {
+            if (trigger == "dropdown_cd" || fig === undefined) {
                 let y = [];
                 let x = [];
                 let c = [];
@@ -198,15 +204,13 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             // console.log(store);
             return new_fig;
         },
-        clampspolar_listener: function (clamps_types, store, fig) {
+        clampspolar_listener: function (clamps_types, store_fig, fig) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
 
-            new_fig = {};
+            let new_fig;
             if (fig === undefined || trigger == "cpolar") {
-                store_fig = JSON.parse(JSON.stringify(store));
-                new_fig = JSON.parse(JSON.stringify(store));
+                new_fig = structuredClone(store_fig);
             } else {
-                store_fig = JSON.parse(JSON.stringify(store));
                 new_fig = { ...fig };
             };
 
