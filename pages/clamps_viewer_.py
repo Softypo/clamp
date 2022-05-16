@@ -61,6 +61,35 @@ def clampsoverview_fig(clamp_types, clamps, fiver=True):
     return fig
 
 
+def clampview_fig(clamp_types, clamps, fiver=True):
+    fig = go.Figure()
+    cc = clamps.copy()
+    fiber = cc[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
+                'fiberTOH']].loc[cc['type'].isin(clamp_types)]
+
+    # add delta
+    nogozone_svg = ''.join([f'M {xy[0][0]+10},{xy[0][1]} ' if xy[1] == 0 else f'L{xy[0][0]+10},{xy[0][1]} ' for xy in zip(fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))]) + \
+        ''.join([f' L{xy[0][0]-10},{xy[0][1]} Z' if xy[1] == 0 else f' L{xy[0][0]-10},{xy[0][1]}' for xy in zip(
+            fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))][::-1])
+
+    fig.update_layout(shapes=[dict(type="path", path=nogozone_svg,
+                      fillcolor='rgba(255,69,0,0.2)', line=dict(width=0), layer='below')])
+
+    fig.update_traces(
+        hovertemplate='%{customdata[0]}<br>%{customdata[1]} deg (TOH)')
+    fig.update_layout(hovermode="y unified", legend_title="Type", legend_orientation="h", yaxis_title="Depth (m)",
+                      showlegend=False,
+                      xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=True, margin=dict(l=80, r=40, b=25, t=20, pad=4),
+                      #title="Fiber cable orientation overview",
+                      # title_x=0.5,
+                      )
+    #fig.update_xaxes(range=[-185, 185])
+    fig.update_yaxes(autorange="reversed", ticksuffix=" m")
+    fig.layout.modebar = {'orientation': 'v'}
+    # fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
+    return fig
+
+
 def clampspolar_fig(clamp_types, clamps, fiver=True):
     fig = go.Figure()
     fiber = clamps[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
@@ -87,8 +116,13 @@ def clampspolar_fig(clamp_types, clamps, fiver=True):
 
     fig.update_traces(
         hovertemplate='%{customdata[1]} m<br>%{customdata[2]} deg (TOH)')
-    fig.update_layout(title="Fiber cable orientation polarplot", title_x=0.5, legend_title="Type",
-                      legend_orientation="h", autosize=True, margin=dict(t=50, b=40, l=40, r=40))
+    fig.update_layout(title="Fiber cable orientation polarplot",
+                      dragmode=False,
+                      title_x=0.5,
+                      legend_title="Type",
+                      legend_orientation="h",
+                      autosize=True,
+                      margin=dict(t=50, b=40, l=40, r=40))
     fig.update_polars(
         hole=0.05,
         radialaxis=dict(
@@ -147,9 +181,14 @@ layout = dbc.Row([
             ),
     dbc.Col([
             dbc.Row(
-                dcc.Graph(id="cd_polar", animate=False,
+                dcc.Graph(id="cd_polar",
+                          animate=False,
+                          responsive=True,
                           config={'displaylogo': False,
-                                  'modeBarButtonsToRemove': ['select2d'],
+                                  # 'doubleClick': False,
+                                  # 'scrollZoom': True,
+                                  # 'staticPlot': True,
+                                  'modeBarButtonsToRemove': ['zoom', 'select2d'],
                                   'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
                           style={'height': '23em'},
                           ),
@@ -216,19 +255,23 @@ tabs = {'overview': [
               ),
 ],
     'tubeview': [
-    dcc.Dropdown(
-        clamp_types,
-        clamp_types[1:],
-        multi=True,
-        searchable=False,
-        persistence=True,
-        persistence_type='memory',
-        id="dropdown_cd2",
-    ),
-    dcc.Graph(id="cd_overview2",
+    # dcc.Dropdown(
+    #     clamp_types,
+    #     clamp_types[1:],
+    #     multi=True,
+    #     searchable=False,
+    #     persistence=True,
+    #     persistence_type='memory',
+    #     id="dropdown_cd2",
+    # ),
+    dcc.Graph(id="cd_view",
+              figure=clampview_fig(clamp_types, clamps, fiver=True),
               animate=False,
-              config={'displaylogo': False},
-              # style={'height': '100%'},
+              responsive=True,
+              config={'displaylogo': False,
+                      'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
+                      'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
+              style={'height': '100%'},
               ),
 ]
 }
