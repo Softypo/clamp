@@ -117,7 +117,7 @@ def clampspolar_fig(clamp_types, clamps, fiver=True):
     fig.update_traces(
         hovertemplate='%{customdata[1]} m<br>%{customdata[2]} deg (TOH)')
     fig.update_layout(title="Fiber cable orientation polarplot",
-                      dragmode=False,
+                      dragmode='turntable',
                       title_x=0.5,
                       legend_title="Type",
                       legend_orientation="h",
@@ -151,7 +151,7 @@ def clampspolar_fig(clamp_types, clamps, fiver=True):
 
 layout = dbc.Row([
     dcc.Store(id="ctbl", storage_type="memory",
-              data=clamps.to_dict('records')),
+              data=clamps.iloc[:, [0, 1, 4, 5, 6]].to_dict('records')),
     dcc.Store(id="cover", storage_type="memory",
               data=clampsoverview_fig(clamp_types, clamps)),
     dcc.Store(id="cpolar", storage_type="memory",
@@ -189,7 +189,7 @@ layout = dbc.Row([
                                   # 'scrollZoom': True,
                                   # 'staticPlot': True,
                                   'modeBarButtonsToRemove': ['zoom', 'select2d'],
-                                  'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
+                                  'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 600, 'width': 600, 'scale': 3}},
                           style={'height': '23em'},
                           ),
             ),
@@ -218,15 +218,26 @@ layout = dbc.Row([
                     ),
                 ), ], style={'height': 'auto'}),
             dbc.Row(
-                dash_table.DataTable(  # clamps.iloc[:, [0, 1, 4, 5, 6]].to_dict('records'),
-                    id='cd_table',
-                    page_action='native',
-                    sort_action='native',
-                    style_as_list_view=True,
-                    fixed_rows={'headers': True, 'data': 0},
-                    style_table={'minHeight': '100%', 'height': '100%', 'maxHeight': '100%',
-                                 'minWidth': 'auto', 'width': 'auto', 'maxWidth': 'auto'},
-                ), style={'height': '100%'}),
+                dash_table.DataTable(id='cd_table',
+                                     # clamps.iloc[:, [0, 1, 4, 5, 6]].to_dict('records'),
+                                     page_action='native',
+                                     sort_action='native',
+                                     style_as_list_view=True,
+                                     fixed_rows={'headers': True, 'data': 0},
+                                     style_table={
+                                         'minHeight': '100%', 'height': '100%', 'maxHeight': '100%',
+                                         'minWidth': 'auto', 'width': 'auto', 'maxWidth': 'auto'},
+                                        style_header={
+                                            'text-align': 'left', 'fontWeight': 'bold', 'fontSize': '0.8em', 'font-style': 'italic'},
+                                        style_cell={
+                                            'text-align': 'left', 'fontSize': '1em'},
+                                        style_data_conditional=[
+                                         {
+                                             'if': {'row_index': 'even'},
+                                             'backgroundColor': 'slategrey',
+                                         }
+                                     ],
+                                     ), style={'height': '100%'}),
             ],
             xl=5, lg=6, md=12, sm=12, xs=12,
             style=CONTENT_STYLE,
@@ -285,22 +296,44 @@ def tab_content(active_tab):
     return tabs[active_tab]
 
 
-@ callback(
+# @ callback(
+#     Output("cd_table", "data"),
+#     Input("dropdown_cd", "value"),
+# )
+# def filterclamps_table(value):
+#     return clamps[clamps.type.isin(value)].iloc[:, [0, 1, 4, 5, 6]].round(3).to_dict('records')
+
+
+clientside_callback(
+    ClientsideFunction(
+        namespace="clientside",
+        function_name="clampstable_listener"
+    ),
     Output("cd_table", "data"),
     Input("dropdown_cd", "value"),
+    Input("ctbl", "data"),
+    State("cd_table", "data"),
 )
-def filterclamps_table(value):
-    return clamps[clamps.type.isin(value)].iloc[:, [0, 1, 4, 5, 6]].round(3).to_dict('records')
 
 
-@ callback(
+# @ callback(
+#     Output("table_copy", "content"),
+#     Input("table_copy", "n_clicks"),
+#     State("cd_table", "data"),
+# )
+# def customcopy_table(_, data):
+#     # See options for .to_csv() or .to_excel() or .to_string() in the  pandas documentation
+#     return pd.DataFrame(data).to_csv(index=False)  # includes headers
+
+clientside_callback(
+    ClientsideFunction(
+        namespace="clientside",
+        function_name="clampstable_tocsv"
+    ),
     Output("table_copy", "content"),
     Input("table_copy", "n_clicks"),
     State("cd_table", "data"),
 )
-def customcopy_table(_, data):
-    # See options for .to_csv() or .to_excel() or .to_string() in the  pandas documentation
-    return pd.DataFrame(data).to_csv(index=False)  # includes headers
 
 
 clientside_callback(

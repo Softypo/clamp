@@ -63,7 +63,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 cover_fig.data.forEach((trace, index) => {
                     cover_fig.data[index].y = trace.y.map(y => y * 3.28084);
                     cpolar_fig.data[index].r = cpolar_fig.data[index].r.map(y => y * 3.28084);
-                    cpolar_fig.data[index].customdata = cpolar_fig.data[index].customdata.map(c => [c[0], c[1] * 3.28084, c[2]]);
+                    cpolar_fig.data[index].customdata = cpolar_fig.data[index].customdata.map(c => [c[0], +(c[1] * 3.28084).toFixed(0), c[2]]);
                     cpolar_fig.data[index].hovertemplate = '%{customdata[1]} ft<br>%{customdata[2]} deg (TOH)';
                 });
                 cover_fig.layout.yaxis.title.text = 'Depth (ft)';
@@ -71,13 +71,13 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 // delete cover_fig.layout.yaxis.range;
                 cpolar_fig.layout.polar.radialaxis.range = [Math.max(...cpolar_fig.data[3].r) + 300, Math.min(...cpolar_fig.data[3].r) - 300];
                 // cpolar_fig.layout['uirevision'] = ' ft';
-                ctbl_new = ctbl_new.map(dic => Object.assign(dic, { 'depth': dic.depth * 3.28084 }));
+                ctbl_new = ctbl_new.map(dic => Object.assign(dic, { 'depth': +(dic.depth * 3.28084).toFixed(3) }));
             } else {
                 if (cover_fig.layout.yaxis.title.text == 'Depth (m)') return [ctbl_new, cover_fig, cpolar_fig];
                 cover_fig.data.forEach((trace, index) => {
                     cover_fig.data[index].y = trace.y.map(y => y * 0.3048);
                     cpolar_fig.data[index].r = cpolar_fig.data[index].r.map(y => y * 0.3048);
-                    cpolar_fig.data[index].customdata = cpolar_fig.data[index].customdata.map(c => [c[0], c[1] * 0.3048, c[2]]);
+                    cpolar_fig.data[index].customdata = cpolar_fig.data[index].customdata.map(c => [c[0], +(c[1] * 0.3048).toFixed(0), c[2]]);
                     cpolar_fig.data[index].hovertemplate = '%{customdata[1]} m<br>%{customdata[2]} deg (TOH)';
                 });
                 cover_fig.layout.yaxis.title.text = 'Depth (m)';
@@ -85,7 +85,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 // delete cover_fig.layout.yaxis.range;
                 cpolar_fig.layout.polar.radialaxis.range = [Math.max(...cpolar_fig.data[3].r) + 100, Math.min(...cpolar_fig.data[3].r) - 100];
                 // cpolar_fig.layout['uirevision'] = ' m';
-                ctbl_new = ctbl_new.map(dic => Object.assign(dic, { 'depth': dic.depth * 0.3048 }));
+                ctbl_new = ctbl_new.map(dic => Object.assign(dic, { 'depth': +(dic.depth * 0.3048).toFixed(3) }));
             };
             let nogozone_go = [];
             let nogozone_back = [];
@@ -127,35 +127,34 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 return new_fig;
             };
 
-            if (trigger == "dropdown_cd" || fig === undefined) {
-                let y = [];
-                let x = [];
-                let c = [];
-                let nogozone_go = [];
-                let nogozone_back = [];
-                store_fig.data.forEach((trace, index) => {
-                    if (trace.name == "Fiber Wire") {
-                        trace.customdata.forEach((type, indext) => {
-                            if (clamps_types.includes(type[0])) {
-                                y = y.concat(store_fig.data[index]['y'][indext]);
-                                x = x.concat(store_fig.data[index]['x'][indext]);
-                                c = c.concat([type]);
-                                nogozone_go = nogozone_go.concat(`L${store_fig.data[index]['x'][indext] - 20},${store_fig.data[index]['y'][indext]}`);
-                                nogozone_back = nogozone_back.concat(`L${store_fig.data[index]['x'][indext] + 20},${store_fig.data[index]['y'][indext]}`);
-                            }
-                        });
-                        if (nogozone_go[0] != undefined) {
-                            nogozone_go[0] = nogozone_go[0].replace('L', 'M ');
-                            nogozone_back[0] = nogozone_back[0] + ' Z';
-                        };
-                        new_fig.data[index]['y'] = y;
-                        new_fig.data[index]['x'] = x;
-                        new_fig.data[index]['customdata'] = c;
-                        new_fig.layout.shapes[0]['path'] = nogozone_go + nogozone_back.reverse();
+            let y = [];
+            let x = [];
+            let c = [];
+            let nogozone_go = [];
+            let nogozone_back = [];
+            store_fig.data.forEach((trace, index) => {
+                if (trace.name == "Fiber Wire") {
+                    trace.customdata.forEach((type, indext) => {
+                        if (clamps_types.includes(type[0])) {
+                            y = y.concat(store_fig.data[index]['y'][indext]);
+                            x = x.concat(store_fig.data[index]['x'][indext]);
+                            c = c.concat([type]);
+                            nogozone_go = nogozone_go.concat(`L${store_fig.data[index]['x'][indext] - 20},${store_fig.data[index]['y'][indext]}`);
+                            nogozone_back = nogozone_back.concat(`L${store_fig.data[index]['x'][indext] + 20},${store_fig.data[index]['y'][indext]}`);
+                        }
+                    });
+                    if (nogozone_go[0] != undefined) {
+                        nogozone_go[0] = nogozone_go[0].replace('L', 'M ');
+                        nogozone_back[0] = nogozone_back[0] + ' Z';
                     };
-                });
-                new_fig.layout.transition = { "duration": 500, "easing": "cubic-in-out" };
-            };
+                    new_fig.data[index]['y'] = y;
+                    new_fig.data[index]['x'] = x;
+                    new_fig.data[index]['customdata'] = c;
+                    new_fig.layout.shapes[0]['path'] = nogozone_go + nogozone_back.reverse();
+                };
+            });
+            if (trigger == "dropdown_cd" || fig === undefined) new_fig.layout.transition = { "duration": 500, "easing": "cubic-in-out" };
+
             return new_fig;
         },
         clampspolar_listener: function (clamps_types, store_fig, fig) {
@@ -188,11 +187,36 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             // new_fig.layout.polar.radialaxis.autorange = true;
             // delete new_fig.layout.polar.radialaxis.range;
             //new_fig.layout.polar.radialaxis.range = [...store_fig.layout.polar.radialaxis.range];
-            console.log('polar store', store_fig);
-            console.log('polar new_fig', new_fig);
-            console.log('store', [...store_fig.layout.polar.radialaxis.range]);
-            console.log('new', new_fig.layout.polar.radialaxis.range);
+            // console.log('polar store', store_fig);
+            // console.log('polar new_fig', new_fig);
+            // console.log('store', [...store_fig.layout.polar.radialaxis.range]);
+            // console.log('new', new_fig.layout.polar.radialaxis.range);
             return new_fig;
+        },
+        clampstable_listener: function (clamps_types, store_tbl, tbl) {
+            const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
+
+            let new_tbl = [];
+            // if (new_tbl === undefined || trigger == "ctbl") {
+            //     new_tbl = structuredClone(store_tbl);
+
+            // new_tbl = [];
+            index = 0;
+            store_tbl.forEach(row => {
+                if (clamps_types.includes(row.type)) {
+                    new_tbl[index] = { ...row };
+                    index++;
+                };
+            });
+
+            console.log('tbl store', store_tbl);
+            console.log('tbl new', new_tbl);
+            return new_tbl;
+        },
+        clampstable_tocsv: function (_, data) {
+            let csvContent = "data:text/csv;charset=utf-8,"
+                + data.map(e => e.join(",")).join("\n");
+            return csvContent;
         },
     }
 });
