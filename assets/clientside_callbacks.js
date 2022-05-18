@@ -214,8 +214,9 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             return new_tbl;
         },
         clampstable_tocsv: function (_, data) {
-            let csvContent = "data:text/csv;charset=utf-8,"
-                + data.map(e => e.join(",")).join("\n");
+            let csvContent = true;
+            // let csvContent = "data:text/csv;charset=utf-8,"
+            //     + data.map(e => e.join(",")).join("\n");
             return csvContent;
         },
     }

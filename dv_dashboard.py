@@ -26,7 +26,7 @@ app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[them
                     {"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=1"}],
                 # external_scripts=['https://cdn.plot.ly/plotly-2.11.1.min.js']
                 )
-
+application = app.server  # <<<<<<<<for debuging in vscode only
 # load_figure_template(themes['_light']['fig'])
 # load_figure_template(themes['_dark']['fig'])
 #load_figure_template([themes['_dark']['fig'], themes['_light']['fig']])
@@ -306,7 +306,7 @@ app.layout = dbc.Container(
 
 if __name__ == "__main__":
     app.run_server(port=8888,
-                   debug=True,
+                   debug=False,
                    threaded=True,
                    # host='0.0.0.0',
                    use_reloader=True)

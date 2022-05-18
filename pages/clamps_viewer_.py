@@ -1,5 +1,4 @@
-from turtle import home
-from dv_dashboard import themes, CONTENT_STYLE
+# from dv_dashboard import themes, CONTENT_STYLE
 import pandas as pd
 # from dash_bootstrap_templates import template_from_url, load_figure_template
 import dash_bootstrap_components as dbc
@@ -14,6 +13,15 @@ from dash import clientside_callback
 from dash.dependencies import ClientsideFunction
 
 dash.register_page(__name__, path="/")
+
+
+CONTENT_STYLE = {
+    "marginTop": '8px',
+    # "padding": "0.5rem",
+    "height": "93vh",
+    "display": "flex",
+    "flexFlow": "column",
+}
 
 # data
 
