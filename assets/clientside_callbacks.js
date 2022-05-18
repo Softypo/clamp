@@ -157,7 +157,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
 
             return new_fig;
         },
-        clampspolar_listener: function (clamps_types, store_fig, fig) {
+        clampspolar_listener: function (clamps_types, relayoutData, store_fig, fig) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
 
             let new_fig;
@@ -165,6 +165,14 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 new_fig = structuredClone(store_fig);
             } else {
                 new_fig = { ...fig };
+            };
+
+            if (trigger == "cd_overview" && relayoutData != undefined) {
+                console.log(relayoutData);
+                if (relayoutData['yaxis.range[0]'] != undefined) {
+                    new_fig.layout.polar.radialaxis.range = [relayoutData['yaxis.range[0]'], relayoutData['yaxis.range[1]']];
+                } else if (relayoutData['xaxis.range[0]'] == undefined) new_fig.layout.polar.radialaxis.range = [...store_fig.layout.polar.radialaxis.range];
+                return new_fig;
             };
 
             let r = [];
@@ -194,8 +202,6 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             return new_fig;
         },
         clampstable_listener: function (clamps_types, store_tbl, tbl) {
-            const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
-
             let new_tbl = [];
             // if (new_tbl === undefined || trigger == "ctbl") {
             //     new_tbl = structuredClone(store_tbl);
@@ -209,15 +215,16 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 };
             });
 
-            console.log('tbl store', store_tbl);
-            console.log('tbl new', new_tbl);
+            // console.log('tbl store', store_tbl);
+            // console.log('tbl new', new_tbl);
             return new_tbl;
         },
         clampstable_tocsv: function (_, data) {
-            let csvContent = true;
-            // let csvContent = "data:text/csv;charset=utf-8,"
-            //     + data.map(e => e.join(",")).join("\n");
-            return csvContent;
+            const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
+            if (trigger == "table_copy") {
+                const dictionaryKeys = Object.keys(data[0]);
+                return [dictionaryKeys.join(','), ...data.map(dict => (dictionaryKeys.map(key => dict[key]).join(',')))].join("\n");
+            };
         },
     }
 });

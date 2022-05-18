@@ -358,7 +358,7 @@ clientside_callback(
     ),
     Output("cd_polar", "figure"),
     Input("dropdown_cd", "value"),
-    # Input("themeToggle", "value"),
+    Input('cd_overview', 'relayoutData'),
     Input("cpolar", "data"),
     State('cd_polar', 'figure'),
     # State("themes", "data"),
