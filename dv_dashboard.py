@@ -56,6 +56,7 @@ CONTENT_STYLE = {
     "marginTop": '8px',
     # "padding": "0.5rem",
     "height": "93vh",
+    "min-height": "20em",
     "display": "flex",
     "flexFlow": "column",
 }
@@ -280,24 +281,15 @@ def close_sidebar(value, n0, is_open):
         return value, is_open, n0
 
 
-app.clientside_callback(
-    ClientsideFunction(
-        namespace="clientside",
-        function_name="theme_switcher",
-    ),
-    Output("void1", "children"),
-    Input("themeToggle", "value"),
-    State("themes", "data"),
-)
-
-# @ app.callback(Output("void2", "children"),
-#                #Input("url", "href"),
-#                Input("themeToggle", "value"),
-#                )
-# def fig_theme_session(themeToggle):
-#     load_figure_template(themes['_light']['fig']
-#                          if themeToggle else themes['_dark']['fig'])
-#     #pio.templates.default = themes['_light']['fig'] if themeToggle else themes['_dark']['fig']
+# app.clientside_callback(
+#     ClientsideFunction(
+#         namespace="clientside",
+#         function_name="theme_switcher",
+#     ),
+#     Output("void1", "children"),
+#     Input("themeToggle", "value"),
+#     State("themes", "data"),
+# )
 
 
 # app initialization

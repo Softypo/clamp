@@ -1,11 +1,11 @@
-# from dv_dashboard import themes, CONTENT_STYLE
+from dv_dashboard import CONTENT_STYLE
 import pandas as pd
 # from dash_bootstrap_templates import template_from_url, load_figure_template
 import dash_bootstrap_components as dbc
-import dash_labs as dl
+# import dash_labs as dl
 import plotly.graph_objects as go
-import plotly.express as px
-import dash_daq as daq
+# import plotly.express as px
+# import dash_daq as daq
 from dash import dcc, html, dash_table, Input, Output, State, callback
 import dash
 
@@ -14,18 +14,9 @@ from dash.dependencies import ClientsideFunction
 
 dash.register_page(__name__, path="/")
 
-
-CONTENT_STYLE = {
-    "marginTop": '8px',
-    # "padding": "0.5rem",
-    "height": "93vh",
-    "display": "flex",
-    "flexFlow": "column",
-}
-
 # data
 
-#clamps = pd.read_hdf("data/446/446cd.h5", "cd446")
+# clamps = pd.read_hdf("data/446/446cd.h5", "cd446")
 clamps = pd.read_pickle("data/446/446cd.pkl")
 clamp_types = clamps['type'].unique()
 
@@ -59,10 +50,10 @@ def clampsoverview_fig(clamp_types, clamps, fiver=True):
     fig.update_layout(hovermode="y unified", legend_title="Type", legend_orientation="h", yaxis_title="Depth (m)",
                       showlegend=False,
                       xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=True, margin=dict(l=80, r=40, b=25, t=20, pad=4),
-                      #title="Fiber cable orientation overview",
+                      # title="Fiber cable orientation overview",
                       # title_x=0.5,
                       )
-    #fig.update_xaxes(range=[-185, 185])
+    # fig.update_xaxes(range=[-185, 185])
     fig.update_yaxes(autorange="reversed", ticksuffix=" m")
     fig.layout.modebar = {'orientation': 'v'}
     # fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
@@ -88,10 +79,10 @@ def clampview_fig(clamp_types, clamps, fiver=True):
     fig.update_layout(hovermode="y unified", legend_title="Type", legend_orientation="h", yaxis_title="Depth (m)",
                       showlegend=False,
                       xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=True, margin=dict(l=80, r=40, b=25, t=20, pad=4),
-                      #title="Fiber cable orientation overview",
+                      # title="Fiber cable orientation overview",
                       # title_x=0.5,
                       )
-    #fig.update_xaxes(range=[-185, 185])
+    # fig.update_xaxes(range=[-185, 185])
     fig.update_yaxes(autorange="reversed", ticksuffix=" m")
     fig.layout.modebar = {'orientation': 'v'}
     # fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
@@ -130,7 +121,7 @@ def clampspolar_fig(clamp_types, clamps, fiver=True):
                       legend_title="Type",
                       legend_orientation="h",
                       autosize=True,
-                      margin=dict(t=50, b=40, l=40, r=40))
+                      margin=dict(t=40, b=40, l=40, r=40))
     fig.update_polars(
         hole=0.05,
         radialaxis=dict(
@@ -196,9 +187,10 @@ layout = dbc.Row([
                                   # 'doubleClick': False,
                                   # 'scrollZoom': True,
                                   # 'staticPlot': True,
+                                  'responsive': True,
                                   'modeBarButtonsToRemove': ['zoom', 'select2d'],
                                   'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 600, 'width': 600, 'scale': 3}},
-                          style={'height': '23em'},
+                          style={'minHeight': '20em', 'height': '30vh'},
                           ),
             ),
             dbc.Row([
@@ -233,7 +225,7 @@ layout = dbc.Row([
                                      style_as_list_view=True,
                                      fixed_rows={'headers': True, 'data': 0},
                                      style_table={
-                                         'minHeight': '100%', 'height': '100%', 'maxHeight': '100%',
+                                         'minHeight': '10%', 'height': '100%', 'maxHeight': '100%',
                                          'minWidth': 'auto', 'width': 'auto', 'maxWidth': 'auto'},
                                         style_header={
                                             'text-align': 'left', 'fontWeight': 'bold', 'fontSize': '0.8em', 'font-style': 'italic'},
@@ -351,12 +343,12 @@ clientside_callback(
     ),
     Output("cd_overview", "figure"),
     Input("dropdown_cd", "value"),
-    #Input("themeToggle", "value"),
-    #Input("unitsToggle", "value"),
+    # Input("themeToggle", "value"),
+    # Input("unitsToggle", "value"),
     Input('cd_overview', 'relayoutData'),
     Input("cover", "data"),
     State('cd_overview', 'figure'),
-    #State("themes", "data"),
+    # State("themes", "data"),
 )
 
 clientside_callback(
@@ -366,10 +358,10 @@ clientside_callback(
     ),
     Output("cd_polar", "figure"),
     Input("dropdown_cd", "value"),
-    #Input("themeToggle", "value"),
+    # Input("themeToggle", "value"),
     Input("cpolar", "data"),
     State('cd_polar', 'figure'),
-    #State("themes", "data"),
+    # State("themes", "data"),
 )
 
 clientside_callback(
