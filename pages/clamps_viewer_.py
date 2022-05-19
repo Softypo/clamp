@@ -1,4 +1,4 @@
-from dv_dashboard import CONTENT_STYLE
+#from dv_dashboard import CONTENT_STYLE
 import pandas as pd
 # from dash_bootstrap_templates import template_from_url, load_figure_template
 import dash_bootstrap_components as dbc
@@ -9,16 +9,28 @@ import plotly.graph_objects as go
 from dash import dcc, html, dash_table, Input, Output, State, callback
 import dash
 
+from pil_utilities import loader_pil_multiprocess, loader_pil
+
 from dash import clientside_callback
 from dash.dependencies import ClientsideFunction
 
 dash.register_page(__name__, path="/")
+
+CONTENT_STYLE = {
+    "marginTop": '8px',
+    # "padding": "0.5rem",
+    "height": "93vh",
+    "minHeight": "20em",
+    "display": "flex",
+    "flexFlow": "column",
+}
 
 # data
 
 # clamps = pd.read_hdf("data/446/446cd.h5", "cd446")
 clamps = pd.read_pickle("data/446/446cd.pkl")
 clamp_types = clamps['type'].unique()
+clamp_imgs = loader_pil('data/446/tubeviews/cdc')
 
 
 # functions
@@ -60,32 +72,62 @@ def clampsoverview_fig(clamp_types, clamps, fiver=True):
     return fig
 
 
-def clampview_fig(clamp_types, clamps, fiver=True):
+def clampview_fig(clamp_types, clamp_img, fiver=True):
+
+    # Create figure
     fig = go.Figure()
-    cc = clamps.copy()
-    fiber = cc[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
-                'fiberTOH']].loc[cc['type'].isin(clamp_types)]
 
-    # add delta
-    nogozone_svg = ''.join([f'M {xy[0][0]+10},{xy[0][1]} ' if xy[1] == 0 else f'L{xy[0][0]+10},{xy[0][1]} ' for xy in zip(fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))]) + \
-        ''.join([f' L{xy[0][0]-10},{xy[0][1]} Z' if xy[1] == 0 else f' L{xy[0][0]-10},{xy[0][1]}' for xy in zip(
-            fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))][::-1])
+    # Constants
+    img_width = clamp_img.size[0]
+    img_height = clamp_img.size[1]
+    scale_factor = 0.5
 
-    fig.update_layout(shapes=[dict(type="path", path=nogozone_svg,
-                      fillcolor='rgba(255,69,0,0.2)', line=dict(width=0), layer='below')])
+    # Add invisible scatter trace.
+    # This trace is added to help the autoresize logic work.
+    fig.add_trace(
+        go.Scatter(
+            x=[0, img_width * scale_factor],
+            y=[0, img_height * scale_factor],
+            mode="markers",
+            marker_opacity=0
+        )
+    )
 
-    fig.update_traces(
-        hovertemplate='%{customdata[0]}<br>%{customdata[1]} deg (TOH)')
-    fig.update_layout(hovermode="y unified", legend_title="Type", legend_orientation="h", yaxis_title="Depth (m)",
-                      showlegend=False,
-                      xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=True, margin=dict(l=80, r=40, b=25, t=20, pad=4),
-                      # title="Fiber cable orientation overview",
-                      # title_x=0.5,
-                      )
-    # fig.update_xaxes(range=[-185, 185])
-    fig.update_yaxes(autorange="reversed", ticksuffix=" m")
-    fig.layout.modebar = {'orientation': 'v'}
-    # fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
+    # Configure axes
+    fig.update_xaxes(
+        visible=False,
+        range=[0, img_width * scale_factor]
+    )
+
+    fig.update_yaxes(
+        visible=False,
+        range=[0, img_height * scale_factor],
+        # the scaleanchor attribute ensures that the aspect ratio stays constant
+        scaleanchor="x"
+    )
+
+    # Add image
+    fig.add_layout_image(
+        dict(
+            x=0,
+            sizex=img_width * scale_factor,
+            y=img_height * scale_factor,
+            sizey=img_height * scale_factor,
+            xref="x",
+            yref="y",
+            opacity=1.0,
+            layer="below",
+            sizing="stretch",
+            source=clamp_img)
+    )
+
+    # Configure other layout
+    fig.update_layout(
+        width=img_width * scale_factor,
+        height=img_height * scale_factor,
+        margin={"l": 0, "r": 0, "t": 0, "b": 0},
+    )
+    #fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
     return fig
 
 
@@ -184,7 +226,7 @@ layout = dbc.Row([
                           animate=False,
                           responsive=True,
                           config={'displaylogo': False,
-                                  # 'doubleClick': False,
+                                  'doubleClick': 'reset',
                                   # 'scrollZoom': True,
                                   # 'staticPlot': True,
                                   'responsive': True,
@@ -276,14 +318,26 @@ tabs = {'overview': [
     #     id="dropdown_cd2",
     # ),
     dcc.Graph(id="cd_view",
-              figure=clampview_fig(clamp_types, clamps, fiver=True),
+              figure=clampview_fig(
+                  clamp_types, clamp_imgs['clamp_clampCDC1'], fiver=True),
               animate=False,
               responsive=True,
               config={'displaylogo': False,
+                      'doubleClick': 'reset',
                       'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
                       'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
               style={'height': '100%'},
               ),
+    # dbc.Carousel(
+    #     items=[
+    #         {"key": "1", "src": "data/446/tubeviews/cdc/clamp_clampCDC1.jpeg"}
+    #         {"key": "2", "src": "/static/images/slide2.svg"},
+    #         {"key": "3", "src": "/static/images/slide3.svg"},
+    #     ],
+    #     controls=True,
+    #     indicators=True,
+    # ),
+
 ]
 }
 
