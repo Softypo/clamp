@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 from dash import dcc, html, dash_table, Input, Output, State, callback
 import dash
 
-from pil_utilities import loader_pil_multiprocess, loader_pil
+from .utils.pil_utilities import loader_pil_multiprocess, loader_pil
 
 from dash import clientside_callback
 from dash.dependencies import ClientsideFunction
@@ -30,7 +30,7 @@ CONTENT_STYLE = {
 # clamps = pd.read_hdf("data/446/446cd.h5", "cd446")
 clamps = pd.read_pickle("data/446/446cd.pkl")
 clamp_types = clamps['type'].unique()
-clamp_imgs = loader_pil_multiprocess('data/446/tubeviews/cdc')
+clamp_imgs = loader_pil('data/446/tubeviews/cdc')
 
 
 # functions
