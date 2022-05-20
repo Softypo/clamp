@@ -6,6 +6,7 @@ import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template, ThemeSwitchAIO
 from dash.dependencies import ClientsideFunction
 
+
 import plotly.io as pio
 
 # To use different themes,  change these links:

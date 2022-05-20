@@ -30,7 +30,7 @@ CONTENT_STYLE = {
 # clamps = pd.read_hdf("data/446/446cd.h5", "cd446")
 clamps = pd.read_pickle("data/446/446cd.pkl")
 clamp_types = clamps['type'].unique()
-clamp_imgs = loader_pil('data/446/tubeviews/cdc')
+clamp_imgs = loader_pil_multiprocess('data/446/tubeviews/cdc')
 
 
 # functions
