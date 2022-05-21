@@ -3,7 +3,6 @@
 /__pycache__
 pages/__pycache__
 pages/utils/__pycache__
-pages/utils/__pycache__/pil_utilities.cpython-39.pyc
 
 plotly/430_pie.html
 plotly/430_plot.html
