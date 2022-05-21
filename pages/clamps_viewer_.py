@@ -80,7 +80,7 @@ def clampview_fig(clamp_types, clamp_img, fiver=True):
     # Constants
     img_width = clamp_img.size[0]
     img_height = clamp_img.size[1]
-    scale_factor = 0.5
+    scale_factor = 1
 
     # Add invisible scatter trace.
     # This trace is added to help the autoresize logic work.
@@ -123,8 +123,10 @@ def clampview_fig(clamp_types, clamp_img, fiver=True):
 
     # Configure other layout
     fig.update_layout(
-        width=img_width * scale_factor,
-        height=img_height * scale_factor,
+        dragmode='pan',
+        hovermode=False,
+        # width=img_width * scale_factor,
+        # height=img_height * scale_factor,
         margin={"l": 0, "r": 0, "t": 0, "b": 0},
     )
     #fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
@@ -214,7 +216,33 @@ layout = dbc.Row([
                     )
                 ),
                 dbc.CardBody(
-                    id="card-content", className="card-text", style={'height': '100%'}),
+                    children=[
+                        dcc.Graph(id="cd_overview",
+                                  # figure=clampsoverview_fig(clamp_types, clamps, False),
+                                  animate=False,
+                                  responsive=True,
+                                  config={'displaylogo': False,
+                                          'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
+                                          'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
+                                  style={'height': '100%', 'display': 'block'},
+                                  ),
+                        dcc.Graph(id="cd_view",
+                                  figure=clampview_fig(
+                                      clamp_types, clamp_imgs['clamp_clampCDC1'], fiver=True),
+                                  animate=True,
+                                  responsive=True,
+                                  config={'displaylogo': False,
+                                          'scrollZoom': True,
+                                          'doubleClick': 'reset',
+                                          # 'responsive': True,
+                                          'modeBarButtonsToRemove': ['zoom', 'boxZoom', 'lasso2d', 'select2d'],
+                                          'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
+                                  style={'height': '100%', 'display': 'none'},
+                                  ),
+                    ],
+                    id="card-content",
+                    className="card-text",
+                    style={'height': '100%'}),
             ], style={'height': '100%'}),
             ],
             xl=7, lg=6, md=12, sm=12, xs=12,
@@ -229,7 +257,7 @@ layout = dbc.Row([
                                   'doubleClick': 'reset',
                                   # 'scrollZoom': True,
                                   # 'staticPlot': True,
-                                  'responsive': True,
+                                  # 'responsive': True,
                                   'modeBarButtonsToRemove': ['zoom', 'select2d'],
                                   'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 600, 'width': 600, 'scale': 3}},
                           style={'minHeight': '20em', 'height': '30vh'},
@@ -287,67 +315,59 @@ layout = dbc.Row([
 ])
 
 
-tabs = {'overview': [
-    # dcc.Dropdown(
-    #     clamp_types,
-    #     clamp_types[1:],
-    #     multi=True,
-    #     searchable=False,
-    #     persistence=True,
-    #     persistence_type='memory',
-    #     id="dropdown_cd",
-    # ),
-    dcc.Graph(id="cd_overview",
-              # figure=clampsoverview_fig(clamp_types, clamps, False),
-              animate=False,
-              responsive=True,
-              config={'displaylogo': False,
-                      'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
-                      'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
-              style={'height': '100%'},
-              ),
-],
-    'tubeview': [
-    # dcc.Dropdown(
-    #     clamp_types,
-    #     clamp_types[1:],
-    #     multi=True,
-    #     searchable=False,
-    #     persistence=True,
-    #     persistence_type='memory',
-    #     id="dropdown_cd2",
-    # ),
-    dcc.Graph(id="cd_view",
-              figure=clampview_fig(
-                  clamp_types, clamp_imgs['clamp_clampCDC1'], fiver=True),
-              animate=False,
-              responsive=True,
-              config={'displaylogo': False,
-                      'doubleClick': 'reset',
-                      'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
-                      'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
-              style={'height': '100%'},
-              ),
-    # dbc.Carousel(
-    #     items=[
-    #         {"key": "1", "src": "data/446/tubeviews/cdc/clamp_clampCDC1.jpeg"}
-    #         {"key": "2", "src": "/static/images/slide2.svg"},
-    #         {"key": "3", "src": "/static/images/slide3.svg"},
-    #     ],
-    #     controls=True,
-    #     indicators=True,
-    # ),
+# tabs = {'overview': [
+#     dcc.Graph(id="cd_overview",
+#               # figure=clampsoverview_fig(clamp_types, clamps, False),
+#               animate=False,
+#               responsive=True,
+#               config={'displaylogo': False,
+#                       'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
+#                       'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
+#               style={'height': '100%'},
+#               ),
+# ],
+#     'tubeview': [
+#     # dcc.Dropdown(
+#     #     clamp_types,
+#     #     clamp_types[1:],
+#     #     multi=True,
+#     #     searchable=False,
+#     #     persistence=True,
+#     #     persistence_type='memory',
+#     #     id="dropdown_cd2",
+#     # ),
+#     dcc.Graph(id="cd_view",
+#               figure=clampview_fig(
+#                   clamp_types, clamp_imgs['clamp_clampCDC1'], fiver=True),
+#               animate=False,
+#               responsive=True,
+#               config={'displaylogo': False,
+#                       'doubleClick': 'reset',
+#                       'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
+#                       'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
+#               style={'height': '100%'},
+#               ),
 
-]
-}
+# ]
+# }
 
 
 # callbacks
 
-@ callback(
-    Output("card-content", "children"), [Input("card-tabs", "active_tab")])
-def tab_content(active_tab):
-    return tabs[active_tab]
+# @ callback(
+#     Output("card-content", "children"), [Input("card-tabs", "active_tab")])
+# def tab_content(active_tab):
+#     return tabs[active_tab]
+
+clientside_callback(
+    ClientsideFunction(
+        namespace="clientside",
+        function_name="tab_content"
+    ),
+    Output("cd_overview", "style"),
+    Output("cd_view", "style"),
+    Input("card-tabs", "active_tab"),
+)
 
 
 # @ callback(
@@ -426,11 +446,13 @@ clientside_callback(
     Output("ctbl", "data"),
     Output("cover", "data"),
     Output("cpolar", "data"),
+    Output("cd_view", "figure"),
     Input("themeToggle", "value"),
     Input("unitsToggle", "value"),
     State("ctbl", "data"),
     State("cover", "data"),
     State("cpolar", "data"),
+    State("cd_view", "figure"),
     State("themes", "data"),
 )
 

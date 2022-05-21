@@ -1,22 +1,29 @@
 window.dash_clientside = Object.assign({}, window.dash_clientside, {
     clientside: {
+        tab_content: function (active_tab) {
+            let on = { 'height': '100%', 'display': 'block' }
+            let off = { 'height': '100%', 'display': 'none' }
+            if (active_tab == 'overview') return [on, off]
+            else return [off, on]
+        },
         theme_switcher: function (themeToggle, themes) {
             const stylesheet = document.querySelector('link[rel=stylesheet][href^="https://cdn.jsdelivr"]');
             var themeLink = themeToggle ? themes['_light']['css'] : themes['_dark']['css'];
             //stylesheet.href = themeLink;
             setTimeout(function () { stylesheet.href = themeLink; }, 100);
         },
-        cstore_switcher: function (themeToggle, unitsToggle, ctbl, cover, cpolar, themes) {
+        cstore_switcher: function (themeToggle, unitsToggle, ctbl, cover, cpolar, cview, themes) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
             // ctbl_new = JSON.parse(JSON.stringify(ctbl));
             // cover_fig = JSON.parse(JSON.stringify(cover));
             // cpolar_fig = JSON.parse(JSON.stringify(cpolar));
-            // let ctbl_new = structuredClone(ctbl);
-            // let cover_fig = structuredClone(cover);
-            // let cpolar_fig = structuredClone(cpolar);
-            let ctbl_new = [...ctbl];
-            let cover_fig = { ...cover };
-            let cpolar_fig = { ...cpolar };
+            let ctbl_new = structuredClone(ctbl);
+            let cover_fig = structuredClone(cover);
+            let cpolar_fig = structuredClone(cpolar);
+            // let ctbl_new = [...ctbl];
+            // let cover_fig = { ...cover };
+            // let cpolar_fig = { ...cpolar };
+            let cview_fig = structuredClone(cview);
 
             // console.log('pre u', cpolar_fig);
 
@@ -55,11 +62,14 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 cover_fig.layout.modebar = modebar;
                 cpolar_fig.layout.template = template;
                 cpolar_fig.layout.modebar = modebar;
+                cview_fig.layout.template = template;
+                cview_fig.layout.modebar = modebar;
+
             };
 
             // if (trigger == "unitsToggle") {
             if (unitsToggle) {
-                if (cover_fig.layout.yaxis.title.text == 'Depth (ft)') return [ctbl_new, cover_fig, cpolar_fig];
+                if (cover_fig.layout.yaxis.title.text == 'Depth (ft)') return [ctbl_new, cover_fig, cpolar_fig, cview_fig];
                 cover_fig.data.forEach((trace, index) => {
                     cover_fig.data[index].y = trace.y.map(y => y * 3.28084);
                     cpolar_fig.data[index].r = cpolar_fig.data[index].r.map(y => y * 3.28084);
@@ -73,7 +83,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 // cpolar_fig.layout['uirevision'] = ' ft';
                 ctbl_new = ctbl_new.map(dic => Object.assign(dic, { 'depth': +(dic.depth * 3.28084).toFixed(3) }));
             } else {
-                if (cover_fig.layout.yaxis.title.text == 'Depth (m)') return [ctbl_new, cover_fig, cpolar_fig];
+                if (cover_fig.layout.yaxis.title.text == 'Depth (m)') return [ctbl_new, cover_fig, cpolar_fig, cview_fig];
                 cover_fig.data.forEach((trace, index) => {
                     cover_fig.data[index].y = trace.y.map(y => y * 0.3048);
                     cpolar_fig.data[index].r = cpolar_fig.data[index].r.map(y => y * 0.3048);
@@ -107,7 +117,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             // cover_fig.layout.autosize = true;
             // delete cover_fig.layout.yaxis.autorange
             // cover_fig.layout.yaxis.autorange = true;
-            return [ctbl_new, cover_fig, cpolar_fig];
+            return [ctbl_new, cover_fig, cpolar_fig, cview_fig];
         },
         clampsoverview_listener: function (clamps_types, relayoutData, store_fig, fig) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
@@ -167,7 +177,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 new_fig = { ...fig };
             };
 
-            if (trigger == "cd_overview" && relayoutData != undefined) {
+            if (trigger == "cd_overview" && Object.keys(relayoutData).length > 1) {
                 console.log(relayoutData);
                 if (relayoutData['yaxis.range[0]'] != undefined) {
                     new_fig.layout.polar.radialaxis.range = [relayoutData['yaxis.range[0]'], relayoutData['yaxis.range[1]']];
