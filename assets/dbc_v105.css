@@ -164,8 +164,8 @@ body .dbc .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-in
 
 /* active cell */
 .dbc .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner td.focused {
-  background-color: rgba(var(--bs-primary-rgb), 0.0) !important;
-  outline: 0px solid var(--bs-primary);
+  background-color: rgba(var(--bs-primary-rgb), 0.2) !important;
+  outline: 1px solid var(--bs-primary);
 }
 
 /* active cell when cell is  editable */
@@ -175,7 +175,7 @@ body .dbc .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-in
 
 /* selected cells */
 .dbc .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner td.cell--selected {
-  background-color: rgba(var(--bs-primary-rgb), 0.0) !important;
+  background-color: rgba(var(--bs-primary-rgb), 0.2) !important;
 }
 
 /*  dropdown inside datatable */

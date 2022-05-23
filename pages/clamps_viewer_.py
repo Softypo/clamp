@@ -291,6 +291,7 @@ layout = dbc.Row([
             dbc.Row(
                 dash_table.DataTable(id='cd_table',
                                      # clamps.iloc[:, [0, 1, 4, 5, 6]].to_dict('records'),
+                                     cell_selectable=False,
                                      row_selectable='single',
                                      page_action='native',
                                      sort_action='native',
