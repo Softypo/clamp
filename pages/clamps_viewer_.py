@@ -72,7 +72,7 @@ def clampsoverview_fig(clamp_types, clamps, fiver=True):
     return fig
 
 
-def clampview_fig(clamp_types, clamp_img, fiver=True):
+def clampview_fig(clamp_img, fiver=True):
 
     # Create figure
     fig = go.Figure()
@@ -194,9 +194,10 @@ def clampspolar_fig(clamp_types, clamps, fiver=True):
 
 layout = dbc.Row([
     dcc.Store(id="ctbl", storage_type="memory",
-              data=clamps.iloc[:, [0, 1, 4, 5, 6]].to_dict('records')),
+              data=clamps.iloc[:, [0, 1, 4, 5, 6, 9]].to_dict('records')),
     dcc.Store(id="cover", storage_type="memory",
               data=clampsoverview_fig(clamp_types, clamps)),
+    dcc.Store(id="cview", storage_type="memory"),
     dcc.Store(id="cpolar", storage_type="memory",
               data=clampspolar_fig(clamp_types, clamps)),
     dbc.Col([
@@ -228,7 +229,7 @@ layout = dbc.Row([
                                   ),
                         dcc.Graph(id="cd_view",
                                   figure=clampview_fig(
-                                      clamp_types, clamp_imgs['clamp_clampCDC1'], fiver=True),
+                                      clamp_imgs['CDC1'], fiver=True),
                                   animate=True,
                                   responsive=True,
                                   config={'displaylogo': False,
@@ -290,6 +291,7 @@ layout = dbc.Row([
             dbc.Row(
                 dash_table.DataTable(id='cd_table',
                                      # clamps.iloc[:, [0, 1, 4, 5, 6]].to_dict('records'),
+                                     row_selectable='single',
                                      page_action='native',
                                      sort_action='native',
                                      style_as_list_view=True,
@@ -301,12 +303,13 @@ layout = dbc.Row([
                                             'text-align': 'left', 'fontWeight': 'bold', 'fontSize': '0.8em', 'font-style': 'italic'},
                                         style_cell={
                                             'text-align': 'left', 'fontSize': '1em'},
-                                        style_data_conditional=[
-                                         {
-                                             'if': {'row_index': 'even'},
-                                             'backgroundColor': 'slategrey',
-                                         }
-                                     ],
+                                     #  style_data_conditional=[
+                                     #      {
+                                     #          "if": {"state": "selected"},
+                                     #          "backgroundColor": "inherit !important",
+                                     #          "border": "inherit !important",
+                                     #      }
+                                     #  ]
                                      ), style={'height': '100%'}),
             ],
             xl=5, lg=6, md=12, sm=12, xs=12,
@@ -377,6 +380,14 @@ clientside_callback(
 # def filterclamps_table(value):
 #     return clamps[clamps.type.isin(value)].iloc[:, [0, 1, 4, 5, 6]].round(3).to_dict('records')
 
+clientside_callback(
+    ClientsideFunction(
+        namespace="clientside",
+        function_name="clampstable_rowselect"
+    ),
+    Output("cd_table", "style_data_conditional"),
+    Input("cd_table", "derived_virtual_selected_row_ids"),
+)
 
 clientside_callback(
     ClientsideFunction(
@@ -384,6 +395,7 @@ clientside_callback(
         function_name="clampstable_listener"
     ),
     Output("cd_table", "data"),
+    Output("cd_table", "columns"),
     Input("dropdown_cd", "value"),
     Input("ctbl", "data"),
     State("cd_table", "data"),
@@ -425,6 +437,18 @@ clientside_callback(
     # State("themes", "data"),
 )
 
+
+@ callback(
+    Output("cview", "data"),
+    Input("cd_table", "derived_virtual_selected_row_ids"),
+)
+def clampsoverview_listener(fig_id):
+    if fig_id is None:
+        return None
+    else:
+        return clampview_fig(clamp_types, clamp_imgs[fig_id[0].id], fiver=True)
+
+
 clientside_callback(
     ClientsideFunction(
         namespace="clientside",
@@ -452,7 +476,7 @@ clientside_callback(
     State("ctbl", "data"),
     State("cover", "data"),
     State("cpolar", "data"),
-    State("cd_view", "figure"),
+    State("cview", "data"),
     State("themes", "data"),
 )
 

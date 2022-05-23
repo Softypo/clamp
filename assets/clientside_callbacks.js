@@ -1,16 +1,16 @@
 window.dash_clientside = Object.assign({}, window.dash_clientside, {
     clientside: {
-        tab_content: function (active_tab) {
-            let on = { 'height': '100%', 'display': 'block' }
-            let off = { 'height': '100%', 'display': 'none' }
-            if (active_tab == 'overview') return [on, off]
-            else return [off, on]
-        },
         theme_switcher: function (themeToggle, themes) {
             const stylesheet = document.querySelector('link[rel=stylesheet][href^="https://cdn.jsdelivr"]');
             var themeLink = themeToggle ? themes['_light']['css'] : themes['_dark']['css'];
             //stylesheet.href = themeLink;
             setTimeout(function () { stylesheet.href = themeLink; }, 100);
+        },
+        tab_content: function (active_tab) {
+            let on = { 'height': '100%', 'display': 'block' }
+            let off = { 'height': '100%', 'display': 'none' }
+            if (active_tab == 'overview') return [on, off]
+            else return [off, on]
         },
         cstore_switcher: function (themeToggle, unitsToggle, ctbl, cover, cpolar, cview, themes) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
@@ -211,12 +211,30 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             // console.log('new', new_fig.layout.polar.radialaxis.range);
             return new_fig;
         },
+        // clampsview_listener: function (clamps_types, store_tbl, tbl) {
+        //     let new_tbl = [];
+        //     // if (new_tbl === undefined || trigger == "ctbl") {
+        //     //     new_tbl = structuredClone(store_tbl);
+
+        //     // new_tbl = [];
+        //     index = 0;
+        //     store_tbl.forEach(row => {
+        //         if (clamps_types.includes(row.type)) {
+        //             new_tbl[index] = { ...row };
+        //             index++;
+        //         };
+        //     });
+
+        //     // console.log('tbl store', store_tbl);
+        //     // console.log('tbl new', new_tbl);
+        //     return new_tbl;
+        // },
         clampstable_listener: function (clamps_types, store_tbl, tbl) {
             let new_tbl = [];
+            let new_cols = [];
             // if (new_tbl === undefined || trigger == "ctbl") {
             //     new_tbl = structuredClone(store_tbl);
 
-            // new_tbl = [];
             index = 0;
             store_tbl.forEach(row => {
                 if (clamps_types.includes(row.type)) {
@@ -224,10 +242,22 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                     index++;
                 };
             });
+            Object.keys(store_tbl[0]).forEach(key => {
+                if (key != "id") new_cols = new_cols.concat({ "name": key, "id": key });
+            });
 
             // console.log('tbl store', store_tbl);
-            // console.log('tbl new', new_tbl);
-            return new_tbl;
+            // console.log('tbl new', new_cols);
+            return [new_tbl, new_cols];
+        },
+        clampstable_rowselect: function (rows) {
+            let selected_rows = [];
+            if (rows == undefined) return window.dash_clientside.no_update;
+            rows.forEach(row => {
+                selected_rows = selected_rows.concat({ "if": { "filter_query": `{id} = ${row}` }, "backgroundColor": '#e95420' });
+            });
+            // console.log('post', selected_rows);
+            return selected_rows;
         },
         clampstable_tocsv: function (_, data) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
