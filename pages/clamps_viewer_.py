@@ -179,15 +179,15 @@ def clampspolar_fig(clamp_types, clamps, fiver=True):
     return fig
 
 
-['linear', 'quad', 'cubic', 'sin', 'exp', 'circle',
- 'elastic', 'back', 'bounce', 'linear-in', 'quad-in',
- 'cubic-in', 'sin-in', 'exp-in', 'circle-in', 'elastic-in',
- 'back-in', 'bounce-in', 'linear-out', 'quad-out',
- 'cubic-out', 'sin-out', 'exp-out', 'circle-out',
- 'elastic-out', 'back-out', 'bounce-out', 'linear-in-out',
- 'quad-in-out', 'cubic-in-out', 'sin-in-out', 'exp-in-out',
- 'circle-in-out', 'elastic-in-out', 'back-in-out',
- 'bounce-in-out']
+# ['linear', 'quad', 'cubic', 'sin', 'exp', 'circle',
+#  'elastic', 'back', 'bounce', 'linear-in', 'quad-in',
+#  'cubic-in', 'sin-in', 'exp-in', 'circle-in', 'elastic-in',
+#  'back-in', 'bounce-in', 'linear-out', 'quad-out',
+#  'cubic-out', 'sin-out', 'exp-out', 'circle-out',
+#  'elastic-out', 'back-out', 'bounce-out', 'linear-in-out',
+#  'quad-in-out', 'cubic-in-out', 'sin-in-out', 'exp-in-out',
+#  'circle-in-out', 'elastic-in-out', 'back-in-out',
+#  'bounce-in-out']
 
 
 # body
@@ -300,17 +300,10 @@ layout = dbc.Row([
                                      style_table={
                                          'minHeight': '10%', 'height': '100%', 'maxHeight': '100%',
                                          'minWidth': 'auto', 'width': 'auto', 'maxWidth': 'auto'},
-                                        style_header={
-                                            'text-align': 'left', 'fontWeight': 'bold', 'fontSize': '0.8em', 'font-style': 'italic'},
-                                        style_cell={
-                                            'text-align': 'left', 'fontSize': '1em'},
-                                     #  style_data_conditional=[
-                                     #      {
-                                     #          "if": {"state": "selected"},
-                                     #          "backgroundColor": "inherit !important",
-                                     #          "border": "inherit !important",
-                                     #      }
-                                     #  ]
+                                     style_header={
+                                         'text-align': 'left', 'fontWeight': 'bold', 'fontSize': '0.8em', 'font-style': 'italic'},
+                                     style_cell={
+                                         'text-align': 'left', 'fontSize': '1em'},
                                      ), style={'height': '100%'}),
             ],
             xl=5, lg=6, md=12, sm=12, xs=12,
@@ -447,7 +440,7 @@ def clampsoverview_listener(fig_id):
     if fig_id is None:
         return None
     else:
-        return clampview_fig(clamp_types, clamp_imgs[fig_id[0].id], fiver=True)
+        return clampview_fig(clamp_types, clamp_imgs[fig_id[0]], fiver=True)
 
 
 clientside_callback(
@@ -477,7 +470,7 @@ clientside_callback(
     State("ctbl", "data"),
     State("cover", "data"),
     State("cpolar", "data"),
-    State("cview", "data"),
+    State("cd_view", "figure"),
     State("themes", "data"),
 )
 
