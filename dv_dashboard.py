@@ -1,9 +1,9 @@
 import dash
 from dash import dcc, html, dash_table, Input, Output, State, callback, clientside_callback
-import dash_daq as daq
+#import dash_daq as daq
 import dash_labs as dl
 import dash_bootstrap_components as dbc
-from dash_bootstrap_templates import load_figure_template, ThemeSwitchAIO
+#from dash_bootstrap_templates import load_figure_template, ThemeSwitchAIO
 from dash.dependencies import ClientsideFunction
 
 
@@ -28,9 +28,11 @@ app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[them
                 # external_scripts=['https://cdn.plot.ly/plotly-2.11.1.min.js']
                 )
 application = app.server  # <<<<<<<<for debuging in vscode only
+
+
 # load_figure_template(themes['_light']['fig'])
 # load_figure_template(themes['_dark']['fig'])
-#load_figure_template([themes['_dark']['fig'], themes['_light']['fig']])
+# load_figure_template([themes['_dark']['fig'], themes['_light']['fig']])
 
 # app.scripts.config.serve_locally = True
 

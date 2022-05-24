@@ -1,4 +1,4 @@
-from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url, load_figure_template
+#from dash_bootstrap_templates import ThemeSwitchAIO, ThemeChangerAIO, template_from_url, load_figure_template
 import dash_bootstrap_components as dbc
 # import dash_labs as dl
 import plotly.express as px

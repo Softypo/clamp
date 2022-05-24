@@ -12,7 +12,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             if (active_tab == 'overview') return [on, off]
             else return [off, on]
         },
-        cstore_switcher: function (themeToggle, unitsToggle, ctbl, cover, cpolar, cview, themes) {
+        cstore_switcher: function (themeToggle, unitsToggle, ctbl, cover, cpolar, themes) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
             // ctbl_new = JSON.parse(JSON.stringify(ctbl));
             // cover_fig = JSON.parse(JSON.stringify(cover));
@@ -23,7 +23,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             // let ctbl_new = [...ctbl];
             // let cover_fig = { ...cover };
             // let cpolar_fig = { ...cpolar };
-            let cview_fig = structuredClone(cview);
+            // let cview_fig = structuredClone(cview);
 
             // console.log('pre u', cpolar_fig);
 
@@ -62,14 +62,14 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 cover_fig.layout.modebar = modebar;
                 cpolar_fig.layout.template = template;
                 cpolar_fig.layout.modebar = modebar;
-                cview_fig.layout.template = template;
-                cview_fig.layout.modebar = modebar;
+                // cview_fig.layout.template = template;
+                // cview_fig.layout.modebar = modebar;
 
             };
 
             // if (trigger == "unitsToggle") {
             if (unitsToggle) {
-                if (cover_fig.layout.yaxis.title.text == 'Depth (ft)') return [ctbl_new, cover_fig, cpolar_fig, cview_fig];
+                if (cover_fig.layout.yaxis.title.text == 'Depth (ft)') return [ctbl_new, cover_fig, cpolar_fig];
                 cover_fig.data.forEach((trace, index) => {
                     cover_fig.data[index].y = trace.y.map(y => y * 3.28084);
                     cpolar_fig.data[index].r = cpolar_fig.data[index].r.map(y => y * 3.28084);
@@ -83,7 +83,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 // cpolar_fig.layout['uirevision'] = ' ft';
                 ctbl_new = ctbl_new.map(dic => Object.assign(dic, { 'depth': +(dic.depth * 3.28084).toFixed(3) }));
             } else {
-                if (cover_fig.layout.yaxis.title.text == 'Depth (m)') return [ctbl_new, cover_fig, cpolar_fig, cview_fig];
+                if (cover_fig.layout.yaxis.title.text == 'Depth (m)') return [ctbl_new, cover_fig, cpolar_fig];
                 cover_fig.data.forEach((trace, index) => {
                     cover_fig.data[index].y = trace.y.map(y => y * 0.3048);
                     cpolar_fig.data[index].r = cpolar_fig.data[index].r.map(y => y * 0.3048);
@@ -117,7 +117,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             // cover_fig.layout.autosize = true;
             // delete cover_fig.layout.yaxis.autorange
             // cover_fig.layout.yaxis.autorange = true;
-            return [ctbl_new, cover_fig, cpolar_fig, cview_fig];
+            return [ctbl_new, cover_fig, cpolar_fig];
         },
         clampsoverview_listener: function (clamps_types, relayoutData, store_fig, fig) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);

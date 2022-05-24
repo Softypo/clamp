@@ -1,4 +1,4 @@
-#from dv_dashboard import CONTENT_STYLE
+# from dv_dashboard import CONTENT_STYLE
 import pandas as pd
 # from dash_bootstrap_templates import template_from_url, load_figure_template
 import dash_bootstrap_components as dbc
@@ -8,6 +8,8 @@ import plotly.graph_objects as go
 # import dash_daq as daq
 from dash import dcc, html, dash_table, Input, Output, State, callback
 import dash
+
+import requests
 
 from .utils.pil_utilities import loader_pil_multiprocess, loader_pil
 
@@ -69,6 +71,36 @@ def clampsoverview_fig(clamp_types, clamps, fiver=True):
     fig.update_yaxes(autorange="reversed", ticksuffix=" m")
     fig.layout.modebar = {'orientation': 'v'}
     # fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
+
+    # fig.update_layout(
+    #     xaxis=dict(
+    #         # rangeselector=dict(
+    #         #     buttons=list([
+    #         #         dict(count=1,
+    #         #              label="1m",
+    #         #              step="month",
+    #         #              stepmode="backward"),
+    #         #         dict(count=6,
+    #         #              label="6m",
+    #         #              step="month",
+    #         #              stepmode="backward"),
+    #         #         dict(count=1,
+    #         #              label="YTD",
+    #         #              step="year",
+    #         #              stepmode="todate"),
+    #         #         dict(count=1,
+    #         #              label="1y",
+    #         #              step="year",
+    #         #              stepmode="backward"),
+    #         #         dict(step="all")
+    #         #     ])
+    #         # ),
+    #         rangeslider=dict(
+    #             visible=True
+    #         ),
+    #         type="-",
+    #     ))
+
     return fig
 
 
@@ -125,11 +157,11 @@ def clampview_fig(clamp_img, fiver=True):
     fig.update_layout(
         dragmode='pan',
         hovermode=False,
-        # width=img_width * scale_factor,
-        # height=img_height * scale_factor,
+        width=img_width * scale_factor,
+        height=img_height * scale_factor,
         margin={"l": 0, "r": 0, "t": 0, "b": 0},
     )
-    #fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
+    # fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
     return fig
 
 
@@ -228,8 +260,8 @@ layout = dbc.Row([
                                   style={'height': '100%', 'display': 'block'},
                                   ),
                         dcc.Graph(id="cd_view",
-                                  figure=clampview_fig(
-                                      clamp_imgs['CDC1'], fiver=True),
+                                  #   figure=clampview_fig(
+                                  #       clamp_imgs['CDC1'], fiver=True),
                                   animate=True,
                                   responsive=True,
                                   config={'displaylogo': False,
@@ -290,7 +322,6 @@ layout = dbc.Row([
                 ), ], style={'height': 'auto'}),
             dbc.Row(
                 dash_table.DataTable(id='cd_table',
-                                     # clamps.iloc[:, [0, 1, 4, 5, 6]].to_dict('records'),
                                      cell_selectable=False,
                                      row_selectable='single',
                                      page_action='native',
@@ -301,7 +332,7 @@ layout = dbc.Row([
                                          'minHeight': '10%', 'height': '100%', 'maxHeight': '100%',
                                          'minWidth': 'auto', 'width': 'auto', 'maxWidth': 'auto'},
                                      style_header={
-                                         'text-align': 'left', 'fontWeight': 'bold', 'fontSize': '0.8em', 'font-style': 'italic'},
+                                         'text-align': 'left', 'fontSize': '0.8em', 'font-style': 'italic'},
                                      style_cell={
                                          'text-align': 'left', 'fontSize': '1em'},
                                      ), style={'height': '100%'}),
@@ -364,6 +395,8 @@ clientside_callback(
     Output("cd_overview", "style"),
     Output("cd_view", "style"),
     Input("card-tabs", "active_tab"),
+
+
 )
 
 
@@ -433,14 +466,63 @@ clientside_callback(
 
 
 @ callback(
-    Output("cview", "data"),
+    Output("cd_view", "figure"),
     Input("cd_table", "derived_virtual_selected_row_ids"),
+    Input("themeToggle", "value"),
+    State("themes", "data"),
 )
-def clampsoverview_listener(fig_id):
-    if fig_id is None:
-        return None
+def clampsoverview_listener(fig_id, themeToggle, themes):
+    # if len(fig_id) < 1:
+    if fig_id is not None and len(fig_id) < 1:
+        # Create figure
+        fig = go.Figure()
+        # Add invisible scatter trace.
+        # This trace is added to help the autoresize logic work.
+        # fig.add_trace(
+        #     go.Scatter(
+        #         x=[0, 1],
+        #         y=[0, 1],
+        #         mode="markers",
+        #         marker_opacity=0
+        #     )
+        # )
+        # Configure axes
+        fig.update_yaxes(
+            visible=False,
+            range=[0, 1]
+        )
+        fig.update_xaxes(
+            visible=False,
+            range=[0, 1]
+        )
+        fig.update_layout(
+            dragmode='pan',
+            hovermode=False,
+            # width=img_width * scale_factor,
+            # height=img_height * scale_factor,
+            margin={"l": 0, "r": 0, "t": 0, "b": 0},
+        )
+        # return dash.no_update
     else:
-        return clampview_fig(clamp_types, clamp_imgs[fig_id[0]], fiver=True)
+        fig = clampview_fig(clamp_imgs[fig_id[0]], fiver=True)
+    if themeToggle:
+        fig.layout.template = requests.get(
+            url=themes['_light']['json']).json()
+        fig.layout.modebar = {
+            'orientation': 'v',
+            'bgcolor': 'salmon',
+            'color': 'white',
+            'activecolor': '#9ED3CD'}
+    else:
+        fig.layout.template = requests.get(
+            url=themes['_dark']['json']).json()
+        fig.update_polars(bgcolor='rgb(58, 63, 68)')
+        fig.layout.modebar = {
+            'orientation': 'v',
+            'bgcolor': 'rgb(39, 43, 48)',
+            'color': 'white',
+            'activecolor': 'grey'}
+    return fig
 
 
 clientside_callback(
@@ -464,13 +546,11 @@ clientside_callback(
     Output("ctbl", "data"),
     Output("cover", "data"),
     Output("cpolar", "data"),
-    Output("cd_view", "figure"),
     Input("themeToggle", "value"),
     Input("unitsToggle", "value"),
     State("ctbl", "data"),
     State("cover", "data"),
     State("cpolar", "data"),
-    State("cd_view", "figure"),
     State("themes", "data"),
 )
 
