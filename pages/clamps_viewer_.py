@@ -159,7 +159,7 @@ def clampview_fig(clamp_img, fiver=True):
         hovermode=False,
         width=img_width * scale_factor,
         height=img_height * scale_factor,
-        margin={"l": 0, "r": 0, "t": 0, "b": 0},
+        margin=dict(l=0, r=0, b=0, t=0),
     )
     # fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
     return fig
@@ -267,7 +267,7 @@ layout = dbc.Row([
                                   config={'displaylogo': False,
                                           'scrollZoom': True,
                                           'doubleClick': 'reset',
-                                          # 'responsive': True,
+                                          'responsive': False,
                                           'modeBarButtonsToRemove': ['zoom', 'boxZoom', 'lasso2d', 'select2d'],
                                           'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
                                   style={'height': '100%', 'display': 'none'},
@@ -472,39 +472,33 @@ clientside_callback(
     State("themes", "data"),
 )
 def clampsoverview_listener(fig_id, themeToggle, themes):
-    # if len(fig_id) < 1:
-    if fig_id is not None and len(fig_id) < 1:
-        # Create figure
-        fig = go.Figure()
-        # Add invisible scatter trace.
-        # This trace is added to help the autoresize logic work.
-        # fig.add_trace(
-        #     go.Scatter(
-        #         x=[0, 1],
-        #         y=[0, 1],
-        #         mode="markers",
-        #         marker_opacity=0
-        #     )
-        # )
-        # Configure axes
-        fig.update_yaxes(
-            visible=False,
-            range=[0, 1]
-        )
-        fig.update_xaxes(
-            visible=False,
-            range=[0, 1]
-        )
-        fig.update_layout(
-            dragmode='pan',
-            hovermode=False,
-            # width=img_width * scale_factor,
-            # height=img_height * scale_factor,
-            margin={"l": 0, "r": 0, "t": 0, "b": 0},
-        )
-        # return dash.no_update
+    # Create empty figure
+    empty_fig = go.Figure()
+    # Configure axes
+    empty_fig.update_yaxes(
+        visible=False,
+        range=[0, 1]
+    )
+    empty_fig.update_xaxes(
+        visible=False,
+        range=[0, 1]
+    )
+    empty_fig.update_layout(
+        dragmode='pan',
+        hovermode=False,
+        # width=img_width * scale_factor,
+        # height=img_height * scale_factor,
+        margin={"l": 0, "r": 0, "t": 0, "b": 0},
+    )
+    if fig_id is None:
+        fig = empty_fig
+    elif len(fig_id) < 1:
+        fig = empty_fig
     else:
-        fig = clampview_fig(clamp_imgs[fig_id[0]], fiver=True)
+        try:
+            fig = clampview_fig(clamp_imgs[fig_id[0]], fiver=True)
+        except:
+            fig = empty_fig
     if themeToggle:
         fig.layout.template = requests.get(
             url=themes['_light']['json']).json()
