@@ -112,7 +112,7 @@ def clampview_fig(clamp_img, fiver=True):
     # Constants
     img_width = clamp_img.size[0]
     img_height = clamp_img.size[1]
-    scale_factor = 1
+    scale_factor = 0.5
 
     # Add invisible scatter trace.
     # This trace is added to help the autoresize logic work.
@@ -128,14 +128,15 @@ def clampview_fig(clamp_img, fiver=True):
     # Configure axes
     fig.update_xaxes(
         visible=False,
-        range=[0, img_width * scale_factor]
+        # range=[0, img_width * scale_factor]
+        scaleanchor="y"
     )
 
     fig.update_yaxes(
         visible=False,
         range=[0, img_height * scale_factor],
         # the scaleanchor attribute ensures that the aspect ratio stays constant
-        scaleanchor="x"
+        # scaleanchor="x"
     )
 
     # Add image
@@ -149,16 +150,17 @@ def clampview_fig(clamp_img, fiver=True):
             yref="y",
             opacity=1.0,
             layer="below",
-            sizing="stretch",
+            # sizing="stretch",
             source=clamp_img)
     )
 
     # Configure other layout
     fig.update_layout(
+        # autosize=True,
         dragmode='pan',
         hovermode=False,
-        width=img_width * scale_factor,
-        height=img_height * scale_factor,
+        # width=img_width * scale_factor,
+        # height=img_height * scale_factor,
         margin=dict(l=0, r=0, b=0, t=0),
     )
     # fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
@@ -290,7 +292,7 @@ layout = dbc.Row([
                                   'doubleClick': 'reset',
                                   # 'scrollZoom': True,
                                   # 'staticPlot': True,
-                                  # 'responsive': True,
+                                  'responsive': True,
                                   'modeBarButtonsToRemove': ['zoom', 'select2d'],
                                   'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 600, 'width': 600, 'scale': 3}},
                           style={'minHeight': '20em', 'height': '30vh'},

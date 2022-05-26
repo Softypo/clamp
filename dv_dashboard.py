@@ -300,7 +300,7 @@ app.layout = dbc.Container(
     [dcc.Location(id="url"), navbar, sidebar, content, stores, voids], fluid=True, className="dbc", style={"height": "100vh"})
 
 if __name__ == "__main__":
-    app.run_server(port=8888,
+    app.run_server(port=5000,
                    debug=True,
                    threaded=True,
                    # host='0.0.0.0',
