@@ -473,7 +473,7 @@ clientside_callback(
     Input("themeToggle", "value"),
     State("themes", "data"),
 )
-def clampsoverview_listener(fig_id, themeToggle, themes):
+def clampsview_listener(fig_id, themeToggle, themes):
     # Create empty figure
     empty_fig = go.Figure()
     # Configure axes
