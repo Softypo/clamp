@@ -1,4 +1,5 @@
 # from dv_dashboard import CONTENT_STYLE
+from re import T
 import pandas as pd
 # from dash_bootstrap_templates import template_from_url, load_figure_template
 import dash_bootstrap_components as dbc
@@ -150,7 +151,7 @@ def clampview_fig(clamp_img, fiver=True):
             yref="y",
             opacity=1.0,
             layer="below",
-            # sizing="stretch",
+            sizing="contain",
             source=clamp_img)
     )
 
@@ -261,19 +262,19 @@ layout = dbc.Row([
                                           'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
                                   style={'height': '100%', 'display': 'block'},
                                   ),
-                        dcc.Graph(id="cd_view",
-                                  #   figure=clampview_fig(
-                                  #       clamp_imgs['CDC1'], fiver=True),
-                                  animate=True,
-                                  responsive=True,
-                                  config={'displaylogo': False,
-                                          'scrollZoom': True,
-                                          'doubleClick': 'reset',
-                                          'responsive': False,
-                                          'modeBarButtonsToRemove': ['zoom', 'boxZoom', 'lasso2d', 'select2d'],
-                                          'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
-                                  style={'height': '100%', 'display': 'none'},
-                                  ),
+                        dcc.Loading(id="cd_view_loading", type="default", children=[
+                            dcc.Graph(id="cd_view",
+                                      animate=True,
+                                      responsive=True,
+                                      config={'displaylogo': False,
+                                              'scrollZoom': True,
+                                              # 'doubleClick': 'reset',
+                                              'responsive': True,
+                                              'modeBarButtonsToRemove': ['zoom', 'boxZoom', 'lasso2d', 'select2d'],
+                                              'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
+                                      style={'height': '100%',
+                                             'display': 'none'},
+                                      ), ], color='#e95420', parent_style={'height': '100%'}),
                     ],
                     id="card-content",
                     className="card-text",
@@ -474,6 +475,8 @@ clientside_callback(
     State("themes", "data"),
 )
 def clampsview_listener(fig_id, themeToggle, themes):
+    trigger = dash.callback_context.triggered[0]['prop_id'].split('.')[0]
+
     # Create empty figure
     empty_fig = go.Figure()
     # Configure axes
@@ -493,14 +496,14 @@ def clampsview_listener(fig_id, themeToggle, themes):
         margin={"l": 0, "r": 0, "t": 0, "b": 0},
     )
     if fig_id is None:
-        fig = empty_fig
+        fig = go.Figure(empty_fig)
     elif len(fig_id) < 1:
-        fig = empty_fig
+        fig = go.Figure(empty_fig)
     else:
         try:
-            fig = clampview_fig(clamp_imgs[fig_id[0]], fiver=True)
+            fig = go.Figure(clampview_fig(clamp_imgs[fig_id[0]], fiver=True))
         except:
-            fig = empty_fig
+            fig = go.Figure(empty_fig)
     if themeToggle:
         fig.layout.template = requests.get(
             url=themes['_light']['json']).json()

@@ -296,8 +296,8 @@ app.clientside_callback(
 
 
 # app initialization
-app.layout = dbc.Container(
-    dcc.Loading(children=[dcc.Location(id="url"), navbar, sidebar, content, stores, voids], color='#e95420'), fluid=True, className="dbc", style={"height": "100vh"})
+app.layout = dbc.Container([dcc.Location(id="url"), navbar, sidebar, content,
+                           stores, voids], fluid=True, className="dbc", style={"height": "100vh"})
 
 if __name__ == "__main__":
     app.run_server(port=5000,
