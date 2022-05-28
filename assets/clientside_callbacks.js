@@ -7,8 +7,8 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             setTimeout(function () { stylesheet.href = themeLink; }, 100);
         },
         tab_content: function (active_tab) {
-            let on = { 'height': '100%', 'display': 'block' }
-            let off = { 'height': '100%', 'display': 'none' }
+            let on = { 'display': 'block', 'height': '100%' };
+            let off = { 'display': 'none', 'height': '100%' };
             if (active_tab == 'overview') return [on, off]
             else return [off, on]
         },

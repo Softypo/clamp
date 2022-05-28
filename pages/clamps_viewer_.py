@@ -1,5 +1,4 @@
 # from dv_dashboard import CONTENT_STYLE
-from re import T
 import pandas as pd
 # from dash_bootstrap_templates import template_from_url, load_figure_template
 import dash_bootstrap_components as dbc
@@ -33,7 +32,7 @@ CONTENT_STYLE = {
 # clamps = pd.read_hdf("data/446/446cd.h5", "cd446")
 clamps = pd.read_pickle("data/446/446cd.pkl")
 clamp_types = clamps['type'].unique()
-clamp_imgs = loader_pil('data/446/tubeviews/cdc')
+clamp_imgs = loader_pil('data/446/tubeviews/all')
 
 
 # functions
@@ -253,16 +252,16 @@ layout = dbc.Row([
                 ),
                 dbc.CardBody(
                     children=[
-                        dcc.Graph(id="cd_overview",
-                                  # figure=clampsoverview_fig(clamp_types, clamps, False),
-                                  animate=False,
-                                  responsive=True,
-                                  config={'displaylogo': False,
-                                          'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
-                                          'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
-                                  style={'height': '100%', 'display': 'block'},
-                                  ),
-                        dcc.Loading(id="cd_view_loading", type="default", children=[
+                        dcc.Loading(id="cd_loading", type="default", children=[
+                            dcc.Graph(id="cd_overview",
+                                      animate=False,
+                                      responsive=True,
+                                      config={'displaylogo': False,
+                                              'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
+                                              'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
+                                      style={'display': 'block',
+                                             'height': '100%'}
+                                      ),
                             dcc.Graph(id="cd_view",
                                       animate=True,
                                       responsive=True,
@@ -272,8 +271,8 @@ layout = dbc.Row([
                                               'responsive': True,
                                               'modeBarButtonsToRemove': ['zoom', 'boxZoom', 'lasso2d', 'select2d'],
                                               'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
-                                      style={'height': '100%',
-                                             'display': 'none'},
+                                      style={'display': 'none',
+                                             'height': '100%'}
                                       ), ], color='#e95420', parent_style={'height': '100%'}),
                     ],
                     id="card-content",
@@ -286,18 +285,19 @@ layout = dbc.Row([
             ),
     dbc.Col([
             dbc.Row(
-                dcc.Graph(id="cd_polar",
-                          animate=False,
-                          responsive=True,
-                          config={'displaylogo': False,
-                                  'doubleClick': 'reset',
-                                  # 'scrollZoom': True,
-                                  # 'staticPlot': True,
-                                  'responsive': True,
-                                  'modeBarButtonsToRemove': ['zoom', 'select2d'],
-                                  'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 600, 'width': 600, 'scale': 3}},
-                          style={'minHeight': '20em', 'height': '30vh'},
-                          ),
+                dcc.Loading(id="cd_loading_2", type="default", children=[
+                    dcc.Graph(id="cd_polar",
+                              animate=False,
+                              responsive=True,
+                              config={'displaylogo': False,
+                                      'doubleClick': 'reset',
+                                      # 'scrollZoom': True,
+                                      # 'staticPlot': True,
+                                      'responsive': True,
+                                      'modeBarButtonsToRemove': ['zoom', 'select2d'],
+                                      'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 600, 'width': 600, 'scale': 3}},
+                              style={'minHeight': '20em', 'height': '30vh'},
+                              ), ], color='#e95420', parent_style={'minHeight': '20em', 'height': '30vh'}),
             ),
             dbc.Row([
                 dbc.Col(

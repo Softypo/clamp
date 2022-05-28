@@ -7,7 +7,7 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import ClientsideFunction
 
 
-import plotly.io as pio
+# import plotly.io as pio
 
 # To use different themes,  change these links:
 # dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
