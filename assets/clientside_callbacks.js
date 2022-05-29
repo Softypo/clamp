@@ -6,11 +6,13 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             //stylesheet.href = themeLink;
             setTimeout(function () { stylesheet.href = themeLink; }, 100);
         },
-        tab_content: function (active_tab) {
+        tab_content: function (active_tab, cd_table_rowid) {
+            const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
             let on = { 'display': 'block', 'height': '100%' };
             let off = { 'display': 'none', 'height': '100%' };
-            if (active_tab == 'overview') return [on, off]
-            else return [off, on]
+            if (trigger == "cd_table" && Object.keys(cd_table_rowid).length > 0) return [off, on, 'tubeview']
+            else if (active_tab == 'overview') return [on, off, 'overview']
+            else return [off, on, 'tubeview']
         },
         cstore_switcher: function (themeToggle, unitsToggle, ctbl, cover, cpolar, themes) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
@@ -229,7 +231,8 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
         //     // console.log('tbl new', new_tbl);
         //     return new_tbl;
         // },
-        clampstable_listener: function (clamps_types, store_tbl, tbl) {
+        clampstable_listener: function (clamps_types, store_tbl, selected_rows) {
+            const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
             let new_tbl = [];
             let new_cols = [];
             // if (new_tbl === undefined || trigger == "ctbl") {
@@ -243,12 +246,13 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 };
             });
             Object.keys(store_tbl[0]).forEach(key => {
-                if (key != "id") new_cols = new_cols.concat({ "name": key, "id": key });
+                if (["id", "type"].includes(key) == false) new_cols = new_cols.concat({ "name": key, "id": key });
             });
 
             // console.log('tbl store', store_tbl);
             // console.log('tbl new', new_cols);
-            return [new_tbl, new_cols];
+            if (trigger == "ctbl") return [new_tbl, new_cols, selected_rows];
+            else return [new_tbl, new_cols, []];
         },
         clampstable_rowselect: function (rows) {
             let selected_rows = [];

@@ -112,7 +112,7 @@ def clampview_fig(clamp_img, fiver=True):
     # Constants
     img_width = clamp_img.size[0]
     img_height = clamp_img.size[1]
-    scale_factor = 0.5
+    scale_factor = 1
 
     # Add invisible scatter trace.
     # This trace is added to help the autoresize logic work.
@@ -128,13 +128,15 @@ def clampview_fig(clamp_img, fiver=True):
     # Configure axes
     fig.update_xaxes(
         visible=False,
-        # range=[0, img_width * scale_factor]
+        # autorange=False,
+        #range=[0, img_width * scale_factor],
         scaleanchor="y"
     )
 
     fig.update_yaxes(
         visible=False,
-        range=[0, img_height * scale_factor],
+        # autorange=False,
+        #range=[0, img_height * scale_factor],
         # the scaleanchor attribute ensures that the aspect ratio stays constant
         # scaleanchor="x"
     )
@@ -156,11 +158,11 @@ def clampview_fig(clamp_img, fiver=True):
 
     # Configure other layout
     fig.update_layout(
-        # autosize=True,
+        # autosize=False,
         dragmode='pan',
         hovermode=False,
-        # width=img_width * scale_factor,
-        # height=img_height * scale_factor,
+        #width=img_width * scale_factor,
+        #height=img_height * scale_factor,
         margin=dict(l=0, r=0, b=0, t=0),
     )
     # fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
@@ -263,13 +265,13 @@ layout = dbc.Row([
                                              'height': '100%'}
                                       ),
                             dcc.Graph(id="cd_view",
-                                      animate=True,
+                                      animate=False,
                                       responsive=True,
                                       config={'displaylogo': False,
                                               'scrollZoom': True,
                                               # 'doubleClick': 'reset',
                                               'responsive': True,
-                                              'modeBarButtonsToRemove': ['zoom', 'boxZoom', 'lasso2d', 'select2d'],
+                                              'modeBarButtonsToRemove': ['zoom', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
                                               'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
                                       style={'display': 'none',
                                              'height': '100%'}
@@ -397,7 +399,9 @@ clientside_callback(
     ),
     Output("cd_overview", "style"),
     Output("cd_view", "style"),
+    Output("card-tabs", "active_tab"),
     Input("card-tabs", "active_tab"),
+    Input("cd_table", "derived_virtual_selected_row_ids"),
 
 
 )
@@ -426,9 +430,10 @@ clientside_callback(
     ),
     Output("cd_table", "data"),
     Output("cd_table", "columns"),
+    Output("cd_table", "selected_rows"),
     Input("dropdown_cd", "value"),
     Input("ctbl", "data"),
-    State("cd_table", "data"),
+    State("cd_table", "selected_rows"),
 )
 
 
