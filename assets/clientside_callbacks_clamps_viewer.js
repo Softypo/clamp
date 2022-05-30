@@ -207,24 +207,6 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             // console.log('new', new_fig.layout.polar.radialaxis.range);
             return new_fig;
         },
-        // clampsview_listener: function (clamps_types, store_tbl, tbl) {
-        //     let new_tbl = [];
-        //     // if (new_tbl === undefined || trigger == "ctbl") {
-        //     //     new_tbl = structuredClone(store_tbl);
-
-        //     // new_tbl = [];
-        //     index = 0;
-        //     store_tbl.forEach(row => {
-        //         if (clamps_types.includes(row.type)) {
-        //             new_tbl[index] = { ...row };
-        //             index++;
-        //         };
-        //     });
-
-        //     // console.log('tbl store', store_tbl);
-        //     // console.log('tbl new', new_tbl);
-        //     return new_tbl;
-        // },
         clampstable_listener: function (clamps_types, store_tbl, selected_rows) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
             let new_tbl = [];
@@ -258,11 +240,9 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             return selected_rows;
         },
         clampstable_tocsv: function (_, data) {
-            const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
-            if (trigger == "table_copy") {
-                const dictionaryKeys = Object.keys(data[0]);
-                return [dictionaryKeys.join(','), ...data.map(dict => (dictionaryKeys.map(key => dict[key]).join(',')))].join("\n");
-            };
+            if (data == undefined) return window.dash_clientside.no_update;
+            const dictionaryKeys = Object.keys(data[0]).filter(key => key != "id")
+            return [dictionaryKeys.join(','), ...data.map(dict => (dictionaryKeys.map(key => dict[key]).join(',')))].join("\n");
         },
     }
 });
