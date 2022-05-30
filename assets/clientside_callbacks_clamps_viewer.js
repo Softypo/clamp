@@ -1,11 +1,5 @@
 window.dash_clientside = Object.assign({}, window.dash_clientside, {
-    clientside: {
-        theme_switcher: function (themeToggle, themes) {
-            const stylesheet = document.querySelector('link[rel=stylesheet][href^="https://cdn.jsdelivr"]');
-            var themeLink = themeToggle ? themes['_light']['css'] : themes['_dark']['css'];
-            //stylesheet.href = themeLink;
-            setTimeout(function () { stylesheet.href = themeLink; }, 100);
-        },
+    clamps_viewer: {
         tab_content: function (active_tab, cd_table_rowid) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
             let on = { 'display': 'block', 'height': '100%' };

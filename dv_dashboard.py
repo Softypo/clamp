@@ -19,7 +19,7 @@ themes = {'_dark': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_da
 
 # initial config
 app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[themes['_dark']['css'], dbc.icons.FONT_AWESOME],
-                suppress_callback_exceptions=True,
+                suppress_callback_exceptions=False,
                 title='DV Dashboard',
                 serve_locally=True,
                 meta_tags=[
@@ -40,15 +40,15 @@ application = app.server  # <<<<<<<<for debuging in vscode only
 DV_LOGO = 'assets/dv_logo.png'
 
 # styles
-SIDEBAR_STYLE = {
-    # "position": "fixed",
-    # "top": 0,
-    # "left": 0,
-    # "bottom": 0,
-    # "width": "16rem",
-    # "padding": "2rem 1rem",
+# SIDEBAR_STYLE = {
+#     # "position": "fixed",
+#     # "top": 0,
+#     # "left": 0,
+#     # "bottom": 0,
+#     # "width": "16rem",
+#     # "padding": "2rem 1rem",
 
-}
+# }
 
 NAVBAR_STYLE = {
     "padding": "0.4rem",
@@ -88,7 +88,7 @@ sidebar = html.Div(
                 dbc.Row(
                     [
                         dbc.Col(
-                            html.P("Themes",  # className="lead",
+                            html.P("Theme",
                                    style={"textAlign": "right", "marginTop": "auto", "marginBottom": "auto"}),
                             width=8,
                         ),
@@ -103,17 +103,12 @@ sidebar = html.Div(
                                           style={"marginRight": "auto"}),
                             ],
                         ),
-                        # dbc.Col(
-                        #     ThemeChangerAIO(
-                        #         aio_id="themeio", radio_props={"value": dbc.themes.SLATE}
-                        #     ),
-                        # ),
                     ],
                 ),
                 dbc.Row(
                     [
                         dbc.Col(
-                            html.P("Unit System",  # className="lead",
+                            html.P("Unit System",
                                    style={"textAlign": "right", "marginTop": "auto", "marginBottom": "auto"}),
                             width=8,
                         ),
@@ -180,7 +175,7 @@ navbar_menu = dbc.Row(
                     {"label": "Settings", "value": 1},
                 ],
                 value=[1],
-                id="sidebar-toggler",
+                id="sidebar_toggler",
                 switch=True,
                 style={"color": "grey", "marginLeft": "1rem"},
             ),
@@ -208,10 +203,10 @@ navbar = dbc.Navbar(
                 href="https://darkvisiontech.com/",
                 style={"textDecoration": "none"},
             ),
-            dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
+            dbc.NavbarToggler(id="navbar_toggler", n_clicks=0),
             dbc.Collapse(
                 navbar_menu,
-                id="navbar-collapse",
+                id="navbar_collapse",
                 is_open=False,
                 navbar=True,
             ),
@@ -236,16 +231,16 @@ voids = html.Div([html.Div(id='void1'), html.Div(id='void2')],
 
 # callbacks
 
-@ app.callback(
-    Output("navbar-collapse", "is_open"),
-    Input("navbar-toggler", "n_clicks"),
-    State("navbar-collapse", "is_open"),
-)
-# add callback for toggling the collapse on small screens
-def toggle_navbar_collapse(n, is_open):
-    if n:
-        return not is_open
-    return is_open
+# @ app.callback(
+#     Output("navbar_collapse", "is_open"),
+#     Input("navbar_toggler", "n_clicks"),
+#     State("navbar_collapse", "is_open"),
+# )
+# # add callback for toggling the collapse on small screens
+# def toggle_navbar_collapse(n_clicks, is_open):
+#     if n_clicks:
+#         return not is_open
+#     return is_open
 
 
 # @ app.callback(Output("page-content", "children"), [Input("url", "pathname")])
@@ -266,27 +261,49 @@ def toggle_navbar_collapse(n, is_open):
 #     )
 
 
-@ app.callback(Output("sidebar-toggler", "value"),
-               Output("offcanvas", "is_open"),
-               Output("cls_sidebar", "n_clicks"),
-               Input("sidebar-toggler", "value"),
-               Input("cls_sidebar", "n_clicks"),
-               State("offcanvas", "is_open"),
-               )
-def close_sidebar(value, n0, is_open):
-    if n0:
-        return [1], False, 0
-    elif not value:
-        return value, True, n0
-    elif value:
-        return value, False, n0
-    else:
-        return value, is_open, n0
-
+# @ app.callback(Output("sidebar_toggler", "value"),
+#                Output("offcanvas", "is_open"),
+#                Output("cls_sidebar", "n_clicks"),
+#                Input("sidebar_toggler", "value"),
+#                Input("cls_sidebar", "n_clicks"),
+#                State("offcanvas", "is_open"),
+#                )
+# def close_sidebar(value, n0, is_open):
+#     if n0:
+#         return [1], False, 0
+#     elif not value:
+#         return value, True, n0
+#     elif value:
+#         return value, False, n0
+#     else:
+#         return value, is_open, n0
 
 app.clientside_callback(
     ClientsideFunction(
-        namespace="clientside",
+        namespace="dv_dashboard",
+        function_name="toggle_navbar_collapse",
+    ),
+    Output("navbar_collapse", "is_open"),
+    Input("navbar_toggler", "n_clicks"),
+    State("navbar_collapse", "is_open"),
+)
+
+app.clientside_callback(
+    ClientsideFunction(
+        namespace="dv_dashboard",
+        function_name="close_sidebar",
+    ),
+    Output("sidebar_toggler", "value"),
+    Output("offcanvas", "is_open"),
+    Output("cls_sidebar", "n_clicks"),
+    Input("sidebar_toggler", "value"),
+    Input("cls_sidebar", "n_clicks"),
+    State("offcanvas", "is_open"),
+)
+
+app.clientside_callback(
+    ClientsideFunction(
+        namespace="dv_dashboard",
         function_name="theme_switcher",
     ),
     Output("void1", "children"),

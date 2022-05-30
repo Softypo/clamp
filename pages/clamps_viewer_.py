@@ -394,7 +394,7 @@ layout = dbc.Row([
 
 clientside_callback(
     ClientsideFunction(
-        namespace="clientside",
+        namespace="clamps_viewer",
         function_name="tab_content"
     ),
     Output("cd_overview", "style"),
@@ -416,7 +416,7 @@ clientside_callback(
 
 clientside_callback(
     ClientsideFunction(
-        namespace="clientside",
+        namespace="clamps_viewer",
         function_name="clampstable_rowselect"
     ),
     Output("cd_table", "style_data_conditional"),
@@ -425,7 +425,7 @@ clientside_callback(
 
 clientside_callback(
     ClientsideFunction(
-        namespace="clientside",
+        namespace="clamps_viewer",
         function_name="clampstable_listener"
     ),
     Output("cd_table", "data"),
@@ -448,7 +448,7 @@ clientside_callback(
 
 clientside_callback(
     ClientsideFunction(
-        namespace="clientside",
+        namespace="clamps_viewer",
         function_name="clampstable_tocsv"
     ),
     Output("table_copy", "content"),
@@ -459,7 +459,7 @@ clientside_callback(
 
 clientside_callback(
     ClientsideFunction(
-        namespace="clientside",
+        namespace="clamps_viewer",
         function_name="clampsoverview_listener"
     ),
     Output("cd_overview", "figure"),
@@ -531,7 +531,7 @@ def clampsview_listener(fig_id, themeToggle, themes):
 
 clientside_callback(
     ClientsideFunction(
-        namespace="clientside",
+        namespace="clamps_viewer",
         function_name="clampspolar_listener"
     ),
     Output("cd_polar", "figure"),
@@ -544,7 +544,7 @@ clientside_callback(
 
 clientside_callback(
     ClientsideFunction(
-        namespace="clientside",
+        namespace="clamps_viewer",
         function_name="cstore_switcher",
     ),
     Output("ctbl", "data"),
