@@ -4,9 +4,9 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
             let on = { 'display': 'block', 'height': '100%' };
             let off = { 'display': 'none', 'height': '100%' };
-            if (trigger == "cd_table" && Object.keys(cd_table_rowid).length > 0) return [off, on, 'tubeview']
-            else if (active_tab == 'overview') return [on, off, 'overview']
-            else return [off, on, 'tubeview']
+            if (trigger == "cd_table" && Object.keys(cd_table_rowid).length > 0) return [off, false, on, true, 'tubeview']
+            else if (active_tab == 'overview') return [on, true, off, false, 'overview']
+            else return [off, false, on, true, 'tubeview']
         },
         cstore_switcher: function (themeToggle, unitsToggle, ctbl, cover, cpolar, themes) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);

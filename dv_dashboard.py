@@ -1,3 +1,4 @@
+from time import sleep
 import dash
 from dash import dcc, html, dash_table, Input, Output, State, callback, clientside_callback
 #import dash_daq as daq
@@ -312,9 +313,15 @@ app.clientside_callback(
 )
 
 
+# @app.callback(Output("loading", "style"), Input("void2", "children"))
+# def void2(_):
+#     sleep(3)
+#     return {"display": "none"}
+
+
 # app initialization
-app.layout = dbc.Container([dcc.Location(id="url"), navbar, sidebar, content,
-                           stores, voids], fluid=True, className="dbc", style={"height": "100vh"})
+app.layout = dbc.Container([dcc.Location(id="url"), navbar, sidebar, content, stores, voids],
+                           fluid=True, className="dbc", style={"height": "100vh"}, id="main")
 
 if __name__ == "__main__":
     app.run_server(port=5000,

@@ -129,14 +129,14 @@ def clampview_fig(clamp_img, fiver=True):
     fig.update_xaxes(
         visible=False,
         # autorange=False,
-        #range=[0, img_width * scale_factor],
+        # range=[0, img_width * scale_factor],
         scaleanchor="y"
     )
 
     fig.update_yaxes(
         visible=False,
         # autorange=False,
-        #range=[0, img_height * scale_factor],
+        # range=[0, img_height * scale_factor],
         # the scaleanchor attribute ensures that the aspect ratio stays constant
         # scaleanchor="x"
     )
@@ -161,8 +161,8 @@ def clampview_fig(clamp_img, fiver=True):
         # autosize=False,
         dragmode='pan',
         hovermode=False,
-        #width=img_width * scale_factor,
-        #height=img_height * scale_factor,
+        # width=img_width * scale_factor,
+        # height=img_height * scale_factor,
         margin=dict(l=0, r=0, b=0, t=0),
     )
     # fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
@@ -242,9 +242,13 @@ layout = dbc.Row([
                     dbc.Tabs(
                         [
                             dbc.Tab(label="Overview",
-                                    tab_id="overview", key="overview"),
+                                    tab_id="overview",
+                                    activeTabClassName="fst-italic",
+                                    key="overview"),
                             dbc.Tab(label="Tubeview",
-                                    tab_id="tubeview", key="tubeview"),
+                                    tab_id="tubeview",
+                                    activeTabClassName="fst-italic",
+                                    key="tubeview"),
                         ],
                         id="card-tabs",
                         active_tab="overview",
@@ -255,27 +259,28 @@ layout = dbc.Row([
                 dbc.CardBody(
                     children=[
                         dcc.Loading(id="cd_loading", type="default", children=[
-                            dcc.Graph(id="cd_overview",
-                                      animate=False,
-                                      responsive=True,
-                                      config={'displaylogo': False,
-                                              'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
-                                              'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
-                                      style={'display': 'block',
-                                             'height': '100%'}
-                                      ),
-                            dcc.Graph(id="cd_view",
-                                      animate=False,
-                                      responsive=True,
-                                      config={'displaylogo': False,
-                                              'scrollZoom': True,
-                                              # 'doubleClick': 'reset',
-                                              'responsive': True,
-                                              'modeBarButtonsToRemove': ['zoom', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
-                                              'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
-                                      style={'display': 'none',
-                                             'height': '100%'}
-                                      ), ], color='#e95420', parent_style={'height': '100%'}),
+                            dbc.Fade(id="cd_overview_fade", is_in=True, exit=True, timeout=100, children=[
+                                dcc.Graph(id="cd_overview",
+                                          animate=False,
+                                          responsive=True,
+                                          config={'displaylogo': False,
+                                                  'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
+                                                  'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
+                                          style={'height': '100%'}
+                                          )], style={'height': '100%', 'display': 'block'}),
+                            dbc.Fade(id="cd_view_fade", is_in=False, exit=True, timeout=100, children=[
+                                dcc.Graph(id="cd_view",
+                                          animate=False,
+                                          responsive=True,
+                                          config={'displaylogo': False,
+                                                  'scrollZoom': True,
+                                                  # 'doubleClick': 'reset',
+                                                  'responsive': True,
+                                                  'modeBarButtonsToRemove': ['zoom', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
+                                                  'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
+                                          style={'height': '100%'}
+                                          )], style={'height': '100%', 'display': 'none'}),
+                        ], color='#e95420', parent_style={'height': '100%'}),
                     ],
                     id="card-content",
                     className="card-text",
@@ -313,7 +318,7 @@ layout = dbc.Row([
                         id="dropdown_cd",
                         style={"width": "100%"},
                     ), width=11,),
-                dbc.Col(
+                dbc.Col([
                     dcc.Clipboard(
                         id="table_copy",
                         style={
@@ -324,6 +329,11 @@ layout = dbc.Row([
                             # "padding": "50%",
                         },
                     ),
+                    dbc.Tooltip(
+                        "Copy to clipboard",
+                        delay={'show': 500, 'hide': 500},
+                        target="table_copy",
+                    ), ],
                 ), ], style={'height': 'auto'}),
             dbc.Row(
                 dash_table.DataTable(id='cd_table',
@@ -397,13 +407,13 @@ clientside_callback(
         namespace="clamps_viewer",
         function_name="tab_content"
     ),
-    Output("cd_overview", "style"),
-    Output("cd_view", "style"),
+    Output("cd_overview_fade", "style"),
+    Output("cd_overview_fade", "is_in"),
+    Output("cd_view_fade", "style"),
+    Output("cd_view_fade", "is_in"),
     Output("card-tabs", "active_tab"),
     Input("card-tabs", "active_tab"),
     Input("cd_table", "derived_virtual_selected_row_ids"),
-
-
 )
 
 
