@@ -292,19 +292,18 @@ layout = dbc.Row([
             ),
     dbc.Col([
             dbc.Row(
-                dcc.Loading(id="cd_loading_2", type="default", children=[
-                    dcc.Graph(id="cd_polar",
-                              animate=False,
-                              responsive=True,
-                              config={'displaylogo': False,
-                                      'doubleClick': 'reset',
-                                      # 'scrollZoom': True,
-                                      # 'staticPlot': True,
-                                      'responsive': True,
-                                      'modeBarButtonsToRemove': ['zoom', 'select2d'],
-                                      'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 600, 'width': 600, 'scale': 3}},
-                              style={'minHeight': '20em', 'height': '30vh'},
-                              ), ], color='#e95420', parent_style={'minHeight': '20em', 'height': '30vh'}),
+                dcc.Graph(id="cd_polar",
+                          animate=False,
+                          responsive=True,
+                          config={'displaylogo': False,
+                                  'doubleClick': 'reset',
+                                  # 'scrollZoom': True,
+                                  # 'staticPlot': True,
+                                  'responsive': True,
+                                  'modeBarButtonsToRemove': ['zoom', 'select2d'],
+                                  'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 600, 'width': 600, 'scale': 3}},
+                          style={'minHeight': '20em', 'height': '30vh'}
+                          ),
             ),
             dbc.Row([
                 dbc.Col(
@@ -344,13 +343,13 @@ layout = dbc.Row([
                                      style_as_list_view=True,
                                      fixed_rows={'headers': True, 'data': 0},
                                      style_table={
-                                         'minHeight': '10%', 'height': '100%', 'maxHeight': '100%',
-                                         'minWidth': 'auto', 'width': 'auto', 'maxWidth': 'auto'},
+                                         'minHeight': 'auto', 'height': '100%', 'maxHeight': '100%'},
                                      style_header={
                                          'text-align': 'left', 'fontSize': '0.8em', 'font-style': 'italic'},
                                      style_cell={
                                          'text-align': 'left', 'fontSize': '1em'},
-                                     ), style={'height': '100%'}),
+                                     ),
+                className="flex-grow-1"),
             ],
             xl=5, lg=6, md=12, sm=12, xs=12,
             style=CONTENT_STYLE,
