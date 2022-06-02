@@ -1,10 +1,10 @@
 from time import sleep
 import dash
 from dash import dcc, html, dash_table, Input, Output, State, callback, clientside_callback
-#import dash_daq as daq
+# import dash_daq as daq
 import dash_labs as dl
 import dash_bootstrap_components as dbc
-#from dash_bootstrap_templates import load_figure_template, ThemeSwitchAIO
+# from dash_bootstrap_templates import load_figure_template, ThemeSwitchAIO
 from dash.dependencies import ClientsideFunction
 
 
@@ -190,19 +190,26 @@ navbar_menu = dbc.Row(
 navbar = dbc.Navbar(
     dbc.Container(
         [
-            html.A(
-                # Use row and col to control vertical alignment of logo / brand
-                dbc.Row(
-                    [
-                        dbc.Col(html.Img(src=DV_LOGO, height="30px")),
-                        dbc.Col(dbc.NavbarBrand(
-                            "Dashboard", class_name="ms-2")),
-                    ],
-                    align="center",
-                    className="g-0",
-                ),
-                href="https://darkvisiontech.com/",
-                style={"textDecoration": "none"},
+            # Use row and col to control vertical alignment of logo / brand
+            dbc.Row(
+                [
+                    dbc.Col(html.A([html.Img(src=DV_LOGO, height="30px")],
+                            href="https://darkvisiontech.com/", style={"textDecoration": "none"},),),
+                    dbc.Col(dbc.NavbarBrand(
+                        "Dashboard", class_name="ms-2")),
+                    dbc.Col(dcc.Dropdown(
+                            ['well1', 'well2'],
+                            'well1',
+                            multi=False,
+                            searchable=True,
+                            persistence=True,
+                            persistence_type='memory',
+                            id="well",
+                            style={"width": "100%"},
+                            ), width='100%'),
+                ],
+                align="center",
+                className="g-0",
             ),
             dbc.NavbarToggler(id="navbar_toggler", n_clicks=0),
             dbc.Collapse(
