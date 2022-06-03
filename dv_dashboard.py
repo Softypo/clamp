@@ -160,19 +160,24 @@ navbar_menu = dbc.Row(
                  for page in dash.page_registry.values() if page["module"] != "pages.not_found_404"],
                 pills=False,
                 justified=True,
+                style={'width': '100%'},
             ),
-            width=5,
+            # width=5
         ),
-        dbc.Col(dcc.Dropdown(
-            ['well1', 'well2'],
-            'well1',
-            multi=False,
-            searchable=True,
-            persistence=True,
-            persistence_type='memory',
-            id="well",
-            style={"width": "15rem"},
-        ), width=4),
+        dbc.Col(
+            dcc.Dropdown(
+                ['well1', 'well2'],
+                'well1',
+                multi=False,
+                clearable=False,
+                searchable=True,
+                persistence=True,
+                persistence_type='memory',
+                id="well",
+                style={"width": "100%"},
+            ),
+            # width=4
+        ),
         dbc.Col(
             dbc.Checklist(
                 options=[
@@ -183,7 +188,7 @@ navbar_menu = dbc.Row(
                 switch=True,
                 style={"color": "grey", "marginLeft": "1rem"},
             ),
-            width=1,
+            # width=1
         ),
     ],
     className="g-0 ms-auto flex-nowrap mt-3 mt-md-0",
