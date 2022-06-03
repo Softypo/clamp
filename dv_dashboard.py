@@ -163,13 +163,16 @@ navbar_menu = dbc.Row(
             ),
             width=5,
         ),
-        dbc.Col(dbc.Input(type="search", placeholder="Search")),
-        dbc.Col(
-            dbc.Button(
-                "Search", color="primary", className="ms-2", n_clicks=0
-            ),
-            width="auto",
-        ),
+        dbc.Col(dcc.Dropdown(
+            ['well1', 'well2'],
+            'well1',
+            multi=False,
+            searchable=True,
+            persistence=True,
+            persistence_type='memory',
+            id="well",
+            style={"width": "15rem"},
+        ), width=4),
         dbc.Col(
             dbc.Checklist(
                 options=[
@@ -180,7 +183,7 @@ navbar_menu = dbc.Row(
                 switch=True,
                 style={"color": "grey", "marginLeft": "1rem"},
             ),
-            width="auto",
+            width=1,
         ),
     ],
     className="g-0 ms-auto flex-nowrap mt-3 mt-md-0",
@@ -197,16 +200,6 @@ navbar = dbc.Navbar(
                             href="https://darkvisiontech.com/", style={"textDecoration": "none"},),),
                     dbc.Col(dbc.NavbarBrand(
                         "Dashboard", class_name="ms-2")),
-                    dbc.Col(dcc.Dropdown(
-                            ['well1', 'well2'],
-                            'well1',
-                            multi=False,
-                            searchable=True,
-                            persistence=True,
-                            persistence_type='memory',
-                            id="well",
-                            style={"width": "100%"},
-                            ), width='100%'),
                 ],
                 align="center",
                 className="g-0",
