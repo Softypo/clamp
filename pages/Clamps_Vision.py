@@ -329,7 +329,7 @@ layout = dbc.Row([
                         },
                     ),
                     dbc.Tooltip(
-                        "Copy to clipboard",
+                        "Copy table to clipboard",
                         delay={'show': 500, 'hide': 500},
                         target="table_copy",
                     ), ],

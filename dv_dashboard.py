@@ -157,38 +157,43 @@ navbar_menu = dbc.Row(
         dbc.Col(
             dbc.Nav(
                 [dbc.NavItem(dbc.NavLink(page["name"], href=page["path"], active="exact"))
-                 for page in dash.page_registry.values() if page["module"] != "pages.not_found_404"],
-                pills=False,
-                justified=True,
-                style={'width': '100%'},
+                 for page in dash.page_registry.values() if page["module"] != "pages.not_found_404"]
+                +
+                [dbc.NavItem(
+                    dcc.Dropdown(
+                        ['well1', 'well2', 'well3'],
+                        multi=False,
+                        clearable=False,
+                        searchable=True,
+                        placeholder='Select well...',
+                        persistence=True,
+                        persistence_type='memory',
+                        id="well",
+                        optionHeight=25,
+                        style={"width": "15rem"},
+                    ),
+                    style={'marginTop': "auto", 'marginBottom': 'auto'}
+                ),
+                    dbc.NavItem(
+                    dbc.Checklist(
+                        options=[
+                            {"label": "Settings",
+                             "value": 1},
+                        ],
+                        value=[1],
+                        id="sidebar_toggler",
+                        switch=True,
+                        style={"color": "grey", "marginLeft": "1rem", },
+                    ),
+                    style={'marginTop': "auto", 'marginBottom': 'auto'}
+                )],
+                # pills=False,
+                # card=True,
+                # justified=False,
+                # fill=True,
+                # horizontal='end',
+                # navbar=True,
             ),
-            # width=5
-        ),
-        dbc.Col(
-            dcc.Dropdown(
-                ['well1', 'well2'],
-                'well1',
-                multi=False,
-                clearable=False,
-                searchable=True,
-                persistence=True,
-                persistence_type='memory',
-                id="well",
-                style={"width": "100%"},
-            ),
-            # width=4
-        ),
-        dbc.Col(
-            dbc.Checklist(
-                options=[
-                    {"label": "Settings", "value": 1},
-                ],
-                value=[1],
-                id="sidebar_toggler",
-                switch=True,
-                style={"color": "grey", "marginLeft": "1rem"},
-            ),
-            # width=1
         ),
     ],
     className="g-0 ms-auto flex-nowrap mt-3 mt-md-0",
@@ -201,10 +206,10 @@ navbar = dbc.Navbar(
             # Use row and col to control vertical alignment of logo / brand
             dbc.Row(
                 [
-                    dbc.Col(html.A([html.Img(src=DV_LOGO, height="30px")],
+                    dbc.Col(html.A([html.Img(src=DV_LOGO, height="35rem")],
                             href="https://darkvisiontech.com/", style={"textDecoration": "none"},),),
                     dbc.Col(dbc.NavbarBrand(
-                        "Dashboard", class_name="ms-2")),
+                        "Dashboard", class_name="ms-1")),
                 ],
                 align="center",
                 className="g-0",
