@@ -51,10 +51,10 @@ DV_LOGO = 'assets/dv_logo.png'
 
 # }
 
-NAVBAR_STYLE = {
-    "padding": "0.4rem",
-    # "height": "4vh",
-}
+# NAVBAR_STYLE = {
+#     "padding": "0.4rem",
+#     #"height": "4vh",
+# }
 
 CONTENT_STYLE = {
     "marginTop": '8px',
@@ -172,7 +172,9 @@ navbar_menu = dbc.Row(
                         optionHeight=25,
                         style={"width": "15rem"},
                     ),
-                    style={'marginTop': "auto", 'marginBottom': 'auto'}
+                    style={'marginTop': "auto", 'marginBottom': 'auto',
+                           'marginLeft': '0.5rem'
+                           },
                 ),
                     dbc.NavItem(
                     dbc.Checklist(
@@ -183,7 +185,7 @@ navbar_menu = dbc.Row(
                         value=[1],
                         id="sidebar_toggler",
                         switch=True,
-                        style={"color": "grey", "marginLeft": "1rem", },
+                        style={"color": "grey", "marginLeft": "0.5rem", },
                     ),
                     style={'marginTop': "auto", 'marginBottom': 'auto'}
                 )],
@@ -196,7 +198,7 @@ navbar_menu = dbc.Row(
             ),
         ),
     ],
-    className="g-0 ms-auto flex-nowrap mt-3 mt-md-0",
+    className="g-0 mx-auto flex-nowrap my-auto mt-md-0",
     align="center",
 )
 
@@ -206,10 +208,11 @@ navbar = dbc.Navbar(
             # Use row and col to control vertical alignment of logo / brand
             dbc.Row(
                 [
-                    dbc.Col(html.A([html.Img(src=DV_LOGO, height="35rem")],
+                    dbc.Col(html.A([html.Img(src=DV_LOGO, height="30rem")],
                             href="https://darkvisiontech.com/", style={"textDecoration": "none"},),),
+                    #dbc.Col(html.Span(className="fa fa-chart-line")),
                     dbc.Col(dbc.NavbarBrand(
-                        "Dashboard", class_name="ms-1")),
+                        "  Dashboard", class_name="my-auto fa fa-chart-line", style={"fontSize": "0.9rem"})),
                 ],
                 align="center",
                 className="g-0",
@@ -225,7 +228,7 @@ navbar = dbc.Navbar(
     ),
     color="black",
     dark=True,
-    style=NAVBAR_STYLE,
+    style={"padding": "0.4rem"},
     # fixed="top",
     # sticky="top",
 )
