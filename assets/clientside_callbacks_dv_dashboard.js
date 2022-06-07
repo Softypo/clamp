@@ -15,5 +15,10 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             var themeLink = themeToggle ? themes['_light']['css'] : themes['_dark']['css'];
             setTimeout(function () { stylesheet.href = themeLink; }, 100);
         },
+        // first_load_delay: function (void) {
+        //     let out;
+        //     setTimeout(function () { out = true; }, 100);
+        //     return true;
+        // },
     }
 });

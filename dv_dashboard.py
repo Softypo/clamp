@@ -156,39 +156,44 @@ navbar_menu = dbc.Row(
     [
         dbc.Col(
             dbc.Nav(
+                [html.Hr()]
+                +
                 [dbc.NavItem(dbc.NavLink(page["name"], href=page["path"], active="exact"))
                  for page in dash.page_registry.values() if page["module"] != "pages.not_found_404"]
                 +
-                [dbc.NavItem(
-                    dcc.Dropdown(
-                        ['well1', 'well2', 'well3'],
-                        multi=False,
-                        clearable=False,
-                        searchable=True,
-                        placeholder='Select well...',
-                        persistence=True,
-                        persistence_type='memory',
-                        id="well",
-                        optionHeight=25,
-                        style={"width": "15rem"},
-                    ),
-                    style={'marginTop': "auto", 'marginBottom': 'auto',
-                           'marginLeft': '0.5rem'
-                           },
-                ),
+                [
+                    html.Hr(),
                     dbc.NavItem(
-                    dbc.Checklist(
-                        options=[
-                            {"label": "Settings",
-                             "value": 1},
-                        ],
-                        value=[1],
-                        id="sidebar_toggler",
-                        switch=True,
-                        style={"color": "grey", "marginLeft": "0.5rem", },
+                        dcc.Dropdown(
+                            ['well1', 'well2', 'well3'],
+                            multi=False,
+                            clearable=False,
+                            searchable=True,
+                            placeholder='Select well...',
+                            persistence=True,
+                            persistence_type='memory',
+                            id="well",
+                            optionHeight=25,
+                            style={"width": "15rem"},
+                        ),
+                        style={'marginTop': "auto", 'marginBottom': 'auto',
+                               'marginLeft': '0.5rem'
+                               },
                     ),
-                    style={'marginTop': "auto", 'marginBottom': 'auto'}
-                )],
+                    html.Hr(),
+                    dbc.NavItem(
+                        dbc.Checklist(
+                            options=[
+                                {"label": "Settings",
+                                 "value": 1},
+                            ],
+                            value=[1],
+                            id="sidebar_toggler",
+                            switch=True,
+                            style={"color": "grey", "marginLeft": "0.5rem", },
+                        ),
+                        style={'marginTop': "auto", 'marginBottom': 'auto'}
+                    )],
                 # pills=False,
                 # card=True,
                 # justified=False,
@@ -210,7 +215,7 @@ navbar = dbc.Navbar(
                 [
                     dbc.Col(html.A([html.Img(src=DV_LOGO, height="30rem")],
                             href="https://darkvisiontech.com/", style={"textDecoration": "none"},),),
-                    #dbc.Col(html.Span(className="fa fa-chart-line")),
+                    # dbc.Col(html.Span(className="fa fa-chart-line")),
                     dbc.Col(dbc.NavbarBrand(
                         "  Dashboard", class_name="my-auto fa fa-chart-line", style={"fontSize": "0.9rem"})),
                 ],
@@ -229,8 +234,10 @@ navbar = dbc.Navbar(
     color="black",
     dark=True,
     style={"padding": "0.4rem"},
+    class_name="rounded-3",
+    expand="lg",
     # fixed="top",
-    # sticky="top",
+    sticky="top",
 )
 
 content = dl.plugins.page_container
@@ -239,6 +246,14 @@ stores = html.Div([dcc.Store(id="dw", storage_type="session"),
                    dcc.Store(id="themes", storage_type="local", data=themes)],
                   id="stores")
 
+initial_load = html.Div(
+    [
+        dbc.Spinner(color="#e95420", fullscreen=True, id="spinner",
+                    fullscreen_style={"position": "fixed", "top": "0", "left": "0", "right": "0",
+                                      "bottom": "0", "z-index": "9999", "background-color": "rgba(0,0,0,0.97)"}
+                    ),
+    ]
+)
 voids = html.Div([html.Div(id='void1'), html.Div(id='void2')],
                  id="voids", style={"display": "none"})
 
@@ -326,14 +341,32 @@ app.clientside_callback(
 )
 
 
+@ app.callback(
+    Output("spinner", "fullscreen_style"),
+    Input("void1", "children"),
+)
+def load_output(_):
+    sleep(1)
+    return {'display': 'none'}
+
+
+# app.clientside_callback(
+#     ClientsideFunction(
+#         namespace="dv_dashboard",
+#         function_name="first_load_delay",
+#     ),
+#     Output("void2", "children"),
+#     Input("themeToggle", "value"),
+#     State("themes", "data"),
+# )
+
 # @app.callback(Output("loading", "style"), Input("void2", "children"))
 # def void2(_):
 #     sleep(3)
 #     return {"display": "none"}
 
-
 # app initialization
-app.layout = dbc.Container([dcc.Location(id="url"), navbar, sidebar, content, stores, voids],
+app.layout = dbc.Container([dcc.Location(id="url"), navbar, sidebar, content, stores, initial_load, voids],
                            fluid=True, className="dbc", style={"height": "100vh"}, id="main")
 
 if __name__ == "__main__":

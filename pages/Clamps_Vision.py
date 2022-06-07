@@ -260,26 +260,28 @@ layout = dbc.Row([
                     children=[
                         dcc.Loading(id="cd_loading", type="default", children=[
                             dbc.Fade(id="cd_overview_fade", is_in=True, exit=True, timeout=100, children=[
-                                dcc.Graph(id="cd_overview",
-                                          animate=False,
-                                          responsive=True,
-                                          config={'displaylogo': False,
-                                                  'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
-                                                  'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
-                                          style={'height': '100%'}
-                                          )], style={'height': '100%', 'display': 'block'}),
+                                    dbc.Card([
+                                        dcc.Graph(id="cd_overview",
+                                                  animate=False,
+                                                  responsive=True,
+                                                  config={'displaylogo': False,
+                                                          'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
+                                                          'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
+                                                  style={'height': '100%'}
+                                                  )], style={'height': '100%'}),
+                                    ], style={'height': '100%', 'display': 'block'}),
                             dbc.Fade(id="cd_view_fade", is_in=False, exit=True, timeout=100, children=[
-                                dcc.Graph(id="cd_view",
-                                          animate=False,
-                                          responsive=True,
-                                          config={'displaylogo': False,
-                                                  'scrollZoom': True,
-                                                  # 'doubleClick': 'reset',
-                                                  'responsive': True,
-                                                  'modeBarButtonsToRemove': ['zoom', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
-                                                  'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
-                                          style={'height': '100%'}
-                                          )], style={'height': '100%', 'display': 'none'}),
+                                        dcc.Graph(id="cd_view",
+                                                  animate=False,
+                                                  responsive=True,
+                                                  config={'displaylogo': False,
+                                                          'scrollZoom': True,
+                                                          # 'doubleClick': 'reset',
+                                                          'responsive': True,
+                                                          'modeBarButtonsToRemove': ['zoom', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
+                                                          'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
+                                                  style={'height': '100%'}
+                                                  )], style={'height': '100%', 'display': 'none'}),
                         ], color='#e95420', parent_style={'height': '100%'}),
                     ],
                     id="card-content",
@@ -287,10 +289,12 @@ layout = dbc.Row([
                     style={'height': '100%'}),
             ], style={'height': '100%'}),
             ],
-            xl=7, lg=6, md=12, sm=12, xs=12,
+            xxl=7, xl=6, lg=6, md=12, sm=12, xs=12,
             style=CONTENT_STYLE,
+            class_name="pe-lg-0",
             ),
-    dbc.Col([
+    dbc.Col(
+        dbc.Card([
             dbc.Row(
                 dcc.Graph(id="cd_polar",
                           animate=False,
@@ -350,10 +354,10 @@ layout = dbc.Row([
                                          'text-align': 'left', 'fontSize': '1em'},
                                      ),
                 className="flex-grow-1"),
-            ],
-            xl=5, lg=6, md=12, sm=12, xs=12,
-            style=CONTENT_STYLE,
-            ),
+        ], style={'height': '100%'}),
+        xxl=5, xl=6, lg=6, md=12, sm=12, xs=12,
+        style=CONTENT_STYLE,
+    ),
 ])
 
 
