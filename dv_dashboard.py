@@ -158,7 +158,7 @@ navbar_menu = dbc.Row(
             dbc.Nav(
                 [html.Hr()]
                 +
-                [dbc.NavItem(dbc.NavLink(page["name"], href=page["path"], active="exact"))
+                [dbc.NavItem(dbc.NavLink(page['module'].split('.')[1], href=page["path"], active="exact"))
                  for page in dash.page_registry.values() if page["module"] not in ["pages.not_found_404", "pages.index"]]
                 +
                 [
@@ -215,9 +215,8 @@ navbar = dbc.Navbar(
                 [
                     dbc.Col(html.A([html.Img(src=DV_LOGO, height="30rem")],
                             href="https://darkvisiontech.com/", style={"textDecoration": "none"},),),
-                    # dbc.Col(html.Span(className="fa fa-chart-line")),
                     dbc.Col(dbc.NavbarBrand(
-                        "  Dashboard",
+                        "   Dashboard",
                         href="/",
                         class_name="my-auto fa fa-chart-line",
                         style={"fontSize": "0.9rem"})),
@@ -369,12 +368,12 @@ def load_output(_):
 #     return {"display": "none"}
 
 # app initialization
-app.layout = dbc.Container([dcc.Location(id="url"), navbar, sidebar, content, stores, initial_load, voids],
+app.layout = dbc.Container([dcc.Location(id="url"), initial_load, navbar, sidebar, content, stores, voids],
                            fluid=True, className="dbc", style={"height": "100vh"}, id="main")
 
 if __name__ == "__main__":
     app.run_server(port=5000,
-                   debug=False,
+                   debug=True,
                    threaded=True,
                    host='0.0.0.0',
                    use_reloader=True)
