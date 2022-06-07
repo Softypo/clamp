@@ -7,7 +7,7 @@ from dash import dcc, html, dash_table, Input, Output, State, callback
 import dash
 import numpy as np
 
-dash.register_page(__name__)
+dash.register_page(__name__, title="DV Dashboard - PerfVision")
 
 
 layout = html.Div(

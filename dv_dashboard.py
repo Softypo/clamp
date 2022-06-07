@@ -217,7 +217,10 @@ navbar = dbc.Navbar(
                             href="https://darkvisiontech.com/", style={"textDecoration": "none"},),),
                     # dbc.Col(html.Span(className="fa fa-chart-line")),
                     dbc.Col(dbc.NavbarBrand(
-                        "  Dashboard", class_name="my-auto fa fa-chart-line", style={"fontSize": "0.9rem"})),
+                        "  Dashboard",
+                        href="/",
+                        class_name="my-auto fa fa-chart-line",
+                        style={"fontSize": "0.9rem"})),
                 ],
                 align="center",
                 className="g-0",
@@ -373,5 +376,5 @@ if __name__ == "__main__":
     app.run_server(port=5000,
                    debug=False,
                    threaded=True,
-                   # host='0.0.0.0',
+                   host='0.0.0.0',
                    use_reloader=True)

@@ -16,7 +16,7 @@ from .utils.pil_utilities import loader_pil_multiprocess, loader_pil
 from dash import clientside_callback
 from dash.dependencies import ClientsideFunction
 
-dash.register_page(__name__, title="Clamps Viewer!!!!!")
+dash.register_page(__name__, title="DV Dashboard - ClampsVision")
 
 CONTENT_STYLE = {
     "marginTop": '8px',
