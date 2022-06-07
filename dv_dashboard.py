@@ -159,7 +159,7 @@ navbar_menu = dbc.Row(
                 [html.Hr()]
                 +
                 [dbc.NavItem(dbc.NavLink(page["name"], href=page["path"], active="exact"))
-                 for page in dash.page_registry.values() if page["module"] != "pages.not_found_404"]
+                 for page in dash.page_registry.values() if page["module"] not in ["pages.not_found_404", "pages.index"]]
                 +
                 [
                     html.Hr(),
@@ -371,7 +371,7 @@ app.layout = dbc.Container([dcc.Location(id="url"), navbar, sidebar, content, st
 
 if __name__ == "__main__":
     app.run_server(port=5000,
-                   debug=True,
+                   debug=False,
                    threaded=True,
                    # host='0.0.0.0',
                    use_reloader=True)
