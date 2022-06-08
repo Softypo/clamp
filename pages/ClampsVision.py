@@ -236,6 +236,16 @@ layout = dbc.Row([
     dcc.Store(id="cview", storage_type="memory"),
     dcc.Store(id="cpolar", storage_type="memory",
               data=clampspolar_fig(clamp_types, clamps)),
+    dbc.Card(
+        dbc.Accordion(
+            [
+                dbc.AccordionItem(
+                    "This is the content of the first section", title="Item 1"
+                ),
+            ],
+            start_collapsed=True,
+        ),
+    ),
     dbc.Col([
             dbc.Card([
                 dbc.CardHeader(
@@ -358,7 +368,7 @@ layout = dbc.Row([
         xxl=5, xl=6, lg=6, md=12, sm=12, xs=12,
         style=CONTENT_STYLE,
     ),
-])
+], style={'height': '100%'},)
 
 
 # tabs = {'overview': [
