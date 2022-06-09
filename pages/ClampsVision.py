@@ -18,10 +18,10 @@ from dash.dependencies import ClientsideFunction
 
 dash.register_page(__name__, title="DV Dashboard - ClampsVision")
 
-CONTENT_STYLE = {
-    "marginTop": '8px',
+COLUMN_STYLE = {
+    "paddingTop": '8px',
     # "padding": "0.5rem",
-    "height": "93vh",
+    # "height": "93vh",
     "minHeight": "20em",
     "display": "flex",
     "flexFlow": "column",
@@ -236,15 +236,19 @@ layout = dbc.Row([
     dcc.Store(id="cview", storage_type="memory"),
     dcc.Store(id="cpolar", storage_type="memory",
               data=clampspolar_fig(clamp_types, clamps)),
-    dbc.Card(
-        dbc.Accordion(
-            [
-                dbc.AccordionItem(
-                    "This is the content of the first section", title="Item 1"
-                ),
-            ],
-            start_collapsed=True,
+    dbc.Col(
+        dbc.Card(
+            dbc.Accordion(
+                [
+                    dbc.AccordionItem(
+                        "This is the content of the first section", title="Item 1"
+                    ),
+                ],
+                start_collapsed=True,
+            ),
         ),
+        width={"size": 12, "order": 1},
+        #style={'height': '10rem'},
     ),
     dbc.Col([
             dbc.Card([
@@ -300,7 +304,7 @@ layout = dbc.Row([
             ], style={'height': '100%'}),
             ],
             xxl=7, xl=6, lg=6, md=12, sm=12, xs=12,
-            style=CONTENT_STYLE,
+            style=COLUMN_STYLE,
             class_name="pe-lg-0",
             ),
     dbc.Col(
@@ -357,18 +361,19 @@ layout = dbc.Row([
                                      style_as_list_view=True,
                                      fixed_rows={'headers': True, 'data': 0},
                                      style_table={
-                                         'minHeight': 'auto', 'height': '100%', 'maxHeight': '100%'},
+                                         'minHeight': 'auto', 'height': '100%', 'maxHeight': '100%', 'padding': '5px'},
                                      style_header={
                                          'text-align': 'left', 'fontSize': '0.8em', 'font-style': 'italic'},
                                      style_cell={
                                          'text-align': 'left', 'fontSize': '1em'},
                                      ),
-                className="flex-grow-1"),
+                class_name="flex-grow-1"),
         ], style={'height': '100%'}),
         xxl=5, xl=6, lg=6, md=12, sm=12, xs=12,
-        style=CONTENT_STYLE,
+        style=COLUMN_STYLE,
+        class_name="flex-grow-1"
     ),
-], style={'height': '100%'},)
+], style={'height': '93vh'},)
 
 
 # tabs = {'overview': [

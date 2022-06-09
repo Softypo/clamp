@@ -57,10 +57,10 @@ DV_LOGO = 'assets/dv_logo.png'
 # }
 
 CONTENT_STYLE = {
-    "marginTop": '8px',
+    # "marginTop": '8px',
     # "padding": "0.5rem",
-    "height": "93vh",
-    "minHeight": "20em",
+    # "height": "93vh",
+    # "minHeight": "20em",
     "display": "flex",
     "flexFlow": "column",
 }
@@ -262,53 +262,6 @@ voids = html.Div([html.Div(id='void1'), html.Div(id='void2')],
 
 # callbacks
 
-# @ app.callback(
-#     Output("navbar_collapse", "is_open"),
-#     Input("navbar_toggler", "n_clicks"),
-#     State("navbar_collapse", "is_open"),
-# )
-# # add callback for toggling the collapse on small screens
-# def toggle_navbar_collapse(n_clicks, is_open):
-#     if n_clicks:
-#         return not is_open
-#     return is_open
-
-
-# @ app.callback(Output("page-content", "children"), [Input("url", "pathname")])
-# def render_page_content(pathname):
-#     if pathname == "/":
-#         return html.P("This is the content of the home page!")
-#     elif pathname == "/page-1":
-#         return html.P("This is the content of page 1. Yay!")
-#     elif pathname == "/page-2":
-#         return html.P("Oh cool, this is page 2!")
-#     # If the user tries to reach a different page, return a 404 message
-#     return dbc.Jumbotron(
-#         [
-#             html.H1("404: Not found", className="text-danger"),
-#             html.Hr(),
-#             html.P(f"The pathname {pathname} was not recognised..."),
-#         ]
-#     )
-
-
-# @ app.callback(Output("sidebar_toggler", "value"),
-#                Output("offcanvas", "is_open"),
-#                Output("cls_sidebar", "n_clicks"),
-#                Input("sidebar_toggler", "value"),
-#                Input("cls_sidebar", "n_clicks"),
-#                State("offcanvas", "is_open"),
-#                )
-# def close_sidebar(value, n0, is_open):
-#     if n0:
-#         return [1], False, 0
-#     elif not value:
-#         return value, True, n0
-#     elif value:
-#         return value, False, n0
-#     else:
-#         return value, is_open, n0
-
 app.clientside_callback(
     ClientsideFunction(
         namespace="dv_dashboard",
@@ -352,28 +305,16 @@ def load_output(_):
     return {'display': 'none'}
 
 
-# app.clientside_callback(
-#     ClientsideFunction(
-#         namespace="dv_dashboard",
-#         function_name="first_load_delay",
-#     ),
-#     Output("void2", "children"),
-#     Input("themeToggle", "value"),
-#     State("themes", "data"),
-# )
-
-# @app.callback(Output("loading", "style"), Input("void2", "children"))
-# def void2(_):
-#     sleep(3)
-#     return {"display": "none"}
-
 # app initialization
-app.layout = dbc.Container([dcc.Location(id="url"), initial_load, navbar, sidebar, content, stores, voids],
-                           fluid=True, className="dbc", style={"height": "100vh"}, id="main")
+app.layout = dbc.Container(children=[dcc.Location(id="url"), initial_load, sidebar, dbc.Container([navbar, content], style=CONTENT_STYLE, fluid=True), stores, voids],
+                           fluid=True,
+                           className="dbc",
+                           #style={"height": "100vh"},
+                           id="main")
 
 if __name__ == "__main__":
     app.run_server(port=5000,
                    debug=True,
                    threaded=True,
-                   host='0.0.0.0',
+                   # host='0.0.0.0',
                    use_reloader=True)
