@@ -6,6 +6,7 @@ import dash_labs as dl
 import dash_bootstrap_components as dbc
 # from dash_bootstrap_templates import load_figure_template, ThemeSwitchAIO
 from dash.dependencies import ClientsideFunction
+import dash_mantine_components as dmc
 
 
 # import plotly.io as pio
@@ -57,12 +58,12 @@ DV_LOGO = 'assets/dv_logo.png'
 # }
 
 CONTENT_STYLE = {
-    # "marginTop": '8px',
-    # "padding": "0.5rem",
+    "marginTop": '8px',
+    "padding": "0rem",
     # "height": "93vh",
     # "minHeight": "20em",
-    "display": "flex",
-    "flexFlow": "column",
+    # "display": "flex",
+    # "flexFlow": "column",
 }
 
 # body
@@ -164,17 +165,13 @@ navbar_menu = dbc.Row(
                 [
                     html.Hr(),
                     dbc.NavItem(
-                        dcc.Dropdown(
-                            ['well1', 'well2', 'well3'],
-                            multi=False,
-                            clearable=False,
+                        dmc.Select(
+                            data=["React", "Angular", "Svelte", "Vue"],
                             searchable=True,
-                            placeholder='Select well...',
-                            persistence=True,
-                            persistence_type='memory',
-                            id="well",
-                            optionHeight=25,
-                            style={"width": "15rem"},
+                            allowDeselect=True,
+                            nothingFound="No well found",
+                            placeholder="Select a framework",
+                            style={"width": '15rem'},
                         ),
                         style={'marginTop': "auto", 'marginBottom': 'auto',
                                'marginLeft': '0.5rem'
@@ -306,7 +303,7 @@ def load_output(_):
 
 
 # app initialization
-app.layout = dbc.Container(children=[dcc.Location(id="url"), initial_load, sidebar, dbc.Container([navbar, content], style=CONTENT_STYLE, fluid=True), stores, voids],
+app.layout = dbc.Container(children=[dcc.Location(id="url"), initial_load, sidebar, navbar, dbc.Container(content, style=CONTENT_STYLE, fluid=True), stores, voids],
                            fluid=True,
                            className="dbc",
                            #style={"height": "100vh"},
