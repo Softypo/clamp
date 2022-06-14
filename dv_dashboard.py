@@ -165,6 +165,7 @@ navbar_menu = dbc.Row(
                 [
                     html.Hr(),
                     dbc.NavItem(
+                        # dmc.MantineProvider(
                         dmc.Select(
                             data=["React", "Angular", "Svelte", "Vue"],
                             searchable=True,
@@ -173,6 +174,8 @@ navbar_menu = dbc.Row(
                             placeholder="Select a framework",
                             style={"width": '15rem'},
                         ),
+                        #     theme={"colorScheme": "dark"},
+                        # ),
                         style={'marginTop': "auto", 'marginBottom': 'auto',
                                'marginLeft': '0.5rem'
                                },
@@ -232,7 +235,7 @@ navbar = dbc.Navbar(
     ),
     color="black",
     dark=True,
-    style={"padding": "0.4rem"},
+    style={"padding": "0.4rem", "zIndex": "10"},
     class_name="rounded-3",
     expand="lg",
     # fixed="top",
@@ -249,7 +252,7 @@ initial_load = html.Div(
     [
         dbc.Spinner(color="#e95420", fullscreen=True, id="spinner",
                     fullscreen_style={"position": "fixed", "top": "0", "left": "0", "right": "0",
-                                      "bottom": "0", "z-index": "9999", "background-color": "rgba(0,0,0,0.97)"}
+                                      "bottom": "0", "zIndex": "9999", "backgroundColor": "rgba(0,0,0,0.97)"}
                     ),
     ]
 )
@@ -306,7 +309,7 @@ def load_output(_):
 app.layout = dbc.Container(children=[dcc.Location(id="url"), initial_load, sidebar, navbar, dbc.Container(content, style=CONTENT_STYLE, fluid=True), stores, voids],
                            fluid=True,
                            className="dbc",
-                           #style={"height": "100vh"},
+                           # style={"height": "100vh"},
                            id="main")
 
 if __name__ == "__main__":
