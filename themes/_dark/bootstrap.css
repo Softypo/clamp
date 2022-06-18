@@ -12331,8 +12331,8 @@ fieldset:disabled .btn {
   border-radius: 4px;
 }
 
-.Select.input:focus,
-.Select.input:focus-within {
+.input:focus,
+.input:focus-within {
   outline: none;
   border-color: --bs-primary !important;
 }
