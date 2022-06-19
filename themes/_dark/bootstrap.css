@@ -12309,7 +12309,7 @@ fieldset:disabled .btn {
  * Mantine stuff
 */
 
-.Select.input {
+.mantine.Select.input {
   border: 1px solid transparent;
   background-color: rgb(44, 46, 51);
   -webkit-font-smoothing: antialiased;
@@ -12331,8 +12331,8 @@ fieldset:disabled .btn {
   border-radius: 4px;
 }
 
-.input:focus,
-.input:focus-within {
+.mantine.input:focus,
+.mantine.input:focus-within {
   outline: none;
   border-color: --bs-primary !important;
 }
