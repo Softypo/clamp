@@ -14,6 +14,8 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             const stylesheet = document.querySelector('link[rel=stylesheet][href^="https://cdn.jsdelivr"]');
             var themeLink = themeToggle ? themes['_light']['css'] : themes['_dark']['css'];
             setTimeout(function () { stylesheet.href = themeLink; }, 100);
+            if (themeToggle) return { "colorScheme": "light" };
+            else return { "colorScheme": "dark" };
         },
         // first_load_delay: function (void) {
         //     let out;

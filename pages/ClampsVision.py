@@ -260,14 +260,14 @@ layout = [
     dcc.Store(id="cpolar", storage_type="memory",
               data=clampspolar_fig(clamp_types, clamps)),
     # dbc.Row([
-    dbc.Card(
-        dmc.Accordion(
-            [
-                dmc.AccordionItem(
-                    "This is the content of the first section", label="Item 1"
-                ),
-                dbc.AccordionItem([
-                    dbc.Row([
+    # dbc.Card(
+    dmc.Accordion(
+        [
+            dmc.AccordionItem(
+                "This is the content of the first section", label="Summary"
+            ),
+            dmc.AccordionItem([
+                dbc.Row([
                         dbc.Col([
                             dbc.Card([
                                 dbc.CardHeader(
@@ -413,21 +413,21 @@ layout = [
                         #     style={'height': '10vh'},
                         #     # class_name="flex-grow-1",
                         # ),
-                    ], style={'height': '69rem', 'minHeight': '69rem'}),
-                ],
-                    title="Item 2",
-                    item_id="clamps_dash",
-                ),
+                        ], style={'height': '69rem', 'minHeight': '69rem'}),
             ],
-            # active_item=['clamps_dash'],
-            # always_open=True,
-            multiple=True,
-            iconPosition="left",
-            offsetIcon=False,
-            style={"height": "auto"},
-        ),
-        style={'height': 'auto'},
+                label="Clamp Data",
+                # item_id="clamps_dash",
+            ),
+        ],
+        # active_item=['clamps_dash'],
+        # always_open=True,
+        multiple=True,
+        iconPosition="left",
+        offsetIcon=False,
+        style={"height": "fill", },
     ),
+    #   style={'height': 'auto'},
+    # ),
     # ], style={'height': '95vh'}),
 ]
 

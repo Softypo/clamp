@@ -174,7 +174,10 @@ navbar_menu = dbc.Row(
                             placeholder="Select a framework",
                             style={"width": '15rem'},
                         ),
-                        #     theme={"colorScheme": "dark"},
+                        #   theme={"colorScheme": "light"},
+                        #   styles={"Select": {
+                        #       "input": {"&:focus": {'borderColor': '#e95420 !important'}}}},
+                        #   withNormalizeCSS=True,
                         # ),
                         style={'marginTop': "auto", 'marginBottom': 'auto',
                                'marginLeft': '0.5rem'
@@ -290,7 +293,7 @@ app.clientside_callback(
         namespace="dv_dashboard",
         function_name="theme_switcher",
     ),
-    Output("void1", "children"),
+    Output("theme_provider", "theme"),
     Input("themeToggle", "value"),
     State("themes", "data"),
 )
@@ -306,11 +309,17 @@ def load_output(_):
 
 
 # app initialization
-app.layout = dbc.Container(children=[dcc.Location(id="url"), initial_load, sidebar, navbar, dbc.Container(content, style=CONTENT_STYLE, fluid=True), stores, voids],
-                           fluid=True,
-                           className="dbc",
-                           # style={"height": "100vh"},
-                           id="main")
+app.layout = dmc.MantineProvider(children=dmc.Container([dcc.Location(id="url"), initial_load, sidebar, navbar, content, stores, voids], class_name='dbc', fluid=True),
+                                 theme={"colorScheme": "dark"},
+                                 styles={"Select": {
+                                     "input": {"&:focus": {'borderColor': '#e95420 !important'}}}},
+                                 withNormalizeCSS=True,
+                                 id='theme_provider',
+                                 )
+#    fluid=True,
+#    className="dbc",
+#    # style={"height": "100vh"},
+#    id="main")
 
 if __name__ == "__main__":
     app.run_server(port=5000,
