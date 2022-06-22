@@ -24,7 +24,8 @@ COLUMN_STYLE = {
     "paddingTop": '8px',
     # "padding": "0.5rem",
     "height": "fill",
-    # "minHeight": "65vh",
+    "minHeight": "50vh",
+    "maxHeight": "93vh",
     # "display": "flex",
     # "flexFlow": "column",
 }
@@ -231,27 +232,6 @@ def clampspolar_fig(clamp_types, clamps, fiver=True):
 # body
 
 layout = [
-    # dbc.Row(
-    #     dbc.Col(
-    #         dbc.Card(
-    #             dbc.Accordion(
-    #                 [
-    #                     dbc.AccordionItem(
-    #                         "This is the content of the first section", title="Item 1"
-    #                     ),
-    #                 ],
-    #                 start_collapsed=True,
-    #                 style={"height": "auto"},
-    #             ),
-    #             style={'height': '100%'},
-    #         ),
-    #         width={"size": 12, "order": 0},
-    #         style={'height': 'auto', 'width': '100%'},
-    #         class_name="flex-grow-1",
-    #     ),
-    #     style={'minHeight': '10vh', 'position': 'sticky',
-    #            'bottom': '0.1rem', 'paddingTop': '8px', },
-    # ),
     dcc.Store(id="ctbl", storage_type="memory",
               data=clamps.iloc[:, [0, 1, 4, 5, 6, 9]].to_dict('records')),
     dcc.Store(id="cover", storage_type="memory",
@@ -259,176 +239,218 @@ layout = [
     dcc.Store(id="cview", storage_type="memory"),
     dcc.Store(id="cpolar", storage_type="memory",
               data=clampspolar_fig(clamp_types, clamps)),
-    # dbc.Row([
-    # dbc.Card(
-    dmc.Accordion(
-        [
-            dmc.AccordionItem(
-                "This is the content of the first section", label="Summary"
+    # dbc.Row(
+    #     dbc.Col([
+    #         dmc.Accordion(
+    #             [
+    #                 dmc.AccordionItem([
+    dbc.Row(
+        dbc.Col(
+            dmc.Accordion(
+                [
+                    dmc.AccordionItem(
+                        "This is the content of the first section", label="Item 1"
+                    ),
+                ],
+                iconPosition="left",
+                offsetIcon=False,
+                multiple=True,
+                style={"height": "auto"},
             ),
-            dmc.AccordionItem([
-                dbc.Row([
-                        dbc.Col([
-                            dbc.Card([
-                                dbc.CardHeader(
-                                    dbc.Tabs(
-                                        [
-                                            dbc.Tab(label="Overview",
-                                                    tab_id="overview",
-                                                    activeTabClassName="fst-italic",
-                                                    key="overview"),
-                                            dbc.Tab(label="Tubeview",
-                                                    tab_id="tubeview",
-                                                    activeTabClassName="fst-italic",
-                                                    key="tubeview"),
-                                        ],
-                                        id="card-tabs",
-                                        active_tab="overview",
-                                        persistence=True,
-                                        persistence_type="memory",
-                                    )
-                                ),
-                                dbc.CardBody(
-                                    children=[
-                                        dcc.Loading(id="cd_loading", type="default", children=[
-                                                    dbc.Fade(id="cd_overview_fade", is_in=True, exit=True, timeout=100, children=[
-                                                        dbc.Card([
-                                                            dcc.Graph(id="cd_overview",
-                                                                      animate=False,
-                                                                      responsive=True,
-                                                                      config={'displaylogo': False,
-                                                                              'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
-                                                                              'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
-                                                                      style={
-                                                                          'height': '100%'}
-                                                                      )], style={'height': '100%'}),
-                                                    ], style={'height': '100%', 'display': 'block'}),
-                                                    dbc.Fade(id="cd_view_fade", is_in=False, exit=True, timeout=100, children=[
-                                                        dcc.Graph(id="cd_view",
-                                                                  animate=False,
-                                                                  responsive=True,
-                                                                  config={'displaylogo': False,
-                                                                          'scrollZoom': True,
-                                                                          # 'doubleClick': 'reset',
-                                                                          'responsive': True,
-                                                                          'modeBarButtonsToRemove': ['zoom', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
-                                                                          'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
-                                                                  style={
-                                                                      'height': '100%'}
-                                                                  )], style={'height': '100%', 'display': 'none'}),
-                                                    ], color='#e95420', parent_style={'height': '100%'}),
-                                    ],
-                                    id="card-content",
-                                    className="card-text",
-                                    style={'height': '100%'}),
-                            ], style={'height': '100%'}),
+            # style={'position': 'absolute', 'bottom': '0px'},
+        ),
+        # style={'position': 'relative', 'bottom': '5px',
+        #        'width': '99%', 'paddingTop': '5px'},
+    ),
+    dbc.Row([
+        dbc.Col([
+            dbc.Card([
+                dbc.CardHeader(
+                    dbc.Tabs(
+                        [
+                            dbc.Tab(label="Overview",
+                                    tab_id="overview",
+                                    activeTabClassName="fst-italic",
+                                    key="overview"),
+                            dbc.Tab(label="Tubeview",
+                                    tab_id="tubeview",
+                                    activeTabClassName="fst-italic",
+                                    key="tubeview"),
                         ],
-                            xxl=7, xl=6, lg=6, md=12, sm=12, xs=12,
-                            style=COLUMN_STYLE,
-                            class_name="pe-lg-0 flex-grow-1",
-                        ),
-                        dbc.Col(
-                            dbc.Card([
-                                dbc.Row(
-                                    dcc.Graph(id="cd_polar",
+                        id="card-tabs",
+                        active_tab="overview",
+                        persistence=True,
+                        persistence_type="memory",
+                    )
+                ),
+                dbc.CardBody(
+                    children=[
+                        dcc.Loading(id="cd_loading", type="default", children=[
+                            dbc.Fade(id="cd_overview_fade", is_in=True, exit=True, timeout=100, children=[
+                                dbc.Card([
+                                    dcc.Graph(id="cd_overview",
                                               animate=False,
                                               responsive=True,
                                               config={'displaylogo': False,
-                                                      'doubleClick': 'reset',
-                                                      # 'scrollZoom': True,
-                                                      # 'staticPlot': True,
-                                                      'responsive': True,
-                                                      'modeBarButtonsToRemove': ['zoom', 'select2d'],
-                                                      'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 600, 'width': 600, 'scale': 3}},
+                                                      'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
+                                                      'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
                                               style={
-                                                  'minHeight': '20em', 'height': '30%'}
-                                              ),
-                                ),
-                                dbc.Row([
-                                    dbc.Col(
-                                        dcc.Dropdown(
-                                            clamp_types,
-                                            clamp_types[1:],
-                                            multi=True,
-                                            searchable=False,
-                                            persistence=True,
-                                            persistence_type='memory',
-                                            id="dropdown_cd",
-                                            style={"width": "100%"},
-                                        ), width=11,),
-                                    dbc.Col([
-                                        dcc.Clipboard(
-                                            id="table_copy",
-                                            style={
-                                                "fontSize": 15,
-                                                "position": "relative",
-                                                "top": "0.5rem",
-                                                "right": "0.5rem",
-                                                # "padding": "50%",
-                                            },
-                                        ),
-                                        dbc.Tooltip(
-                                            "Copy table to clipboard",
-                                            delay={'show': 500,
-                                                   'hide': 500},
-                                            target="table_copy",
-                                        ), ],
-                                    ), ], style={'height': 'auto'}),
-                                dbc.Row(
-                                    dash_table.DataTable(id='cd_table',
-                                                         cell_selectable=False,
-                                                         row_selectable='single',
-                                                         page_action='native',
-                                                         sort_action='native',
-                                                         style_as_list_view=True,
-                                                         fixed_rows={
-                                                                     'headers': True, 'data': 0},
-                                                         style_table={
-                                                             'minHeight': 'auto', 'height': '100%', 'maxHeight': '100%', 'padding': '5px'},
-                                                         style_header={
-                                                             'text-align': 'left', 'fontSize': '0.8em', 'font-style': 'italic'},
-                                                         style_cell={
-                                                             'text-align': 'left', 'fontSize': '1em'},
-                                                         ),
-                                    class_name="flex-grow-1"),
-                            ], style={'height': '100%'}),
-                            xxl=5, xl=6, lg=6, md=12, sm=12, xs=12,
-                            style=COLUMN_STYLE,
-                            # class_name="flex-grow-1",
-                        ),
-                        # dbc.Col(
-                        #     dbc.Card(
-                        #         dbc.Accordion(
-                        #             [
-                        #                 dbc.AccordionItem(
-                        #                     "This is the content of the first section", title="Item 1"
-                        #                 ),
-                        #             ],
-                        #             start_collapsed=True,
-                        #             style={"height": "auto"},
-                        #         ),
-                        #         style={'height': '100%'},
-                        #     ),
-                        #     width={"size": 12, "order": 0},
-                        #     style={'height': '10vh'},
-                        #     # class_name="flex-grow-1",
-                        # ),
-                        ], style={'height': '69rem', 'minHeight': '69rem'}),
-            ],
-                label="Clamp Data",
-                # item_id="clamps_dash",
-            ),
+                                                  'height': '100%'}
+                                              )], style={'height': '100%'}),
+                            ], style={'height': '100%', 'display': 'block'}),
+                            dbc.Fade(id="cd_view_fade", is_in=False, exit=True, timeout=100, children=[
+                                dcc.Graph(id="cd_view",
+                                          animate=False,
+                                          responsive=True,
+                                          config={'displaylogo': False,
+                                                  'scrollZoom': True,
+                                                  # 'doubleClick': 'reset',
+                                                  'responsive': True,
+                                                  'modeBarButtonsToRemove': ['zoom', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
+                                                  'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
+                                          style={
+                                              'height': '100%'}
+                                          )], style={'height': '100%', 'display': 'none'}),
+                        ], color='#e95420', parent_style={'height': '100%'}),
+                    ],
+                    id="card-content",
+                    className="card-text",
+                    style={'height': '100%'}),
+            ], style={'height': '100%'}),
         ],
-        # active_item=['clamps_dash'],
-        # always_open=True,
-        multiple=True,
-        iconPosition="left",
-        offsetIcon=False,
-        style={"height": "fill", },
+            xxl=7, xl=6, lg=6, md=12, sm=12, xs=12,
+            style=COLUMN_STYLE,
+            class_name="pe-lg-0",
+        ),
+        dbc.Col(
+            dbc.Card([
+                dbc.Row(
+                    dcc.Graph(id="cd_polar",
+                              animate=False,
+                              responsive=True,
+                              config={'displaylogo': False,
+                                      'doubleClick': 'reset',
+                                      # 'scrollZoom': True,
+                                      # 'staticPlot': True,
+                                      'responsive': True,
+                                      'modeBarButtonsToRemove': ['zoom', 'select2d'],
+                                      'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 600, 'width': 600, 'scale': 3}},
+                              style={
+                                  'minHeight': '20rem', 'height': '30%'},
+                              ),
+                    # class_name="flex-grow-1",
+                ),
+                dbc.Row([
+                    dbc.Col(
+                        dcc.Dropdown(
+                            clamp_types,
+                            clamp_types[1:],
+                            multi=True,
+                            searchable=False,
+                            persistence=True,
+                            persistence_type='memory',
+                            id="dropdown_cd",
+                            style={"width": "100%"},
+                        ), width=11,),
+                    dbc.Col([
+                        dcc.Clipboard(
+                            id="table_copy",
+                            style={
+                                "fontSize": 15,
+                                "position": "relative",
+                                "top": "0.5rem",
+                                "right": "0.5rem",
+                                # "padding": "50%",
+                            },
+                        ),
+                        dbc.Tooltip(
+                            "Copy table to clipboard",
+                            delay={'show': 500,
+                                   'hide': 500},
+                            target="table_copy",
+                        ), ],
+                    ), ], style={'height': 'auto'}),
+                dbc.Row(
+                    dash_table.DataTable(id='cd_table',
+                                         cell_selectable=False,
+                                         row_selectable='single',
+                                         page_action='native',
+                                         sort_action='native',
+                                         style_as_list_view=True,
+                                         fixed_rows={
+                                             'headers': True, 'data': 0},
+                                         style_table={
+                                             'minHeight': '20rem', 'height': '100%', 'maxHeight': '100%', 'padding': '5px'},
+                                         style_header={
+                                             'text-align': 'left', 'fontSize': '0.8em', 'font-style': 'italic'},
+                                         style_cell={
+                                             'text-align': 'left', 'fontSize': '1em'},
+                                         ),
+                    class_name="flex-grow-1",
+                ),
+            ], style={'height': '100%'}),
+            xxl=5, xl=6, lg=6, md=12, sm=12, xs=12,
+            style=COLUMN_STYLE,
+            # class_name="flex-grow-1",
+        ),
+        # dbc.Col(
+        #     dmc.Accordion(
+        #         [
+        #             dmc.AccordionItem(
+        #                 "This is the content of the first section", label="Item 1"
+        #             ),
+        #         ],
+        #         iconPosition="left",
+        #         offsetIcon=False,
+        #         multiple=True,
+        #         style={"height": "auto"},
+        #     ),
+        #     style={'position': 'relative', 'height': 'fill',
+        #            'bottom': '0px', 'paddingTop': '8px'},
+        # ),
+    ], class_name="flex-grow-1",
+        style={'position': 'relative', 'bottom': '5px',
+               'height': '90vh'},
     ),
-    #   style={'height': 'auto'},
+    #             ],
+    #                 label="Clamp Data",
+
+    #                 # item_id="clamps_dash",
+    #             ),
+    #             dmc.AccordionItem(
+    #                 "This is the content of the first section", label="Summary"
+    #             ),
+    #         ],
+    #         multiple=True,
+    #         state={'0': True},
+    #         iconPosition="left",
+    #         offsetIcon=False,
+    #         style={"height": "fill"},
+    #     ),
+    # ],
+    #     style={'height': '93vh', 'minHeight': '50vh'},
     # ),
-    # ], style={'height': '95vh'}),
+    # style={'height': 'auto'},
+    # class_name="flex-grow-1"
+    # ),
+    # dbc.Row(
+    #     dbc.Col(
+    #         dmc.Accordion(
+    #             [
+    #                 dmc.AccordionItem(
+    #                     "This is the content of the first section", label="Item 1"
+    #                 ),
+    #             ],
+    #             iconPosition="left",
+    #             offsetIcon=False,
+    #             multiple=True,
+    #             style={"height": "auto"},
+    #         ),
+    #         #style={'position': 'absolute', 'bottom': '0px'},
+    #     ),
+    #     style={'position': 'relative', 'bottom': '5px',
+    #            'width': '99%', 'paddingTop': '5px'},
+    # ),
 ]
 
 
