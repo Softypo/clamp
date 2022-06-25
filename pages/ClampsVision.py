@@ -17,6 +17,7 @@ from .utils.pil_utilities import loader_pil_multiprocess, loader_pil
 
 from dash import clientside_callback
 from dash.dependencies import ClientsideFunction
+from dash_iconify import DashIconify
 
 dash.register_page(__name__, title="DV Dashboard - ClampsVision")
 
@@ -249,12 +250,13 @@ layout = [
             dmc.Accordion(
                 [
                     dmc.AccordionItem(
-                        "This is the content of the first section", label="(click to open sumary)", icon="fa6-solid:oil-well",
+                        "This is the content of the first section", label="(click to open sumary)", icon=[DashIconify(icon="fa6-solid:oil-well", width=25)],
                     ),
                 ],
                 iconPosition="left",
                 offsetIcon=False,
                 multiple=True,
+                disableIconRotation=True,
                 style={"height": "auto"},
             ),
             #style={'position': 'absolute', 'bottom': '0px'},
