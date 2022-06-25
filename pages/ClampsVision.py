@@ -25,7 +25,7 @@ COLUMN_STYLE = {
     # "padding": "0.5rem",
     "height": "fill",
     "minHeight": "50vh",
-    "maxHeight": "93vh",
+    "maxHeight": "100vh",
     # "display": "flex",
     # "flexFlow": "column",
 }
@@ -249,7 +249,7 @@ layout = [
             dmc.Accordion(
                 [
                     dmc.AccordionItem(
-                        "This is the content of the first section", label="Item 1"
+                        "This is the content of the first section", label="(click to open sumary)", icon="fa6-solid:oil-well",
                     ),
                 ],
                 iconPosition="left",
@@ -257,10 +257,9 @@ layout = [
                 multiple=True,
                 style={"height": "auto"},
             ),
-            # style={'position': 'absolute', 'bottom': '0px'},
+            #style={'position': 'absolute', 'bottom': '0px'},
         ),
-        # style={'position': 'relative', 'bottom': '5px',
-        #        'width': '99%', 'paddingTop': '5px'},
+        style={'paddingTop': '0px'},
     ),
     dbc.Row([
         dbc.Col([
@@ -336,9 +335,9 @@ layout = [
                                       'modeBarButtonsToRemove': ['zoom', 'select2d'],
                                       'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 600, 'width': 600, 'scale': 3}},
                               style={
-                                  'minHeight': '20rem', 'height': '30%'},
+                                  'height': '25vh'},
                               ),
-                    # class_name="flex-grow-1",
+                    # class_name="flex-shrink-1",
                 ),
                 dbc.Row([
                     dbc.Col(
@@ -359,17 +358,18 @@ layout = [
                                 "fontSize": 15,
                                 "position": "relative",
                                 "top": "0.5rem",
-                                "right": "0.5rem",
-                                # "padding": "50%",
+                                "right": "1rem",
                             },
+                            title="Copy to clipboard",
                         ),
-                        dbc.Tooltip(
-                            "Copy table to clipboard",
-                            delay={'show': 500,
-                                   'hide': 500},
-                            target="table_copy",
-                        ), ],
-                    ), ], style={'height': 'auto'}),
+                        # dbc.Tooltip(
+                        #     "Copy table to clipboard",
+                        #     delay={'show': 500,
+                        #            'hide': 500},
+                        #     target="table_copy",
+                        # ),
+                    ],
+                    ), ], style={'height': 'auto', 'paddingTop': '0.5rem', 'paddingLeft': '0.5rem'}),
                 dbc.Row(
                     dash_table.DataTable(id='cd_table',
                                          cell_selectable=False,
@@ -380,7 +380,7 @@ layout = [
                                          fixed_rows={
                                              'headers': True, 'data': 0},
                                          style_table={
-                                             'minHeight': '20rem', 'height': '100%', 'maxHeight': '100%', 'padding': '5px'},
+                                             'minHeight': '20rem', 'height': '50vh', 'maxHeight': '100%', 'padding': '5px'},
                                          style_header={
                                              'text-align': 'left', 'fontSize': '0.8em', 'font-style': 'italic'},
                                          style_cell={
@@ -391,7 +391,7 @@ layout = [
             ], style={'height': '100%'}),
             xxl=5, xl=6, lg=6, md=12, sm=12, xs=12,
             style=COLUMN_STYLE,
-            # class_name="flex-grow-1",
+            # class_name="flex-shrink-1",
         ),
         # dbc.Col(
         #     dmc.Accordion(
@@ -408,9 +408,10 @@ layout = [
         #     style={'position': 'relative', 'height': 'fill',
         #            'bottom': '0px', 'paddingTop': '8px'},
         # ),
-    ], class_name="flex-grow-1",
+    ],
+        class_name="flex-shrink-1",
         style={'position': 'relative', 'bottom': '5px',
-               'height': '90vh'},
+               'height': '100%'},
     ),
     #             ],
     #                 label="Clamp Data",

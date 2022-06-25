@@ -7,6 +7,7 @@ import dash_bootstrap_components as dbc
 # from dash_bootstrap_templates import load_figure_template, ThemeSwitchAIO
 from dash.dependencies import ClientsideFunction
 import dash_mantine_components as dmc
+from dash_iconify import DashIconify
 
 
 # import plotly.io as pio
@@ -116,16 +117,23 @@ sidebar = html.Div(
                         ),
                         dbc.Col(
                             [
-                                html.Span(className="fa fa-globe",
-                                          style={"marginRight": "0.5rem"}),
+                                DashIconify(icon="el:globe-alt",
+                                            width=15,
+                                            inline=True,
+                                            style={"marginRight": "0.5rem"}
+                                            ),
                                 dbc.Switch(value=False, id="unitsToggle",
-                                           className="d-inline-block ml-2",
+                                           className="d-inline-block",
                                            persistence=True, persistence_type='local'),
-                                html.Span(className="fa fa-flag-usa",
-                                          style={"marginRight": "auto"}),
+                                DashIconify(icon="cib:gov-uk",
+                                            width=15,
+                                            inline=True,
+                                            # style={"marginRight": "auto"}
+                                            ),
                             ],
                         ),
                     ],
+                    # justify="end",
                 ),
                 html.P(
                     "A simple sidebar layout with navigation links", className="lead"
