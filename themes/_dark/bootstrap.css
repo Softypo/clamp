@@ -2642,8 +2642,8 @@ textarea.form-control-lg {
 }
 
 .form-check-input:checked {
-  background-color: #e95420;
-  border-color: #e95420;
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
 }
 
 .form-check-input:checked[type=checkbox] {
@@ -12303,4 +12303,8 @@ fieldset:disabled .btn {
 
 .alert-dark {
   background-color: #272b30;
+}
+
+offcanvas {
+  background-color: var(--bs-primary) !important;
 }
