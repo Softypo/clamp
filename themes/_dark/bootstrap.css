@@ -7177,7 +7177,7 @@ fieldset:disabled .btn {
   flex-direction: column;
   max-width: 100%;
   visibility: hidden;
-  background-color: #3a3f44;
+  background-color: rgba(0, 0, 0, 0.9);
   background-clip: padding-box;
   outline: 0;
   transition: transform 0.3s ease-in-out;
@@ -12303,8 +12303,4 @@ fieldset:disabled .btn {
 
 .alert-dark {
   background-color: #272b30;
-}
-
-offcanvas {
-  background-color: var(--bs-primary) !important;
 }

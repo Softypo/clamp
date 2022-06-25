@@ -16,7 +16,7 @@ from dash_iconify import DashIconify
 # dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
 themes = {'_dark': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap.css',
                     'fig': 'slate', 'json': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/slate.json'},
-          '_light': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/bootstrap.min.css',
+          '_light': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/bootstrap.css',
                      'fig': 'united', 'json': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/united.json'}
           }
 
@@ -97,13 +97,15 @@ sidebar = html.Div(
                         ),
                         dbc.Col(
                             [
-                                html.Span(className="fa fa-moon",
-                                          style={"marginRight": "0.5rem"}),
+                                DashIconify(icon="bi:moon-stars-fill",
+                                            inline=True,
+                                            style={"marginRight": "0.5rem"}
+                                            ),
                                 dbc.Switch(value=False, id="themeToggle",
                                            className="d-inline-block ml-2",
                                            persistence=True, persistence_type='local'),
-                                html.Span(className="fa fa-sun",
-                                          style={"marginRight": "auto"}),
+                                DashIconify(icon="fa-solid:sun",
+                                            inline=True),
                             ],
                         ),
                     ],
@@ -118,7 +120,6 @@ sidebar = html.Div(
                         dbc.Col(
                             [
                                 DashIconify(icon="el:globe-alt",
-                                            width=15,
                                             inline=True,
                                             style={"marginRight": "0.5rem"}
                                             ),
@@ -126,14 +127,10 @@ sidebar = html.Div(
                                            className="d-inline-block",
                                            persistence=True, persistence_type='local'),
                                 DashIconify(icon="cib:gov-uk",
-                                            width=15,
-                                            inline=True,
-                                            # style={"marginRight": "auto"}
-                                            ),
+                                            inline=True),
                             ],
                         ),
                     ],
-                    # justify="end",
                 ),
                 html.P(
                     "A simple sidebar layout with navigation links", className="lead"
