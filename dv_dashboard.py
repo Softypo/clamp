@@ -223,8 +223,8 @@ navbar = dbc.Navbar(
                 [
                     dbc.Col(html.A([html.Img(src=DV_LOGO, height="30rem")],
                             href="https://darkvisiontech.com/", style={"textDecoration": "none"},),),
-                    dbc.Col(dbc.NavbarBrand([DashIconify(icon="simple-icons:soundcharts",
-                                                         width=25,
+                    dbc.Col(dbc.NavbarBrand([DashIconify(icon="arcticons:medilog",
+                                                         width=30,
                                                          # inline=True,
                                                          style={
                                                              "marginRight": "0.5rem"}
@@ -232,7 +232,7 @@ navbar = dbc.Navbar(
                                              "Dashboard"],
                                             href="/",
                                             # class_name="fa",
-                                            style={"fontSize": "1rem", 'font-family': 'fantasy'}), style={"textAlign": "center"}),
+                                            style={"fontSize": "1rem", 'fontFamily': 'fantasy'}), style={"textAlign": "center"}),
                 ],
                 align="center",
                 className="g-0",

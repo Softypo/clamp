@@ -250,7 +250,21 @@ layout = [
             dmc.Accordion(
                 [
                     dmc.AccordionItem(
-                        "This is the content of the first section", label="(click to open sumary)", icon=[DashIconify(icon="fa6-solid:oil-well", width=25)],
+                        children="This is the content of the first section",
+                        label=[
+                            "(click to open sumary)",
+                            # dmc.Select(
+                            #     data=["React", "Angular", "Svelte", "Vue"],
+                            #     searchable=True,
+                            #     allowDeselect=True,
+                            #     nothingFound="No well found",
+                            #     placeholder="Select a framework",
+                            #     style={"width": '15rem'},
+                            # ),
+                        ],
+                        icon=[
+                            DashIconify(icon="fa6-solid:oil-well", width=25)
+                        ],
                     ),
                 ],
                 iconPosition="left",
@@ -259,7 +273,7 @@ layout = [
                 disableIconRotation=True,
                 style={"height": "auto"},
             ),
-            #style={'position': 'absolute', 'bottom': '0px'},
+            # style={'position': 'absolute', 'bottom': '0px'},
         ),
         style={'paddingTop': '0px'},
     ),
@@ -289,6 +303,32 @@ layout = [
                         dcc.Loading(id="cd_loading", type="default", children=[
                             dbc.Fade(id="cd_overview_fade", is_in=True, exit=True, timeout=100, children=[
                                 dbc.Card([
+                                    dbc.Row([
+                                        html.P("Interval:",
+                                               className="d-inline",
+                                               ),
+                                        html.H5("00000.000-00000.000",
+                                                className="d-inline",
+                                                ),
+                                        # ], class_name='d-inline'),
+                                        # dbc.Row([
+                                        html.P("Fibercable",
+                                               className="d-inline",
+                                               ),
+                                        html.P("Mean:",
+                                               className="d-inline",
+                                               ),
+                                        html.H5("000.000",
+                                            className="d-inline",
+                                                ),
+                                        html.P("Mode:",
+                                               className="d-inline",
+                                               ),
+                                        html.H5("000.000",
+                                            className="d-inline",
+                                                ),
+                                    ],  class_name='d-inline-block mx-auto',
+                                    ),
                                     dcc.Graph(id="cd_overview",
                                               animate=False,
                                               responsive=True,
@@ -342,6 +382,67 @@ layout = [
                     # class_name="flex-shrink-1",
                 ),
                 dbc.Row([
+                    # dbc.Col([
+                    #     # dbc.Toast(
+                    #     #     [
+                    #     #         html.H5("Mean: 0.0",
+                    #     #                 className="mb-0 d-inline-block",
+                    #     #                 style={'marginRight': '35px'},
+                    #     #                 ),
+                    #     #         html.H5("Mode: 0.0",
+                    #     #                 className="mb-0 d-inline-block",
+                    #     #                 #style={'marginRight': '15px'},
+                    #     #                 ),
+                    #     #     ],
+                    #     #     header='Fiber Wire direction (azdeg)',
+                    #     #     tag="Fiber Wire direction (azdeg)",
+                    #     #     style={'width': '99%', 'marginBottom': '5px'},
+                    #     # )
+                    #     # html.H6("fiberTOH (azdeg)",
+                    #     #         className="d-inline",
+                    #     #         style={'marginLeft': '5px'},
+                    #     #         ),
+                    #     dbc.Row([
+                    #         # dbc.Col([
+                    #         #     dbc.Row([
+                    #         #         html.P("Interval:",
+                    #         #                className="d-inline",
+                    #         #                ),
+                    #         #         html.P("00000.000-00000.000",
+                    #         #                className="d-inline",
+                    #         #                ),
+                    #         #     ], class_name='d-inline', style={'fontSize': '0.6rem'}),
+                    #         # ], width=5),
+                    #         # dbc.Col([
+                    #         #     dbc.Row([
+                    #             html.P("Fiber cable",
+                    #                    className="d-inline",
+                    #                    # style={'marginRight': '35px'},
+                    #                    ),
+                    #             html.P("Mean:",
+                    #                    className="d-inline",
+                    #                    # style={'marginRight': '35px'},
+                    #                    ),
+                    #             html.H5("000.000",
+                    #                     className="d-inline",
+                    #                     # style={'marginRight': '35px'},
+                    #                     ),
+                    #             html.P("Mode:",
+                    #                    className="d-inline",
+                    #                    # style={'marginRight': '15px'},
+                    #                    ),
+                    #             html.H5("000.000",
+                    #                     className="d-inline",
+                    #                     # style={'marginRight': '35px'},
+                    #                     ),
+                    #             #     ], class_name='d-inline', style={'fontSize': '1rem'}),
+                    #             # ], width=7),
+                    #             ],  class_name='d-inline-block mx-auto',
+                    #             ),
+                    # ],
+                    #     width=12,
+                    #     # className='mb-1',
+                    # ),
                     dbc.Col(
                         dcc.Dropdown(
                             clamp_types,
@@ -382,7 +483,7 @@ layout = [
                                          fixed_rows={
                                              'headers': True, 'data': 0},
                                          style_table={
-                                             'minHeight': '20rem', 'height': '50vh', 'maxHeight': '100%', 'padding': '5px'},
+                                             'minHeight': '20rem', 'height': '100%', 'maxHeight': '100%', 'padding': '5px'},
                                          style_header={
                                              'text-align': 'left', 'fontSize': '0.8em', 'font-style': 'italic'},
                                          style_cell={
@@ -411,9 +512,9 @@ layout = [
         #            'bottom': '0px', 'paddingTop': '8px'},
         # ),
     ],
-        class_name="flex-shrink-1",
+        # class_name="flex-shrink-1 flex-grow-1",
         style={'position': 'relative', 'bottom': '5px',
-               'height': '100%'},
+               'height': '96vh'},
     ),
     #             ],
     #                 label="Clamp Data",

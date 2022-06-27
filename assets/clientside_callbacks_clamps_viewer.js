@@ -60,7 +60,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 cpolar_fig.layout.modebar = modebar;
                 // cview_fig.layout.template = template;
                 // cview_fig.layout.modebar = modebar;
-                return [ctbl_new, cover_fig, cpolar_fig];
+                //return [ctbl_new, cover_fig, cpolar_fig];
             };
 
             // if (trigger == "unitsToggle") {
@@ -174,10 +174,11 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             };
 
             if (trigger == "cd_overview" && Object.keys(relayoutData).length > 1) {
-                console.log(relayoutData);
-                if (relayoutData['yaxis.range[0]'] != undefined) {
+                //console.log(relayoutData);
+                if (relayoutData['yaxis.range[0]'] != undefined && relayoutData['yaxis.range[0]'] != relayoutData['yaxis.range[1]']) {
                     new_fig.layout.polar.radialaxis.range = [relayoutData['yaxis.range[0]'], relayoutData['yaxis.range[1]']];
-                } else if (relayoutData['xaxis.range[0]'] == undefined) new_fig.layout.polar.radialaxis.range = [...store_fig.layout.polar.radialaxis.range];
+                } else if (relayoutData['yaxis.range[0]'] != undefined && relayoutData['yaxis.range[0]'] == relayoutData['yaxis.range[1]']) new_fig.layout.polar.radialaxis.range = [...store_fig.layout.polar.radialaxis.range];
+                else if (relayoutData['xaxis.range[0]'] == undefined) new_fig.layout.polar.radialaxis.range = [...store_fig.layout.polar.radialaxis.range];
                 return new_fig;
             };
 
