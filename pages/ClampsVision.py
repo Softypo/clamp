@@ -25,7 +25,7 @@ COLUMN_STYLE = {
     "paddingTop": '8px',
     # "padding": "0.5rem",
     "height": "fill",
-    "minHeight": "50vh",
+    "minHeight": "60vh",
     "maxHeight": "100vh",
     # "display": "flex",
     # "flexFlow": "column",
@@ -332,7 +332,7 @@ layout = [
                                         ],
                                             xxl=3, xl=3, lg=3, md=3, sm=6, xs=6),
                                     ],
-                                        # class_name='g-0',
+                                        # className='g-0',
                                         # justify="evenly",
                                     ),
                                     dcc.Graph(id="cd_overview",
@@ -367,7 +367,7 @@ layout = [
         ],
             xxl=7, xl=6, lg=6, md=12, sm=12, xs=12,
             style=COLUMN_STYLE,
-            class_name="pe-lg-0",
+            className="pe-lg-0",
         ),
         dbc.Col(
             dbc.Card([
@@ -385,7 +385,7 @@ layout = [
                               style={
                                   'height': '25vh', 'minHeight': '20rem'},
                               ),
-                    # class_name="flex-shrink-1",
+                    # className="flex-shrink-1",
                 ),
                 dbc.Row([
                     # dbc.Col([
@@ -417,7 +417,7 @@ layout = [
                     #         #         html.P("00000.000-00000.000",
                     #         #                className="d-inline",
                     #         #                ),
-                    #         #     ], class_name='d-inline', style={'fontSize': '0.6rem'}),
+                    #         #     ], className='d-inline', style={'fontSize': '0.6rem'}),
                     #         # ], width=5),
                     #         # dbc.Col([
                     #         #     dbc.Row([
@@ -441,9 +441,9 @@ layout = [
                     #                     className="d-inline",
                     #                     # style={'marginRight': '35px'},
                     #                     ),
-                    #             #     ], class_name='d-inline', style={'fontSize': '1rem'}),
+                    #             #     ], className='d-inline', style={'fontSize': '1rem'}),
                     #             # ], width=7),
-                    #             ],  class_name='d-inline-block mx-auto',
+                    #             ],  className='d-inline-block mx-auto',
                     #             ),
                     # ],
                     #     width=12,
@@ -468,6 +468,8 @@ layout = [
                                 "position": "relative",
                                 "top": "0.5rem",
                                 "right": "1rem",
+                                # 'marginTop': '0.5rem',
+                                # 'marginBottom': '0.5rem',
                             },
                             title="Copy to clipboard",
                         ),
@@ -477,8 +479,8 @@ layout = [
                         #            'hide': 500},
                         #     target="table_copy",
                         # ),
-                    ],
-                    ), ], style={'height': 'auto', 'paddingTop': '0.5rem', 'paddingLeft': '0.5rem'}),
+                    ], width=1,
+                    ), ], style={'height': 'auto', 'paddingTop': '0.5rem', 'paddingLeft': '0.5rem'}, justify='around'),
                 dbc.Row(
                     dash_table.DataTable(id='cd_table',
                                          cell_selectable=False,
@@ -489,18 +491,18 @@ layout = [
                                          fixed_rows={
                                              'headers': True, 'data': 0},
                                          style_table={
-                                             'minHeight': '20rem', 'height': '100%', 'maxHeight': '100%', 'padding': '5px'},
+                                             'minHeight': '10rem', 'height': '100%', 'maxHeight': '100%', 'padding': '5px'},
                                          style_header={
                                              'text-align': 'left', 'fontSize': '0.8em', 'font-style': 'italic'},
                                          style_cell={
                                              'text-align': 'left', 'fontSize': '1em'},
                                          ),
-                    class_name="flex-grow-1",
+                    className="flex-grow-1 flex-shrink-1",
                 ),
             ], style={'height': '100%'}),
             xxl=5, xl=6, lg=6, md=12, sm=12, xs=12,
             style=COLUMN_STYLE,
-            # class_name="flex-shrink-1",
+            # className="flex-shrink-1",
         ),
         # dbc.Col(
         #     dmc.Accordion(
@@ -518,7 +520,7 @@ layout = [
         #            'bottom': '0px', 'paddingTop': '8px'},
         # ),
     ],
-        # class_name="flex-shrink-1 flex-grow-1",
+        # className="flex-shrink-1 flex-grow-1",
         style={'position': 'relative', 'bottom': '5px',
                'height': '96vh'},
     ),
@@ -541,7 +543,7 @@ layout = [
     #     style={'height': '93vh', 'minHeight': '50vh'},
     # ),
     # style={'height': 'auto'},
-    # class_name="flex-grow-1"
+    # className="flex-grow-1"
     # ),
     # dbc.Row(
     #     dbc.Col(
