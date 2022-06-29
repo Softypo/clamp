@@ -9,7 +9,7 @@ import datetime
 
 # data
 
-clamps = pd.read_hdf("data/446/446cd.h5", "446cd")
+clamps = pd.read_pickle("data/446/446cd.pkl")
 clamp_types = clamps['type'].unique()
 
 
