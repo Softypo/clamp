@@ -325,12 +325,12 @@ layout = [
                                         ],
                                             xxl=3, xl=3, lg=3, md=3, sm=6, xs=6),
                                         dbc.Col([
-                                            html.P("Mode: ",
+                                            html.P("StDev: ",
                                                    className="d-inline",
                                                    ),
                                             html.H5("000.000",
                                                     className="d-inline-block",
-                                                    id="cd_mode",
+                                                    id="cd_stdev",
                                                     ),
                                         ],
                                             xxl=3, xl=3, lg=3, md=3, sm=6, xs=6),
@@ -756,13 +756,29 @@ clientside_callback(
         namespace="clamps_viewer",
         function_name="clampspolar_listener"
     ),
+    Output("cd_interval", "children"),
+    Output("cd_mean", "children"),
+    Output("cd_stdev", "children"),
     Output("cd_polar", "figure"),
     Input("dropdown_cd", "value"),
     Input('cd_overview', 'relayoutData'),
     Input("cpolar", "data"),
     State('cd_polar', 'figure'),
-    # State("themes", "data"),
+    State('unitsToggle', 'value'),
 )
+
+# clientside_callback(
+#     ClientsideFunction(
+#         namespace="clamps_viewer",
+#         function_name="clampstats_listener"
+#     ),
+#     Output("cd_interval", "children"),
+#     Output("cd_mean", "children"),
+#     Output("cd_mode", "children"),
+#     Input('cd_overview', 'relayoutData'),
+#     State('cd_polar', 'figure'),
+#     State('unitsToggle', 'value'),
+# )
 
 clientside_callback(
     ClientsideFunction(

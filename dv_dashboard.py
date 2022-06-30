@@ -232,7 +232,7 @@ navbar = dbc.Navbar(
                                              "Dashboard"],
                                             href="/",
                                             # class_name="fa",
-                                            style={"fontSize": "1rem", 'fontFamily': 'fantasy'}), style={"textAlign": "center"}),
+                                            style={"fontSize": "1rem", 'fontFamily': 'system-ui'}), style={"textAlign": "center"}),
                 ],
                 align="center",
                 className="g-0",

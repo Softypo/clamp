@@ -163,7 +163,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
 
             return new_fig;
         },
-        clampspolar_listener: function (clamps_types, relayoutData, store_fig, fig) {
+        clampspolar_listener: function (clamps_types, relayoutData, store_fig, fig, unitsToggle) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
 
             let new_fig;
@@ -179,12 +179,15 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                     new_fig.layout.polar.radialaxis.range = [relayoutData['yaxis.range[0]'], relayoutData['yaxis.range[1]']];
                 } else if (relayoutData['yaxis.range[0]'] != undefined && relayoutData['yaxis.range[0]'] == relayoutData['yaxis.range[1]']) new_fig.layout.polar.radialaxis.range = [...store_fig.layout.polar.radialaxis.range];
                 else if (relayoutData['xaxis.range[0]'] == undefined) new_fig.layout.polar.radialaxis.range = [...store_fig.layout.polar.radialaxis.range];
-                return new_fig;
+                //return new_fig;
             };
 
             let r = [];
             let theta = [];
             let c = [];
+            let n = 0;
+            let sum = 0;
+            let stats = [];
             store_fig.data.forEach((trace, index) => {
                 if (trace.name == "Fiber Wire") {
                     trace.customdata.forEach((type, indext) => {
@@ -192,6 +195,11 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                             r = r.concat(store_fig.data[index]['r'][indext]);
                             theta = theta.concat(store_fig.data[index]['theta'][indext]);
                             c = c.concat([type]);
+                            if (r.at(-1) < new_fig.layout.polar.radialaxis.range[0] && r.at(-1) > new_fig.layout.polar.radialaxis.range[1]) {
+                                n++;
+                                sum = sum + theta.at(-1);
+                                stats = stats.concat(theta.at(-1));
+                            }
                         }
                     });
                     new_fig.data[index]['r'] = r;
@@ -199,14 +207,27 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                     new_fig.data[index]['customdata'] = c;
                 };
             });
-            // new_fig.layout.polar.radialaxis.autorange = true;
-            // delete new_fig.layout.polar.radialaxis.range;
-            //new_fig.layout.polar.radialaxis.range = [...store_fig.layout.polar.radialaxis.range];
-            // console.log('polar store', store_fig);
-            // console.log('polar new_fig', new_fig);
-            // console.log('store', [...store_fig.layout.polar.radialaxis.range]);
-            // console.log('new', new_fig.layout.polar.radialaxis.range);
-            return new_fig;
+
+            let units = unitsToggle ? "ft" : "m";
+            let interval = `${new_fig.layout.polar.radialaxis.range[1].toFixed(2)} - ${new_fig.layout.polar.radialaxis.range[0].toFixed(2)} ${units}`;
+            let mean = sum > 0 ? `${(sum / n).toFixed(0)}°` : `${(360 + (sum / n)).toFixed(0)}°`;
+            // let median = sum > 0 ? sum : 360 + sum;
+            // median = median > 0 ? (median).toFixed(0) : (360 + median).toFixed(0);
+
+            function dev(array) {
+                const n = array.length
+                const mean = array.reduce((a, b) => a + b) / n
+                return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
+            }
+            let std = dev(stats).toFixed(2);
+
+            console.log(interval);
+            console.log('mean', mean);
+            //console.log(median);
+            console.log(n);
+            console.log(sum);
+            console.log(new_fig);
+            return [interval, mean, std, new_fig];
         },
         clampstable_listener: function (clamps_types, store_tbl, selected_rows) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
