@@ -250,8 +250,8 @@ layout = [
             dmc.Accordion(
                 [
                     dmc.AccordionItem(
-                        children="This is the content of the first section",
-                        label="(click to open sumary)",
+                        children="Phillips's Unit B3 was scanned by Darkvision Technologies on April 6, 2022, for clamp detection analysis. Darkvision's findings can be summarized as follows:\nAll 27 Cable Detection Clamps were identified, and its orientation measured. All analyses provided in this report or affiliated with this survey are provided on a commercially reasonable efforts basis. It remains the sole responsibility of the operator utilizing the report and information contained to undertake actions to ensure well and personnel safety, and draw their own conclusions regarding the well. All analyses provided by DarkVision Technologies Inc. are based on experience and judgment, but are always within the limitations of the technology deployed and downhole operating environment. Since all analysis and interpretations are opinions based on inferences from ultrasound measurements, the accuracy or completeness of any analysis or interpretation is not and cannot be guaranteed",
+                        label="Unit B3 (click to open sumary)",
                         # icon=[
                         #     DashIconify(icon="fa6-solid:oil-well", width=25)
                         # ],

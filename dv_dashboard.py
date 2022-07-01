@@ -30,7 +30,7 @@ app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[them
                     {"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=1"}],
                 # external_scripts=['https://cdn.plot.ly/plotly-2.11.1.min.js']
                 )
-application = app.server  # <<<<<<<<for debuging in vscode only
+application = app.server  # <<<<<<<<for deploying to heroku
 
 
 # load_figure_template(themes['_light']['fig'])
@@ -237,7 +237,9 @@ navbar = dbc.Navbar(
                 align="center",
                 className="g-0",
             ),
-            dbc.NavbarToggler(id="navbar_toggler", n_clicks=0),
+            dbc.NavbarToggler(id="navbar_toggler", n_clicks=0,
+                              # children=DashIconify(icon="line-md:align-justify")
+                              ),
             dbc.Collapse(
                 navbar_menu,
                 id="navbar_collapse",
@@ -292,10 +294,12 @@ app.clientside_callback(
     ),
     Output("sidebar_toggler", "value"),
     Output("offcanvas", "is_open"),
+    Output("navbar_toggler", "n_clicks"),
     Output("cls_sidebar", "n_clicks"),
     Input("sidebar_toggler", "value"),
     Input("cls_sidebar", "n_clicks"),
     State("offcanvas", "is_open"),
+    State("navbar_toggler", "n_clicks"),
 )
 
 app.clientside_callback(

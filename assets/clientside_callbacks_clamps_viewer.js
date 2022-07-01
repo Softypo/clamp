@@ -251,8 +251,8 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 if (["id", "type"].includes(key) == false) new_cols = new_cols.concat({ "name": key, "id": key });
             });
 
-            console.log(clickData);
-            console.log(selected_rows);
+            // console.log(clickData);
+            // console.log(selected_rows);
             // console.log('tbl store', store_tbl);
             // console.log('tbl new', new_cols);
             if (trigger == "ctbl") return [new_tbl, new_cols, selected_rows];
