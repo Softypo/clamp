@@ -251,20 +251,10 @@ layout = [
                 [
                     dmc.AccordionItem(
                         children="This is the content of the first section",
-                        label=[
-                            "(click to open sumary)",
-                            # dmc.Select(
-                            #     data=["React", "Angular", "Svelte", "Vue"],
-                            #     searchable=True,
-                            #     allowDeselect=True,
-                            #     nothingFound="No well found",
-                            #     placeholder="Select a framework",
-                            #     style={"width": '15rem'},
-                            # ),
-                        ],
-                        icon=[
-                            DashIconify(icon="fa6-solid:oil-well", width=25)
-                        ],
+                        label="(click to open sumary)",
+                        # icon=[
+                        #     DashIconify(icon="fa6-solid:oil-well", width=25)
+                        # ],
                     ),
                 ],
                 iconPosition="left",
@@ -272,6 +262,9 @@ layout = [
                 multiple=True,
                 disableIconRotation=True,
                 style={"height": "auto"},
+                icon=[
+                    DashIconify(icon="fa6-solid:oil-well", width=25)
+                ],
             ),
             # style={'position': 'absolute', 'bottom': '0px'},
         ),
@@ -280,6 +273,15 @@ layout = [
     dbc.Row([
         dbc.Col([
             dbc.Card([
+                dmc.Select(
+                    data=["React", "Angular", "Svelte", "Vue"],
+                    searchable=True,
+                    allowDeselect=True,
+                    nothingFound="No well found",
+                    placeholder="Select a framework",
+                    style={"width": '100%'},
+                    # class_name='d-inline',
+                ),
                 dbc.CardHeader(
                     dbc.Tabs(
                         [
@@ -655,6 +657,7 @@ clientside_callback(
     Output("cd_table", "selected_rows"),
     Input("dropdown_cd", "value"),
     Input("ctbl", "data"),
+    Input("cd_overview", "clickData"),
     State("cd_table", "selected_rows"),
 )
 
@@ -765,6 +768,9 @@ clientside_callback(
     Input("cpolar", "data"),
     State('cd_polar', 'figure'),
     State('unitsToggle', 'value'),
+    # State("cd_interval", "children"),
+    # State("cd_mean", "children"),
+    # State("cd_stdev", "children"),
 )
 
 # clientside_callback(

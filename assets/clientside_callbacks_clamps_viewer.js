@@ -179,7 +179,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                     new_fig.layout.polar.radialaxis.range = [relayoutData['yaxis.range[0]'], relayoutData['yaxis.range[1]']];
                 } else if (relayoutData['yaxis.range[0]'] != undefined && relayoutData['yaxis.range[0]'] == relayoutData['yaxis.range[1]']) new_fig.layout.polar.radialaxis.range = [...store_fig.layout.polar.radialaxis.range];
                 else if (relayoutData['xaxis.range[0]'] == undefined) new_fig.layout.polar.radialaxis.range = [...store_fig.layout.polar.radialaxis.range];
-                //return new_fig;
+                // return new_fig;
             };
 
             let r = [];
@@ -210,26 +210,30 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
 
             let units = unitsToggle ? "ft" : "m";
             let interval = `${new_fig.layout.polar.radialaxis.range[1].toFixed(2)} - ${new_fig.layout.polar.radialaxis.range[0].toFixed(2)} ${units}`;
-            let mean = sum > 0 ? `${(sum / n).toFixed(0)}°` : `${(360 + (sum / n)).toFixed(0)}°`;
-            // let median = sum > 0 ? sum : 360 + sum;
-            // median = median > 0 ? (median).toFixed(0) : (360 + median).toFixed(0);
+            let mean
+            let std
+            if (Object.keys(stats).length > 0) {
+                interval = `${new_fig.layout.polar.radialaxis.range[1].toFixed(2)} - ${new_fig.layout.polar.radialaxis.range[0].toFixed(2)} ${units}`;
+                mean = sum > 0 ? `${(sum / n).toFixed(0)}°` : `${(360 + (sum / n)).toFixed(0)}°`;
+                // let median = sum > 0 ? sum : 360 + sum;
+                // median = median > 0 ? (median).toFixed(0) : (360 + median).toFixed(0);
 
-            function dev(array) {
-                const n = array.length
-                const mean = array.reduce((a, b) => a + b) / n
-                return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
-            }
-            let std = dev(stats).toFixed(2);
+                function dev(array) {
+                    const n = array.length
+                    const mean = array.reduce((a, b) => a + b) / n
+                    return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
+                }
+                std = dev(stats).toFixed(2);
+            };
 
-            console.log(interval);
-            console.log('mean', mean);
-            //console.log(median);
-            console.log(n);
-            console.log(sum);
-            console.log(new_fig);
+            // console.log(interval);
+            // console.log('mean', mean);
+            // console.log(n);
+            // console.log(sum);
+            // console.log(new_fig);
             return [interval, mean, std, new_fig];
         },
-        clampstable_listener: function (clamps_types, store_tbl, selected_rows) {
+        clampstable_listener: function (clamps_types, store_tbl, clickData, selected_rows) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
             let new_tbl = [];
             let new_cols = [];
@@ -247,6 +251,8 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 if (["id", "type"].includes(key) == false) new_cols = new_cols.concat({ "name": key, "id": key });
             });
 
+            console.log(clickData);
+            console.log(selected_rows);
             // console.log('tbl store', store_tbl);
             // console.log('tbl new', new_cols);
             if (trigger == "ctbl") return [new_tbl, new_cols, selected_rows];

@@ -224,7 +224,7 @@ navbar = dbc.Navbar(
                     dbc.Col(html.A([html.Img(src=DV_LOGO, height="30rem")],
                             href="https://darkvisiontech.com/", style={"textDecoration": "none"},),),
                     dbc.Col(dbc.NavbarBrand([DashIconify(icon="arcticons:medilog",
-                                                         width=30,
+                                                         width=35,
                                                          # inline=True,
                                                          style={
                                                              "marginRight": "0.5rem"}
