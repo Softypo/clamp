@@ -1,5 +1,5 @@
 # from dv_dashboard import CONTENT_STYLE
-from turtle import width
+from turtle import right, width
 import pandas as pd
 # from dash_bootstrap_templates import template_from_url, load_figure_template
 import dash_bootstrap_components as dbc
@@ -274,13 +274,12 @@ layout = [
         dbc.Col([
             dbc.Card([
                 dmc.Select(
-                    data=["React", "Angular", "Svelte", "Vue"],
+                    data=["DVT1", "DVT2", "DVT3", "DVT4"],
                     searchable=True,
                     allowDeselect=True,
-                    nothingFound="No well found",
-                    placeholder="Select a framework",
+                    nothingFound="No logging found",
+                    placeholder="Select a logging run",
                     style={"width": '100%'},
-                    # class_name='d-inline',
                 ),
                 dbc.CardHeader(
                     dbc.Tabs(
@@ -657,7 +656,7 @@ clientside_callback(
     Output("cd_table", "selected_rows"),
     Input("dropdown_cd", "value"),
     Input("ctbl", "data"),
-    Input("cd_overview", "clickData"),
+    #Input("cd_overview", "clickData"),
     State("cd_table", "selected_rows"),
 )
 

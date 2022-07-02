@@ -176,8 +176,9 @@ navbar_menu = dbc.Row(
                             searchable=True,
                             allowDeselect=True,
                             nothingFound="No well found",
-                            placeholder="Select a framework",
+                            placeholder="Select a well",
                             style={"width": '15rem'},
+                            id="framework_selector",
                         ),
                         #   theme={"colorScheme": "light"},
                         #   styles={"Select": {
@@ -250,11 +251,12 @@ navbar = dbc.Navbar(
     ),
     color="black",
     dark=True,
-    style={"padding": "0.4rem", "zIndex": "10"},
+    style={"padding": "0.2rem", "zIndex": "10", },
     class_name="rounded-3",
     expand="lg",
     # fixed="top",
     sticky="top",
+    id="navbar",
 )
 
 content = dl.plugins.page_container

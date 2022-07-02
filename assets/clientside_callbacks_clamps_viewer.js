@@ -60,7 +60,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 cpolar_fig.layout.modebar = modebar;
                 // cview_fig.layout.template = template;
                 // cview_fig.layout.modebar = modebar;
-                //return [ctbl_new, cover_fig, cpolar_fig];
+                return [ctbl_new, cover_fig, cpolar_fig];
             };
 
             // if (trigger == "unitsToggle") {
@@ -233,7 +233,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             // console.log(new_fig);
             return [interval, mean, std, new_fig];
         },
-        clampstable_listener: function (clamps_types, store_tbl, clickData, selected_rows) {
+        clampstable_listener: function (clamps_types, store_tbl, selected_rows) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
             let new_tbl = [];
             let new_cols = [];
