@@ -223,7 +223,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                     const mean = array.reduce((a, b) => a + b) / n
                     return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
                 }
-                std = dev(stats).toFixed(2);
+                std = `${dev(stats).toFixed(2)}°`;
             };
 
             // console.log(interval);

@@ -9,8 +9,7 @@ import vtk
 dash.register_page(__name__, path="/", title="DV Dashboard")
 
 
-reader = pv.get_reader(
-    "C:\\Users\\Softypo\\Downloads\\dv_tool_15200ft_final.ply")
+reader = pv.get_reader("C:\.repos\clamp\data\liner_hanger_final.ply")
 mesh = reader.read()
 
 # filename = examples.download_lobster(load=False)
