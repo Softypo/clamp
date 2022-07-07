@@ -9,7 +9,7 @@ import vtk
 dash.register_page(__name__, path="/", title="DV Dashboard")
 
 
-reader = pv.get_reader("C:\.repos\clamp\data\liner_hanger_final.ply")
+reader = pv.get_reader("data\liner_hanger_final.ply")
 mesh = reader.read()
 
 # filename = examples.download_lobster(load=False)
@@ -19,6 +19,7 @@ mesh = reader.read()
 # mesh = reader.read()
 # mesh.plot()
 mesh_state = to_mesh_state(mesh)
+mesh.plot()
 
 
 # reader = vtk.vtkPLYReader()
