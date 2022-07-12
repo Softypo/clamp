@@ -105,7 +105,6 @@ layout = html.Div(
             # ),
         ],
         cameraPosition=[1, 1, 1],
-        background=[0, 0, 0, 0]
-        # background=[0.152, 0.168, 0.188, 1]
+        background=[0, 0, 0, 0],
     )
 )
