@@ -68,7 +68,7 @@ def clampsoverview_fig(clamp_types, clamps, fiver=True):
         hovertemplate='%{customdata[0]}<br>%{customdata[1]} deg (TOH)')
     fig.update_layout(hovermode="y unified", legend_title="Type", legend_orientation="h", yaxis_title="Depth (m)",
                       showlegend=False,
-                      xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=True, margin=dict(l=80, r=40, b=25, t=20, pad=4),
+                      xaxis_title='AngleFromHighSideClockwiseDegrees', autosize=True, margin=dict(l=0, r=10, b=0, t=0, pad=4),
                       # title="Fiber cable orientation overview",
                       # title_x=0.5,
                       )
