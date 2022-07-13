@@ -36,6 +36,7 @@ COLUMN_STYLE = {
 # clamps = pd.read_hdf("data/446/446cd.h5", "cd446")
 clamps = pd.read_pickle("data/452/452cd.pkl")
 clamp_types = clamps['type'].unique()
+clamp_types = clamp_types[clamp_types != 'PERFS']
 clamp_imgs = loader_pil('data/446/tubeviews/all')
 
 
