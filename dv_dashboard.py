@@ -13,15 +13,14 @@ from dash_iconify import DashIconify
 # import plotly.io as pio
 
 # To use different themes,  change these links:
-# dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
-themes = {'_dark': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap_darkly.css',
-                    'fig': 'slate', 'json': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/plotly_templates/darkly.json'},
-          '_light': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/bootstrap_united.css',
-                     'fig': 'united', 'json': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/plotly_templates/united.json'}
+themes = {'_dark': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap_darkly.min.css',
+                    'json': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/plotly_templates/darkly.json'},
+          '_light': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/bootstrap_united.min.css',
+                     'json': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/plotly_templates/united.json'}
           }
 
 # initial config
-app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[themes['_dark']['css'], dbc.icons.FONT_AWESOME],
+app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[themes['_dark']['css']],
                 suppress_callback_exceptions=False,
                 title='DV Dashboard',
                 serve_locally=True,
@@ -31,11 +30,6 @@ app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[them
                 # external_scripts=['https://cdn.plot.ly/plotly-2.11.1.min.js']
                 )
 application = app.server  # <<<<<<<<for deploying to heroku
-
-
-# load_figure_template(themes['_light']['fig'])
-# load_figure_template(themes['_dark']['fig'])
-# load_figure_template([themes['_dark']['fig'], themes['_light']['fig']])
 
 # app.scripts.config.serve_locally = True
 
