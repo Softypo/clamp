@@ -15,9 +15,9 @@ from dash_iconify import DashIconify
 # To use different themes,  change these links:
 # dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.5/dbc.min.css"
 themes = {'_dark': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap.css',
-                    'fig': 'slate', 'json': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/slate.json'},
+                    'fig': 'slate', 'json': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/plotly_templates/darkly.json'},
           '_light': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/bootstrap.css',
-                     'fig': 'united', 'json': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_light/united.json'}
+                     'fig': 'united', 'json': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/plotly_templates/united.json'}
           }
 
 # initial config
