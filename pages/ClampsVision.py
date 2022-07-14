@@ -246,290 +246,301 @@ layout = [
     #         dmc.Accordion(
     #             [
     #                 dmc.AccordionItem([
-    dbc.Row(
-        dbc.Col(
-            dmc.Accordion(
-                [
-                    dmc.AccordionItem(
-                        children="Phillips's Unit B3 was scanned by Darkvision Technologies on April 6, 2022, for clamp detection analysis. Darkvision's findings can be summarized as follows:\nAll 27 Cable Detection Clamps were identified, and its orientation measured. All analyses provided in this report or affiliated with this survey are provided on a commercially reasonable efforts basis. It remains the sole responsibility of the operator utilizing the report and information contained to undertake actions to ensure well and personnel safety, and draw their own conclusions regarding the well. All analyses provided by DarkVision Technologies Inc. are based on experience and judgment, but are always within the limitations of the technology deployed and downhole operating environment. Since all analysis and interpretations are opinions based on inferences from ultrasound measurements, the accuracy or completeness of any analysis or interpretation is not and cannot be guaranteed",
-                        label="Unit B3 (click to open sumary)",
-                        # icon=[
-                        #     DashIconify(icon="fa6-solid:oil-well", width=25)
-                        # ],
-                    ),
-                ],
-                iconPosition="left",
-                offsetIcon=False,
-                multiple=True,
-                disableIconRotation=True,
-                style={"height": "auto"},
-                icon=[
-                    DashIconify(icon="fa6-solid:oil-well", width=25)
-                ],
-            ),
-            # style={'position': 'absolute', 'bottom': '0px'},
-        ),
-        style={'paddingTop': '0px'},
-    ),
+    # dbc.Row(
+    #     dbc.Col(
+    #         dmc.Accordion(
+    #             [
+    #                 dmc.AccordionItem(
+    #                     children="Phillips's Unit B3 was scanned by Darkvision Technologies on April 6, 2022, for clamp detection analysis. Darkvision's findings can be summarized as follows:\nAll 27 Cable Detection Clamps were identified, and its orientation measured. All analyses provided in this report or affiliated with this survey are provided on a commercially reasonable efforts basis. It remains the sole responsibility of the operator utilizing the report and information contained to undertake actions to ensure well and personnel safety, and draw their own conclusions regarding the well. All analyses provided by DarkVision Technologies Inc. are based on experience and judgment, but are always within the limitations of the technology deployed and downhole operating environment. Since all analysis and interpretations are opinions based on inferences from ultrasound measurements, the accuracy or completeness of any analysis or interpretation is not and cannot be guaranteed",
+    #                     label="Unit B3 (click to open sumary)",
+    #                     # icon=[
+    #                     #     DashIconify(icon="fa6-solid:oil-well", width=25)
+    #                     # ],
+    #                 ),
+    #             ],
+    #             iconPosition="left",
+    #             offsetIcon=False,
+    #             multiple=True,
+    #             disableIconRotation=True,
+    #             style={"height": "auto"},
+    #             icon=[
+    #                 DashIconify(icon="fa6-solid:oil-well", width=25)
+    #             ],
+    #         ),
+    #         # style={'position': 'absolute', 'bottom': '0px'},
+    #     ),
+    #     style={'paddingTop': '0px'},
+    # ),
     dbc.Row([
-        dbc.Col([
-            dbc.Card([
-                dmc.Select(
-                    data=["DVT1", "DVT2", "DVT3", "DVT4"],
-                    searchable=True,
-                    allowDeselect=True,
-                    nothingFound="No logging found",
-                    placeholder="Select a logging run",
-                    style={"width": '100%'},
-                ),
-                dbc.CardHeader(
-                    dbc.Tabs(
-                        [
-                            dbc.Tab(label="Overview",
-                                    tab_id="overview",
-                                    activeTabClassName="fst-italic",
-                                    key="overview"),
-                            dbc.Tab(label="Tubeview",
-                                    tab_id="tubeview",
-                                    activeTabClassName="fst-italic",
-                                    key="tubeview"),
-                        ],
-                        id="card-tabs",
-                        active_tab="overview",
-                        persistence=True,
-                        persistence_type="memory",
-                    )
-                ),
-                dbc.CardBody(
-                    children=[
-                        dcc.Loading(id="cd_loading", type="default", children=[
-                            dbc.Fade(id="cd_overview_fade", is_in=True, exit=True, timeout=100, children=[
-                                dbc.Card([
-                                    dbc.Row([
-                                        dbc.Col([
-                                            html.P("Interval: ",
-                                                   className="d-inline",
-                                                   ),
-                                            html.H5("00000.000 - 00000.000",
-                                                className="d-inline-block",
-                                                id="cd_interval",
-                                                    ),
-                                        ],
-                                            xxl=6, xl=6, lg=6, md=6, sm=12, xs=12),
-                                        dbc.Col([
-                                            html.P("Mean: ",
-                                                   className="d-inline",
-                                                   ),
-                                            html.H5("000.000",
-                                                className="d-inline-block",
-                                                id="cd_mean",
-                                                    ),
-                                        ],
-                                            xxl=3, xl=3, lg=3, md=3, sm=6, xs=6),
-                                        dbc.Col([
-                                            html.P("StDev: ",
-                                                   className="d-inline",
-                                                   ),
-                                            html.H5("000.000",
+            dbc.Col([
+                dbc.Card([
+                    dmc.Select(
+                        data=["DVT1", "DVT2", "DVT3", "DVT4"],
+                        searchable=True,
+                        allowDeselect=True,
+                        nothingFound="No logging found",
+                        placeholder="Select a logging run",
+                        style={"width": '100%'},
+                    ),
+                    dbc.CardHeader(
+                        dbc.Tabs(
+                            [
+                                dbc.Tab(label="Overview",
+                                        tab_id="overview",
+                                        activeTabClassName="fst-italic",
+                                        key="overview"),
+                                dbc.Tab(label="Tubeview",
+                                        tab_id="tubeview",
+                                        activeTabClassName="fst-italic",
+                                        key="tubeview"),
+                                dbc.Tab(label="Resume",
+                                        tab_id="resume",
+                                        activeTabClassName="fst-italic",
+                                        key="resume"),
+                            ],
+                            id="card-tabs",
+                            active_tab="overview",
+                            persistence=True,
+                            persistence_type="memory",
+                        )
+                    ),
+                    dbc.CardBody(
+                        children=[
+                            dcc.Loading(id="cd_loading", type="default", children=[
+                                dbc.Fade(id="cd_overview_fade", is_in=True, exit=True, timeout=100, children=[
+                                    dbc.Card([
+                                        dbc.Row([
+                                            dbc.Col([
+                                                html.P("Interval: ",
+                                                       className="d-inline",
+                                                       ),
+                                                html.H5("00000.000 - 00000.000",
+                                                        className="d-inline-block",
+                                                        id="cd_interval",
+                                                        ),
+                                            ],
+                                                xxl=6, xl=6, lg=6, md=6, sm=12, xs=12),
+                                            dbc.Col([
+                                                html.P("Mean: ",
+                                                       className="d-inline",
+                                                       ),
+                                                html.H5("000.000",
+                                                    className="d-inline-block",
+                                                    id="cd_mean",
+                                                        ),
+                                            ],
+                                                xxl=3, xl=3, lg=3, md=3, sm=6, xs=6),
+                                            dbc.Col([
+                                                html.P("StDev: ",
+                                                       className="d-inline",
+                                                       ),
+                                                html.H5("000.000",
                                                     className="d-inline-block",
                                                     id="cd_stdev",
-                                                    ),
+                                                        ),
+                                            ],
+                                                xxl=3, xl=3, lg=3, md=3, sm=6, xs=6),
                                         ],
-                                            xxl=3, xl=3, lg=3, md=3, sm=6, xs=6),
-                                    ],
-                                        # className='g-0',
-                                        # justify="evenly",
-                                        className="text-center",
-                                    ),
-                                    dcc.Graph(id="cd_overview",
+                                            # className='g-0',
+                                            # justify="evenly",
+                                            className="text-center",
+                                        ),
+                                        dcc.Graph(id="cd_overview",
+                                                  animate=False,
+                                                  responsive=True,
+                                                  config={'displaylogo': False,
+                                                          'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
+                                                          'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
+                                                  style={
+                                                      'height': '100%'}
+                                                  )], style={'height': '100%'}),
+                                ], style={'height': '100%', 'display': 'block'}),
+                                dbc.Fade(id="cd_view_fade", is_in=False, exit=True, timeout=100, children=[
+                                    dcc.Graph(id="cd_view",
                                               animate=False,
                                               responsive=True,
                                               config={'displaylogo': False,
-                                                      'modeBarButtonsToRemove': ['zoom', 'pan2d', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
+                                                      'scrollZoom': True,
+                                                      # 'doubleClick': 'reset',
+                                                      'responsive': True,
+                                                      'modeBarButtonsToRemove': ['zoom', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
                                                       'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
                                               style={
                                                   'height': '100%'}
-                                              )], style={'height': '100%'}),
-                            ], style={'height': '100%', 'display': 'block'}),
-                            dbc.Fade(id="cd_view_fade", is_in=False, exit=True, timeout=100, children=[
-                                dcc.Graph(id="cd_view",
-                                          animate=False,
-                                          responsive=True,
-                                          config={'displaylogo': False,
-                                                  'scrollZoom': True,
-                                                  # 'doubleClick': 'reset',
-                                                  'responsive': True,
-                                                  'modeBarButtonsToRemove': ['zoom', 'boxZoom', 'lasso2d', 'select2d', 'resetScale2d'],
-                                                  'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 1080, 'width': 600, 'scale': 3}},
-                                          style={
-                                              'height': '100%'}
-                                          )], style={'height': '100%', 'display': 'none'}),
-                        ], color='#e95420', parent_style={'height': '100%'}),
-                    ],
-                    id="card-content",
-                    className="card-text",
-                    style={'height': '100%'}),
-            ], style={'height': '100%'}),
-        ],
-            xxl=7, xl=6, lg=6, md=12, sm=12, xs=12,
-            style=COLUMN_STYLE,
-            className="pe-lg-0",
-        ),
-        dbc.Col(
-            dbc.Card([
-                dbc.Row(
-                    dcc.Graph(id="cd_polar",
-                              animate=False,
-                              responsive=True,
-                              config={'displaylogo': False,
-                                      'doubleClick': 'reset',
-                                      # 'scrollZoom': True,
-                                      # 'staticPlot': True,
-                                      'responsive': True,
-                                      'modeBarButtonsToRemove': ['zoom', 'select2d'],
-                                      'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 600, 'width': 600, 'scale': 3}},
-                              style={
-                                  'height': '25vh', 'minHeight': '20rem'},
-                              ),
-                    # className="flex-shrink-1",
-                ),
-                dbc.Row([
-                    # dbc.Col([
-                    #     # dbc.Toast(
-                    #     #     [
-                    #     #         html.H5("Mean: 0.0",
-                    #     #                 className="mb-0 d-inline-block",
-                    #     #                 style={'marginRight': '35px'},
-                    #     #                 ),
-                    #     #         html.H5("Mode: 0.0",
-                    #     #                 className="mb-0 d-inline-block",
-                    #     #                 #style={'marginRight': '15px'},
-                    #     #                 ),
-                    #     #     ],
-                    #     #     header='Fiber Wire direction (azdeg)',
-                    #     #     tag="Fiber Wire direction (azdeg)",
-                    #     #     style={'width': '99%', 'marginBottom': '5px'},
-                    #     # )
-                    #     # html.H6("fiberTOH (azdeg)",
-                    #     #         className="d-inline",
-                    #     #         style={'marginLeft': '5px'},
-                    #     #         ),
-                    #     dbc.Row([
-                    #         # dbc.Col([
-                    #         #     dbc.Row([
-                    #         #         html.P("Interval:",
-                    #         #                className="d-inline",
-                    #         #                ),
-                    #         #         html.P("00000.000-00000.000",
-                    #         #                className="d-inline",
-                    #         #                ),
-                    #         #     ], className='d-inline', style={'fontSize': '0.6rem'}),
-                    #         # ], width=5),
-                    #         # dbc.Col([
-                    #         #     dbc.Row([
-                    #             html.P("Fiber cable",
-                    #                    className="d-inline",
-                    #                    # style={'marginRight': '35px'},
-                    #                    ),
-                    #             html.P("Mean:",
-                    #                    className="d-inline",
-                    #                    # style={'marginRight': '35px'},
-                    #                    ),
-                    #             html.H5("000.000",
-                    #                     className="d-inline",
-                    #                     # style={'marginRight': '35px'},
-                    #                     ),
-                    #             html.P("Mode:",
-                    #                    className="d-inline",
-                    #                    # style={'marginRight': '15px'},
-                    #                    ),
-                    #             html.H5("000.000",
-                    #                     className="d-inline",
-                    #                     # style={'marginRight': '35px'},
-                    #                     ),
-                    #             #     ], className='d-inline', style={'fontSize': '1rem'}),
-                    #             # ], width=7),
-                    #             ],  className='d-inline-block mx-auto',
-                    #             ),
-                    # ],
-                    #     width=12,
-                    #     # className='mb-1',
-                    # ),
-                    dbc.Col(
-                        dcc.Dropdown(
-                            clamp_types,
-                            clamp_types[1:],
-                            multi=True,
-                            searchable=False,
-                            persistence=True,
-                            persistence_type='memory',
-                            id="dropdown_cd",
-                            style={"width": "100%"},
-                        ), width=11,),
-                    dbc.Col([
-                        dcc.Clipboard(
-                            id="table_copy",
-                            style={
-                                "fontSize": 15,
-                                "position": "relative",
-                                "top": "0.5rem",
-                                "right": "1rem",
-                                # 'marginTop': '0.5rem',
-                                # 'marginBottom': '0.5rem',
-                            },
-                            title="Copy to clipboard",
-                        ),
-                        # dbc.Tooltip(
-                        #     "Copy table to clipboard",
-                        #     delay={'show': 500,
-                        #            'hide': 500},
-                        #     target="table_copy",
+                                              )], style={'height': '100%', 'display': 'none'}),
+                                dbc.Fade(id="cd_resume_fade", is_in=False, exit=True, timeout=100, children=[
+                                    html.P("Phillips's Unit B3 was scanned by Darkvision Technologies on April 6, 2022, for clamp detection analysis. Darkvision's findings can be summarized as follows:\nAll 27 Cable Detection Clamps were identified, and its orientation measured. All analyses provided in this report or affiliated with this survey are provided on a commercially reasonable efforts basis. It remains the sole responsibility of the operator utilizing the report and information contained to undertake actions to ensure well and personnel safety, and draw their own conclusions regarding the well. All analyses provided by DarkVision Technologies Inc. are based on experience and judgment, but are always within the limitations of the technology deployed and downhole operating environment. Since all analysis and interpretations are opinions based on inferences from ultrasound measurements, the accuracy or completeness of any analysis or interpretation is not and cannot be guaranteed.",
+                                           # className="d-inline",
+                                           style={'textAlign': 'justify',
+                                                  'textJustify': 'inter-word'},
+                                           ),
+                                ], style={'height': '100%', 'display': 'none'}),
+                            ], color='#e95420', parent_style={'height': '100%'}),
+                        ],
+                        id="card-content",
+                        className="card-text",
+                        style={'height': '100%'}),
+                ], style={'height': '100%'}),
+            ],
+                xxl=7, xl=6, lg=6, md=12, sm=12, xs=12,
+                style=COLUMN_STYLE,
+                className="pe-lg-0",
+            ),
+            dbc.Col(
+                dbc.Card([
+                    dbc.Row(
+                        dcc.Graph(id="cd_polar",
+                                  animate=False,
+                                  responsive=True,
+                                  config={'displaylogo': False,
+                                          'doubleClick': 'reset',
+                                          # 'scrollZoom': True,
+                                          # 'staticPlot': True,
+                                          'responsive': True,
+                                          'modeBarButtonsToRemove': ['zoom', 'select2d'],
+                                          'toImageButtonOptions': {'format': 'png', 'filename': 'Overview', 'height': 600, 'width': 600, 'scale': 3}},
+                                  style={
+                                      'height': '25vh', 'minHeight': '20rem'},
+                                  ),
+                        # className="flex-shrink-1",
+                    ),
+                    dbc.Row([
+                        # dbc.Col([
+                        #     # dbc.Toast(
+                        #     #     [
+                        #     #         html.H5("Mean: 0.0",
+                        #     #                 className="mb-0 d-inline-block",
+                        #     #                 style={'marginRight': '35px'},
+                        #     #                 ),
+                        #     #         html.H5("Mode: 0.0",
+                        #     #                 className="mb-0 d-inline-block",
+                        #     #                 #style={'marginRight': '15px'},
+                        #     #                 ),
+                        #     #     ],
+                        #     #     header='Fiber Wire direction (azdeg)',
+                        #     #     tag="Fiber Wire direction (azdeg)",
+                        #     #     style={'width': '99%', 'marginBottom': '5px'},
+                        #     # )
+                        #     # html.H6("fiberTOH (azdeg)",
+                        #     #         className="d-inline",
+                        #     #         style={'marginLeft': '5px'},
+                        #     #         ),
+                        #     dbc.Row([
+                        #         # dbc.Col([
+                        #         #     dbc.Row([
+                        #         #         html.P("Interval:",
+                        #         #                className="d-inline",
+                        #         #                ),
+                        #         #         html.P("00000.000-00000.000",
+                        #         #                className="d-inline",
+                        #         #                ),
+                        #         #     ], className='d-inline', style={'fontSize': '0.6rem'}),
+                        #         # ], width=5),
+                        #         # dbc.Col([
+                        #         #     dbc.Row([
+                        #             html.P("Fiber cable",
+                        #                    className="d-inline",
+                        #                    # style={'marginRight': '35px'},
+                        #                    ),
+                        #             html.P("Mean:",
+                        #                    className="d-inline",
+                        #                    # style={'marginRight': '35px'},
+                        #                    ),
+                        #             html.H5("000.000",
+                        #                     className="d-inline",
+                        #                     # style={'marginRight': '35px'},
+                        #                     ),
+                        #             html.P("Mode:",
+                        #                    className="d-inline",
+                        #                    # style={'marginRight': '15px'},
+                        #                    ),
+                        #             html.H5("000.000",
+                        #                     className="d-inline",
+                        #                     # style={'marginRight': '35px'},
+                        #                     ),
+                        #             #     ], className='d-inline', style={'fontSize': '1rem'}),
+                        #             # ], width=7),
+                        #             ],  className='d-inline-block mx-auto',
+                        #             ),
+                        # ],
+                        #     width=12,
+                        #     # className='mb-1',
                         # ),
-                    ], width=1,
-                    ), ], style={'height': 'auto', 'paddingTop': '0.5rem', 'paddingLeft': '0.5rem'}, justify='around'),
-                dbc.Row(
-                    dash_table.DataTable(id='cd_table',
-                                         cell_selectable=False,
-                                         row_selectable='single',
-                                         page_action='native',
-                                         sort_action='native',
-                                         style_as_list_view=True,
-                                         fixed_rows={
-                                             'headers': True, 'data': 0},
-                                         style_table={
-                                             'minHeight': '10rem', 'height': '100%', 'maxHeight': '100%', 'padding': '5px'},
-                                         style_header={
-                                             'text-align': 'left', 'fontSize': '0.8em', 'font-style': 'italic'},
-                                         style_cell={
-                                             'text-align': 'left', 'fontSize': '1em'},
-                                         ),
-                    className="flex-grow-1 flex-shrink-1",
-                ),
-            ], style={'height': '100%'}),
-            xxl=5, xl=6, lg=6, md=12, sm=12, xs=12,
-            style=COLUMN_STYLE,
-            # className="flex-shrink-1",
-        ),
-        # dbc.Col(
-        #     dmc.Accordion(
-        #         [
-        #             dmc.AccordionItem(
-        #                 "This is the content of the first section", label="Item 1"
-        #             ),
-        #         ],
-        #         iconPosition="left",
-        #         offsetIcon=False,
-        #         multiple=True,
-        #         style={"height": "auto"},
-        #     ),
-        #     style={'position': 'relative', 'height': 'fill',
-        #            'bottom': '0px', 'paddingTop': '8px'},
-        # ),
-    ],
-        # className="flex-shrink-1 flex-grow-1",
-        style={'position': 'relative', 'bottom': '5px',
-               'height': '96vh'},
-    ),
+                        dbc.Col(
+                            dcc.Dropdown(
+                                clamp_types,
+                                clamp_types[1:],
+                                multi=True,
+                                searchable=False,
+                                persistence=True,
+                                persistence_type='memory',
+                                id="dropdown_cd",
+                                style={"width": "100%"},
+                            ), width=11,),
+                        dbc.Col([
+                            dcc.Clipboard(
+                                id="table_copy",
+                                style={
+                                    "fontSize": 15,
+                                    "position": "relative",
+                                    "top": "0.5rem",
+                                    "right": "1rem",
+                                    # 'marginTop': '0.5rem',
+                                    # 'marginBottom': '0.5rem',
+                                },
+                                title="Copy to clipboard",
+                            ),
+                            # dbc.Tooltip(
+                            #     "Copy table to clipboard",
+                            #     delay={'show': 500,
+                            #            'hide': 500},
+                            #     target="table_copy",
+                            # ),
+                        ], width=1,
+                        ), ], style={'height': 'auto', 'paddingTop': '0.5rem', 'paddingLeft': '0.5rem'}, justify='around'),
+                    dbc.Row(
+                        dash_table.DataTable(id='cd_table',
+                                             cell_selectable=False,
+                                             row_selectable='single',
+                                             page_action='native',
+                                             sort_action='native',
+                                             style_as_list_view=True,
+                                             fixed_rows={
+                                                 'headers': True, 'data': 0},
+                                             style_table={
+                                                 'minHeight': '10rem', 'height': '100%', 'maxHeight': '100%', 'padding': '5px'},
+                                             style_header={
+                                                 'text-align': 'left', 'fontSize': '0.8em', 'font-style': 'italic'},
+                                             style_cell={
+                                                 'text-align': 'left', 'fontSize': '1em'},
+                                             ),
+                        className="flex-grow-1 flex-shrink-1",
+                    ),
+                ], style={'height': '100%'}),
+                xxl=5, xl=6, lg=6, md=12, sm=12, xs=12,
+                style=COLUMN_STYLE,
+                # className="flex-shrink-1",
+            ),
+            # dbc.Col(
+            #     dmc.Accordion(
+            #         [
+            #             dmc.AccordionItem(
+            #                 "This is the content of the first section", label="Item 1"
+            #             ),
+            #         ],
+            #         iconPosition="left",
+            #         offsetIcon=False,
+            #         multiple=True,
+            #         style={"height": "auto"},
+            #     ),
+            #     style={'position': 'relative', 'height': 'fill',
+            #            'bottom': '0px', 'paddingTop': '8px'},
+            # ),
+            ],
+            # className="flex-shrink-1 flex-grow-1",
+            style={'position': 'relative', 'bottom': '5px',
+                   'height': '96vh'},
+            ),
     #             ],
     #                 label="Clamp Data",
 
@@ -625,6 +636,8 @@ clientside_callback(
     Output("cd_overview_fade", "is_in"),
     Output("cd_view_fade", "style"),
     Output("cd_view_fade", "is_in"),
+    Output("cd_resume_fade", "style"),
+    Output("cd_resume_fade", "is_in"),
     Output("card-tabs", "active_tab"),
     Input("card-tabs", "active_tab"),
     Input("cd_table", "derived_virtual_selected_row_ids"),
