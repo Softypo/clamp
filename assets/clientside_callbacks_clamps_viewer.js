@@ -61,7 +61,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 cpolar_fig.layout.modebar = modebar;
                 // cview_fig.layout.template = template;
                 // cview_fig.layout.modebar = modebar;
-                return [ctbl_new, cover_fig, cpolar_fig];
+                // return [ctbl_new, cover_fig, cpolar_fig];
             };
 
             // if (trigger == "unitsToggle") {
