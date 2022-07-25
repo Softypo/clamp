@@ -72,7 +72,6 @@ def clampsoverview_fig(clamp_types, clamps, fiver=True):
                       # title="Fiber cable orientation overview",
                       # title_x=0.5,
                       )
-    # fig.update_xaxes(range=[-185, 185])
     fig.update_yaxes(autorange="reversed", ticksuffix=" m")
     fig.layout.modebar = {'orientation': 'v'}
     # fig.layout.transition = {'duration': 500, 'easing': 'cubic-in-out'}
