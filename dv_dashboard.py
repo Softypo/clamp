@@ -1,16 +1,14 @@
 from time import sleep
 import dash
-from dash import dcc, html, dash_table, Input, Output, State, callback, clientside_callback
+from dash import dcc, html, Input, Output, State
 # import dash_daq as daq
-import dash_labs as dl
+# import dash_labs as dl
 import dash_bootstrap_components as dbc
+import dash_mantine_components as dmc
 # from dash_bootstrap_templates import load_figure_template, ThemeSwitchAIO
 from dash.dependencies import ClientsideFunction
-import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 
-
-# import plotly.io as pio
 
 # To use different themes,  change these links:
 themes = {'_dark': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_dark/bootstrap_darkly.min.css',
@@ -20,18 +18,16 @@ themes = {'_dark': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_da
           }
 
 # initial config
-app = dash.Dash(__name__, plugins=[dl.plugins.pages], external_stylesheets=[themes['_dark']['css']],
+app = dash.Dash(__name__, external_stylesheets=[themes['_dark']['css']],
+                use_pages=True,
                 suppress_callback_exceptions=False,
                 title='DV Dashboard',
-                serve_locally=True,
+                # serve_locally=True,
                 meta_tags=[
                     {"name": "color-scheme", "content": "light dark"},
                     {"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=1"}],
-                # external_scripts=['https://cdn.plot.ly/plotly-2.11.1.min.js']
                 )
 application = app.server  # <<<<<<<<for deploying to heroku
-
-# app.scripts.config.serve_locally = True
 
 # images
 DV_LOGO = 'assets/dv_logo.png'
@@ -164,7 +160,6 @@ navbar_menu = dbc.Row(
                 [
                     html.Hr(),
                     dbc.NavItem(
-                        # dmc.MantineProvider(
                         dmc.Select(
                             data=["React", "Angular", "Svelte", "Vue"],
                             searchable=True,
@@ -174,11 +169,6 @@ navbar_menu = dbc.Row(
                             style={"width": '15rem'},
                             id="framework_selector",
                         ),
-                        #   theme={"colorScheme": "light"},
-                        #   styles={"Select": {
-                        #       "input": {"&:focus": {'borderColor': '#e95420 !important'}}}},
-                        #   withNormalizeCSS=True,
-                        # ),
                         style={'marginTop': "auto", 'marginBottom': 'auto',
                                'marginLeft': '0.5rem'
                                },
@@ -253,7 +243,7 @@ navbar = dbc.Navbar(
     id="navbar",
 )
 
-content = dl.plugins.page_container
+content = dash.page_container
 
 stores = html.Div([dcc.Store(id="dw", storage_type="session"),
                    dcc.Store(id="themes", storage_type="local", data=themes)],
@@ -326,10 +316,6 @@ app.layout = dmc.MantineProvider(children=dmc.Container([dcc.Location(id="url"),
                                  withNormalizeCSS=True,
                                  id='theme_provider',
                                  )
-#    fluid=True,
-#    className="dbc",
-#    # style={"height": "100vh"},
-#    id="main")
 
 if __name__ == "__main__":
     app.run_server(port=5000,

@@ -1,11 +1,10 @@
-from dash import html
 import dash
+#import vtk
 import dash_vtk
 import pyvista as pv
-#from pyvista import examples
-from dash_vtk.utils import to_mesh_state, to_volume_state
+from dash import html
 from numpy import amin, amax
-#import vtk
+from dash_vtk.utils import to_mesh_state, to_volume_state
 from vtk.util.numpy_support import vtk_to_numpy
 
 dash.register_page(__name__, path="/", title="DV Dashboard")
