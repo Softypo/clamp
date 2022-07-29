@@ -16,7 +16,7 @@ COLUMN_STYLE = {
     # "padding": "0.5rem",
     "height": "fill",
     "minHeight": "60vh",
-    "maxHeight": "100vh",
+    "maxHeight": "calc(100vh - 3rem)",
     # "display": "flex",
     # "flexFlow": "column",
 }
@@ -231,34 +231,36 @@ layout = [
                                                 html.P("Interval: ",
                                                        className="d-inline",
                                                        ),
-                                                html.H5("00000.000 - 00000.000",
-                                                        className="d-inline-block",
-                                                        id="cd_interval",
-                                                        ),
+                                                html.P("00000.000 - 00000.000",
+                                                       className="d-inline-block",
+                                                       id="cd_interval",
+                                                       ),
                                             ],
                                                 xxl=6, xl=6, lg=6, md=6, sm=12, xs=12),
                                             dbc.Col([
                                                 html.P("Mean: ",
                                                        className="d-inline",
                                                        ),
-                                                html.H5("000.000",
+                                                html.P("000.000",
                                                     className="d-inline-block",
                                                     id="cd_mean",
-                                                        ),
+                                                       ),
                                             ],
                                                 xxl=3, xl=3, lg=3, md=3, sm=6, xs=6),
                                             dbc.Col([
                                                 html.P("StDev: ",
                                                        className="d-inline",
                                                        ),
-                                                html.H5("000.000",
+                                                html.P("000.000",
                                                     className="d-inline-block",
                                                     id="cd_stdev",
-                                                        ),
+                                                       ),
                                             ],
                                                 xxl=3, xl=3, lg=3, md=3, sm=6, xs=6),
                                         ],
                                             className="text-center",
+                                            style={"font-size": "0.9rem",
+                                                   "margin-top": "0.5rem"},
                                         ),
                                         dcc.Graph(id="cd_overview",
                                                   animate=False,
@@ -324,7 +326,7 @@ layout = [
                                 persistence=True,
                                 persistence_type='memory',
                                 id="dropdown_cd",
-                                style={"width": "100%"},
+                                style={"width": "100%", "fontSize": "0.8rem"},
                             ), width=11,),
                         dbc.Col([
                             dcc.Clipboard(
@@ -355,7 +357,7 @@ layout = [
                                              fixed_rows={
                                                  'headers': True, 'data': 0},
                                              style_table={
-                                                 'minHeight': '10rem', 'height': '100%', 'maxHeight': '100%', 'padding': '5px'},
+                                                 'minHeight': '10%', 'height': '100%', 'maxHeight': '100%', 'padding': '5px'},
                                              style_header={
                                                  'text-align': 'left', 'fontSize': '0.8em', 'font-style': 'italic'},
                                              style_cell={
@@ -369,7 +371,7 @@ layout = [
             ),
             ],
             style={'position': 'relative', 'bottom': '5px',
-                   'height': '96vh'},
+                   'height': 'calc(100vh - 3rem)'},
             ),
 ]
 
