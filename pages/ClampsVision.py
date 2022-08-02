@@ -37,10 +37,11 @@ def clampsoverview_fig(clamp_types, clamps, fiver=True):
     cc = clamps.copy()
     fiber = cc[['type', 'fiber_plot_angle', 'depth', 'hadware_name',
                 'fiberTOH']].loc[cc['type'].isin(clamp_types)]
+    std = cc['fiber_plot_angle'].std()+2
 
     # add delta
-    nogozone_svg = ''.join([f'M {xy[0][0]+10},{xy[0][1]} ' if xy[1] == 0 else f'L{xy[0][0]+10},{xy[0][1]} ' for xy in zip(fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))]) + \
-        ''.join([f' L{xy[0][0]-10},{xy[0][1]} Z' if xy[1] == 0 else f' L{xy[0][0]-10},{xy[0][1]}' for xy in zip(
+    nogozone_svg = ''.join([f'M {xy[0][0]+std},{xy[0][1]} ' if xy[1] == 0 else f'L{xy[0][0]+std},{xy[0][1]} ' for xy in zip(fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))]) + \
+        ''.join([f' L{xy[0][0]-std},{xy[0][1]} Z' if xy[1] == 0 else f' L{xy[0][0]-std},{xy[0][1]}' for xy in zip(
             fiber[['fiber_plot_angle', 'depth']].values, range(fiber[['fiber_plot_angle', 'depth']].shape[0]))][::-1])
 
     fig.update_layout(shapes=[dict(type="path", path=nogozone_svg,
@@ -490,6 +491,7 @@ clientside_callback(
     Input("dropdown_cd", "value"),
     Input('cd_overview', 'relayoutData'),
     Input("cover", "data"),
+    Input("cd_stdev", "children"),
     State('cd_overview', 'figure'),
 )
 
@@ -520,6 +522,7 @@ clientside_callback(
     Output("cpolar", "data"),
     Input("themeToggle", "value"),
     Input("unitsToggle", "value"),
+    State("cd_stdev", "children"),
     State("ctbl", "data"),
     State("cover", "data"),
     State("cpolar", "data"),

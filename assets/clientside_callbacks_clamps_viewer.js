@@ -9,7 +9,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             else if (active_tab == 'resume') return [off, false, off, false, on, true, 'resume']
             else return [off, false, on, true, off, false, 'tubeview']
         },
-        cstore_switcher: function (themeToggle, unitsToggle, ctbl, cover, cpolar, themes) {
+        cstore_switcher: function (themeToggle, unitsToggle, std_str, ctbl, cover, cpolar, themes) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
             // ctbl_new = JSON.parse(JSON.stringify(ctbl));
             // cover_fig = JSON.parse(JSON.stringify(cover));
@@ -66,7 +66,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
 
             // if (trigger == "unitsToggle") {
             if (unitsToggle) {
-                if (cover_fig.layout.yaxis.title.text == 'Depth (ft)') return [ctbl_new, cover_fig, cpolar_fig];
+                // if (cover_fig.layout.yaxis.title.text == 'Depth (ft)') return [ctbl_new, cover_fig, cpolar_fig];
                 cover_fig.data.forEach((trace, index) => {
                     cover_fig.data[index].y = trace.y.map(y => y * 3.28084);
                     cpolar_fig.data[index].r = cpolar_fig.data[index].r.map(y => y * 3.28084);
@@ -80,7 +80,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 // cpolar_fig.layout['uirevision'] = ' ft';
                 ctbl_new = ctbl_new.map(dic => Object.assign(dic, { 'depth': +(dic.depth * 3.28084).toFixed(3) }));
             } else {
-                if (cover_fig.layout.yaxis.title.text == 'Depth (m)') return [ctbl_new, cover_fig, cpolar_fig];
+                // if (cover_fig.layout.yaxis.title.text == 'Depth (m)') return [ctbl_new, cover_fig, cpolar_fig];
                 cover_fig.data.forEach((trace, index) => {
                     cover_fig.data[index].y = trace.y.map(y => y * 0.3048);
                     cpolar_fig.data[index].r = cpolar_fig.data[index].r.map(y => y * 0.3048);
@@ -94,21 +94,24 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 // cpolar_fig.layout['uirevision'] = ' m';
                 ctbl_new = ctbl_new.map(dic => Object.assign(dic, { 'depth': +(dic.depth * 0.3048).toFixed(3) }));
             };
-            let nogozone_go = [];
-            let nogozone_back = [];
-            cover_fig.data.forEach((trace, index) => {
-                if (trace.name == "Fiber Wire") {
-                    trace.customdata.forEach((type, indext) => {
-                        nogozone_go = nogozone_go.concat(`L${cover_fig.data[index]['x'][indext] - 20},${cover_fig.data[index]['y'][indext]}`);
-                        nogozone_back = nogozone_back.concat(`L${cover_fig.data[index]['x'][indext] + 20},${cover_fig.data[index]['y'][indext]}`);
-                    });
-                    if (nogozone_go[0] != undefined) {
-                        nogozone_go[0] = nogozone_go[0].replace('L', 'M ');
-                        nogozone_back[0] = nogozone_back[0] + ' Z';
-                    };
-                    cover_fig.layout.shapes[0]['path'] = nogozone_go + nogozone_back.reverse();
-                };
-            });
+            // cover_fig.layout.transition = {};
+            for (var member in cover_fig.layout.transition) delete cover_fig.layout.transition[member];
+            // let nogozone_go = [];
+            // let nogozone_back = [];
+            // std = parseFloat(std_str.replace('°', '')) + 2;
+            // cover_fig.data.forEach((trace, index) => {
+            //     if (trace.name == "Fiber Wire") {
+            //         trace.customdata.forEach((type, indext) => {
+            //             nogozone_go = nogozone_go.concat(`L${cover_fig.data[index]['x'][indext] - std},${cover_fig.data[index]['y'][indext]}`);
+            //             nogozone_back = nogozone_back.concat(`L${cover_fig.data[index]['x'][indext] + std},${cover_fig.data[index]['y'][indext]}`);
+            //         });
+            //         if (nogozone_go[0] != undefined) {
+            //             nogozone_go[0] = nogozone_go[0].replace('L', 'M ');
+            //             nogozone_back[0] = nogozone_back[0] + ' Z';
+            //         };
+            //         cover_fig.layout.shapes[0]['path'] = nogozone_go + nogozone_back.reverse();
+            //     };
+            // });
             // };
 
             // cover_fig.layout.autosize = true;
@@ -116,17 +119,18 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             // cover_fig.layout.yaxis.autorange = true;
             return [ctbl_new, cover_fig, cpolar_fig];
         },
-        clampsoverview_listener: function (clamps_types, relayoutData, store_fig, fig) {
+        clampsoverview_listener: function (clamps_types, relayoutData, store_fig, std_str, fig) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
+            console.log(trigger);
 
             let new_fig;
-            if (fig === undefined || trigger == "cover") {
+            if (fig === undefined || trigger.includes("cover")) {
                 new_fig = structuredClone(store_fig);
             } else {
                 new_fig = { ...fig };
             };
 
-            if (trigger == "cd_overview" && Object.keys(relayoutData).length == 4) {
+            if (trigger.includes("cd_overview") && Object.keys(relayoutData).length == 4) {
                 if (relayoutData['xaxis.range[1]'] == relayoutData['xaxis.range[0]'] && relayoutData['yaxis.range[1]'] == relayoutData['yaxis.range[0]']) {
                     new_fig.layout.xaxis = { ...store_fig.layout.xaxis };
                     new_fig.layout.yaxis = { ...store_fig.layout.yaxis };
@@ -139,6 +143,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             let c = [];
             let nogozone_go = [];
             let nogozone_back = [];
+            std = parseFloat(std_str.replace('°', '')) + 2;
             store_fig.data.forEach((trace, index) => {
                 if (trace.name == "Fiber Wire") {
                     trace.customdata.forEach((type, indext) => {
@@ -146,8 +151,8 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                             y = y.concat(store_fig.data[index]['y'][indext]);
                             x = x.concat(store_fig.data[index]['x'][indext]);
                             c = c.concat([type]);
-                            nogozone_go = nogozone_go.concat(`L${store_fig.data[index]['x'][indext] - 20},${store_fig.data[index]['y'][indext]}`);
-                            nogozone_back = nogozone_back.concat(`L${store_fig.data[index]['x'][indext] + 20},${store_fig.data[index]['y'][indext]}`);
+                            nogozone_go = nogozone_go.concat(`L${store_fig.data[index]['x'][indext] - std},${store_fig.data[index]['y'][indext]}`);
+                            nogozone_back = nogozone_back.concat(`L${store_fig.data[index]['x'][indext] + std},${store_fig.data[index]['y'][indext]}`);
                         }
                     });
                     if (nogozone_go[0] != undefined) {
@@ -160,8 +165,8 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                     new_fig.layout.shapes[0]['path'] = nogozone_go + nogozone_back.reverse();
                 };
             });
-            if (trigger == "dropdown_cd" || fig === undefined) new_fig.layout.transition = { "duration": 500, "easing": "cubic-in-out" };
-
+            if (trigger.includes("dropdown_cd") || fig === undefined) new_fig.layout.transition = { "duration": 500, "easing": "cubic-in-out" };
+            else for (var member in new_fig.layout.transition) delete new_fig.layout.transition[member];
             return new_fig;
         },
         clampspolar_listener: function (clamps_types, relayoutData, store_fig, fig, unitsToggle) {
@@ -211,11 +216,12 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
 
             let units = unitsToggle ? "ft" : "m";
             let interval = `${new_fig.layout.polar.radialaxis.range[1].toFixed(2)} - ${new_fig.layout.polar.radialaxis.range[0].toFixed(2)} ${units}`;
-            let mean
+            let mean_str
             let std
+            let std_str
             if (Object.keys(stats).length > 0) {
                 interval = `${new_fig.layout.polar.radialaxis.range[1].toFixed(2)} - ${new_fig.layout.polar.radialaxis.range[0].toFixed(2)} ${units}`;
-                mean = sum > 0 ? `${(sum / n).toFixed(0)}°` : `${(360 + (sum / n)).toFixed(0)}°`;
+                mean_str = sum > 0 ? `${(sum / n).toFixed(0)}°` : `${(360 + (sum / n)).toFixed(0)}°`;
                 // let median = sum > 0 ? sum : 360 + sum;
                 // median = median > 0 ? (median).toFixed(0) : (360 + median).toFixed(0);
 
@@ -224,7 +230,8 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                     const mean = array.reduce((a, b) => a + b) / n
                     return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
                 }
-                std = `${dev(stats).toFixed(2)}°`;
+                std = dev(stats).toFixed(2);
+                std_str = `${std}°`;
             };
 
             // console.log(interval);
@@ -232,7 +239,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             // console.log(n);
             // console.log(sum);
             // console.log(new_fig);
-            return [interval, mean, std, new_fig];
+            return [interval, mean_str, std_str, new_fig];
         },
         clampstable_listener: function (clamps_types, store_tbl, selected_rows) {
             const trigger = window.dash_clientside.callback_context.triggered.map(t => t.prop_id.split(".")[0]);
