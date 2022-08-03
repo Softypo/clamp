@@ -66,7 +66,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
 
             // if (trigger == "unitsToggle") {
             if (unitsToggle) {
-                // if (cover_fig.layout.yaxis.title.text == 'Depth (ft)') return [ctbl_new, cover_fig, cpolar_fig];
+                if (cover_fig.layout.yaxis.title.text == 'Depth (ft)') return [ctbl_new, cover_fig, cpolar_fig];
                 cover_fig.data.forEach((trace, index) => {
                     cover_fig.data[index].y = trace.y.map(y => y * 3.28084);
                     cpolar_fig.data[index].r = cpolar_fig.data[index].r.map(y => y * 3.28084);
@@ -80,7 +80,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
                 // cpolar_fig.layout['uirevision'] = ' ft';
                 ctbl_new = ctbl_new.map(dic => Object.assign(dic, { 'depth': +(dic.depth * 3.28084).toFixed(3) }));
             } else {
-                // if (cover_fig.layout.yaxis.title.text == 'Depth (m)') return [ctbl_new, cover_fig, cpolar_fig];
+                if (cover_fig.layout.yaxis.title.text == 'Depth (m)') return [ctbl_new, cover_fig, cpolar_fig];
                 cover_fig.data.forEach((trace, index) => {
                     cover_fig.data[index].y = trace.y.map(y => y * 0.3048);
                     cpolar_fig.data[index].r = cpolar_fig.data[index].r.map(y => y * 0.3048);
@@ -143,7 +143,8 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             let c = [];
             let nogozone_go = [];
             let nogozone_back = [];
-            std = parseFloat(std_str.replace('°', '')) + 2;
+            console.log(std_str);
+            std = std_str != undefined ? parseFloat(std_str.replace('°', '')) + 2 : 0;
             store_fig.data.forEach((trace, index) => {
                 if (trace.name == "Fiber Wire") {
                     trace.customdata.forEach((type, indext) => {
@@ -239,6 +240,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             // console.log(n);
             // console.log(sum);
             // console.log(new_fig);
+
             return [interval, mean_str, std_str, new_fig];
         },
         clampstable_listener: function (clamps_types, store_tbl, selected_rows) {

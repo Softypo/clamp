@@ -15,7 +15,7 @@ COLUMN_STYLE = {
     "paddingTop": '8px',
     # "padding": "0.5rem",
     "height": "fill",
-    "minHeight": "60vh",
+    "minHeight": "55rem",
     "maxHeight": "calc(100vh - 3rem)",
     # "display": "flex",
     # "flexFlow": "column",
