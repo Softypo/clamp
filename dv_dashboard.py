@@ -122,18 +122,18 @@ sidebar = html.Div(
                         ),
                     ],
                 ),
-                html.P(
-                    "A simple sidebar layout with navigation links", className="lead"
-                ),
-                dbc.Nav(
-                    [
-                        dbc.NavLink("Home", href="/", active="exact"),
-                        dbc.NavLink("Page 1", href="/page-1", active="exact"),
-                        dbc.NavLink("Page 2", href="/page-2", active="exact"),
-                    ],
-                    vertical=True,
-                    pills=True,
-                ),
+                # html.P(
+                #     "A simple sidebar layout with navigation links", className="lead"
+                # ),
+                # dbc.Nav(
+                #     [
+                #         dbc.NavLink("Home", href="/", active="exact"),
+                #         dbc.NavLink("Page 1", href="/page-1", active="exact"),
+                #         dbc.NavLink("Page 2", href="/page-2", active="exact"),
+                #     ],
+                #     vertical=True,
+                #     pills=True,
+                # ),
             ],
             id="offcanvas",
             is_open=False,
@@ -167,7 +167,7 @@ navbar_menu = dbc.Row(
                             nothingFound="No well found",
                             placeholder="Select a well",
                             style={"width": '15rem'},
-                            id="framework_selector",
+                            id="well_selector",
                         ),
                         style={'marginTop': "auto", 'marginBottom': 'auto',
                                'marginLeft': '0.5rem'
