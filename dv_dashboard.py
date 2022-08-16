@@ -17,6 +17,8 @@ themes = {'_dark': {'css': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/_da
                      'json': 'https://cdn.jsdelivr.net/gh/Softypo/clamp/themes/plotly_templates/united.json'}
           }
 
+external_scripts = [{'src': 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js', 'type': 'module'}]
+
 # initial config
 app = dash.Dash(__name__, external_stylesheets=[themes['_dark']['css']],
                 use_pages=True,
@@ -26,6 +28,7 @@ app = dash.Dash(__name__, external_stylesheets=[themes['_dark']['css']],
                 meta_tags=[
                     {"name": "color-scheme", "content": "light dark"},
                     {"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=1"}],
+                external_scripts=external_scripts
                 )
 application = app.server  # <<<<<<<<for deploying to heroku
 
